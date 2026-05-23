@@ -1,11 +1,14 @@
 """
-LLM Client — Stage 2
+LLM Client — Stage 2 + Stage 3.7 + Stage 3.8
 
 A thin wrapper around the OpenAI Python SDK for calling Kimi API.
 Falls back gracefully when the API key is missing or the call fails.
+
+Added stream_reply_sync() for token-level streaming (synchronous generator).
 """
 
 import os
+from datetime import datetime
 from openai import OpenAI
 
 DEFAULT_BASE_URL = "https://api.moonshot.cn/v1"
@@ -54,6 +57,76 @@ def call_llm(user_message: str) -> str:
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": user_message},
+        ],
+        temperature=1,
+    )
+
+    reply = response.choices[0].message.content
+    return reply.strip() if reply else ""
+
+
+def stream_reply_sync(user_message: str, intent: str, tasks: list[str]):
+    """
+    Synchronous generator that streams deltas from Kimi API.
+    Run this inside a thread pool so it does not block the asyncio event loop.
+    """
+    client = _get_client()
+    if client is None:
+        yield ""
+        return
+
+    model = _get_model()
+
+    tasks_text = "\n".join(f"- {t}" for t in tasks)
+    context_prompt = (
+        f"User intent: {intent}\n"
+        f"Planned tasks:\n{tasks_text}\n\n"
+        f"Now answer the user's question directly and helpfully."
+    )
+
+    response = client.chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_message},
+            {"role": "assistant", "content": context_prompt},
+        ],
+        temperature=1,
+        stream=True,
+    )
+
+    for chunk in response:
+        delta = chunk.choices[0].delta.content
+        if delta:
+            # Diagnostic: print timestamp and delta length (no sensitive data)
+            print(f"[LLM STREAM] {datetime.now().isoformat()} delta_len={len(delta)}", flush=True)
+            yield delta
+
+
+def generate_reply(user_message: str, intent: str, tasks: list[str]) -> str:
+    """
+    Generate a reply using Kimi API with enriched context.
+    Keeps the same client configuration as call_llm().
+    """
+    client = _get_client()
+    if client is None:
+        raise RuntimeError("OPENAI_API_KEY is not set")
+
+    model = _get_model()
+
+    tasks_text = "\n".join(f"- {t}" for t in tasks)
+    context_prompt = (
+        f"User intent: {intent}\n"
+        f"Planned tasks:\n{tasks_text}\n\n"
+        f"Now answer the user's question directly and helpfully."
+    )
+
+    response = client.chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_message},
+            {"role": "assistant", "content": context_prompt},
         ],
         temperature=1,
     )
