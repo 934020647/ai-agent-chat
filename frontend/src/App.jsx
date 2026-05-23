@@ -103,6 +103,11 @@ function App() {
               <p className="empty">No steps</p>
             )}
           </div>
+
+          <div className="panel">
+            <h3>Mode</h3>
+            <p>{response.mode}</p>
+          </div>
         </>
       )}
     </>

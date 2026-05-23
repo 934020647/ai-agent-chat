@@ -4,13 +4,29 @@
 
 ## 0. Current Development Focus
 
-Current focus: **Implement Stage 1 ONLY**.
+Current focus: **Stage 2: Kimi API Integration**.
 
-Kimi Code must not implement Stage 2-9 until explicitly instructed.
+Stage 1 has already been implemented and manually verified:
 
-For the current stage:
+- Frontend can be opened in browser.
+- Backend can be accessed.
+- Frontend can call backend.
+- User can send a message.
+- Page can display reply, intent, tasks, and steps.
+- Current backend mode is mock.
 
-- Do not implement real LLM calls.
+Kimi Code must now implement **Stage 2 only**.
+
+For Stage 2:
+
+- Implement Kimi API cloud model integration.
+- Use Kimi API / Moonshot Open Platform as the only model provider.
+- Use OpenAI Python SDK because Kimi API is OpenAI-compatible.
+- Do not implement local model deployment.
+- Do not implement Ollama.
+- Do not implement vLLM.
+- Do not implement Xinference.
+- Do not implement local GPU inference.
 - Do not implement RAG.
 - Do not implement ReAct workflow.
 - Do not implement multi-agent orchestration.
@@ -20,17 +36,7 @@ For the current stage:
 - Do not overwrite existing files without first checking their contents.
 - Do not delete existing files unless explicitly instructed.
 
-The immediate priority is to build a stable minimum runnable frontend-backend chat web app.
-
-The project should first prove that:
-
-1. The frontend can be accessed from a browser.
-2. The backend can be accessed from a browser or curl.
-3. The frontend can call the backend successfully.
-4. The backend can return structured mock chat data.
-5. The frontend can display reply, intent, task decomposition, and execution steps.
-
-Only after Stage 1 is fully verified should later stages be implemented.
+The immediate priority is to replace the Stage 1 mock final answer with an optional real Kimi API call while keeping the `/api/chat` response format stable.
 
 ---
 
@@ -47,12 +53,20 @@ The final deliverable should be:
 5. All source code should be committed to a public GitHub repository.
 6. The final demo should be recordable by phone or screen recording software.
 
-The project preparation document requires a public cloud server, a web page accessible through a public URL, a simple chat service, model invocation through a specified model/API, GitHub code submission, and a short demo video. The server should also include the required SSH public keys for project inspection.
+The project preparation requirement is:
+
+- Public cloud server.
+- Public web URL.
+- Simple web chat service.
+- Model invocation through a specified model/API.
+- GitHub code submission.
+- Short demo video.
 
 Current server environment:
 
 - Cloud provider: Alibaba Cloud ECS
 - OS: Ubuntu 22.04
+- Public IP: `39.106.227.41`
 - Project root: `/root/ai-agent-chat`
 - Frontend directory: `/root/ai-agent-chat/frontend`
 - Backend directory: `/root/ai-agent-chat/backend`
@@ -73,11 +87,32 @@ ai-agent-chat/
 ├── data/
 ├── frontend/
 ├── scripts/
+├── AGENTS.md
+├── DEVELOPMENT_PLAN.md
 ├── README.md
 ├── .env.example
-├── .gitignore
-└── AGENTS.md
+└── .gitignore
 ````
+
+Stage 1 has already created:
+
+```text
+backend/
+├── main.py
+├── requirements.txt
+└── .env.example
+
+frontend/
+├── index.html
+├── package.json
+├── package-lock.json
+├── vite.config.js
+├── .env.example
+└── src/
+    ├── App.jsx
+    ├── index.css
+    └── main.jsx
+```
 
 ---
 
@@ -120,12 +155,13 @@ Use the following stack unless there is a strong reason to change it.
 * Plain CSS or CSS modules
 * Fetch API for backend calls
 
-Important frontend decision:
+Important frontend rules:
 
 * Use JavaScript + JSX.
 * Do not use TypeScript unless explicitly instructed.
 * Use Vite environment variables with the `VITE_` prefix.
 * Read frontend environment variables through `import.meta.env`.
+* Do not use `process.env` in frontend code.
 
 ### Backend
 
@@ -134,29 +170,49 @@ Important frontend decision:
 * Uvicorn
 * Pydantic
 * python-dotenv
-* OpenAI-compatible API client
+* OpenAI Python SDK
+* Kimi API / Moonshot Open Platform
 
-Backend model strategy:
+### Backend Model Strategy
 
-The backend should use an OpenAI-compatible API client. This allows the same backend code to work with:
+This project uses **cloud model API only**.
 
-* OpenAI cloud API
-* DeepSeek API
-* OpenRouter API
-* Alibaba Cloud DashScope OpenAI-compatible endpoint
-* Local Ollama OpenAI-compatible endpoint
-* Local vLLM OpenAI-compatible server
-* Local Xinference OpenAI-compatible server
+The only model provider for Stage 2 is:
 
-The model provider should be changed through `.env`, not by changing application code.
+* Kimi API / Moonshot Open Platform
+
+Kimi API is OpenAI-compatible, so the backend should use the OpenAI Python SDK.
+
+Default backend model configuration:
+
+```env
+OPENAI_API_KEY=
+OPENAI_BASE_URL=https://api.moonshot.cn/v1
+MODEL_NAME=kimi-k2.6
+```
+
+Rules:
+
+* Use the OpenAI Python SDK to call Kimi API.
+* Do not implement local model deployment.
+* Do not implement Ollama.
+* Do not implement vLLM.
+* Do not implement Xinference.
+* Do not implement local GPU inference.
+* Do not hardcode API keys.
+* Do not expose API keys to frontend.
+* Store real API keys only in `backend/.env`.
+* Keep `backend/.env.example` and root `.env.example` as templates only.
+* If `OPENAI_API_KEY` is missing, backend should continue using mock mode.
+* If Kimi API call fails, backend should return a friendly fallback response while preserving the same response schema.
 
 ### Agent Layer
 
-* Pure Python modules first
-* Keep the architecture clear and readable
-* Avoid over-engineering in the early stages
-* Prefer explicit modules over hidden frameworks
-* Keep response format stable across stages
+* Pure Python modules first.
+* Keep the architecture clear and readable.
+* Avoid over-engineering in the early stages.
+* Prefer explicit modules over hidden frameworks.
+* Keep response format stable across stages.
 
 ### Deployment
 
@@ -194,7 +250,7 @@ Kimi Code must follow these rules:
 15. All functions should have clear names and simple comments where needed.
 16. If a file already exists, inspect its content before modifying it.
 17. Do not overwrite existing files unless necessary.
-18. Use JavaScript + JSX for the frontend in this project. Do not use TypeScript unless explicitly instructed.
+18. Use JavaScript + JSX for the frontend. Do not use TypeScript unless explicitly instructed.
 19. For frontend environment variables, only use variables prefixed with `VITE_`.
 20. In Vite frontend code, read environment variables through `import.meta.env`, not `process.env`.
 21. The frontend should read backend base URL from `import.meta.env.VITE_API_BASE_URL`.
@@ -207,6 +263,19 @@ Kimi Code must follow these rules:
 28. Do not expose hidden chain-of-thought. Only expose concise user-facing execution summaries.
 29. Do not commit generated cache files, build outputs, virtual environments, or API keys.
 30. If a command may affect system configuration, ask for confirmation before running it.
+31. This project uses cloud model APIs only.
+32. The primary cloud model provider is Kimi API / Moonshot Open Platform.
+33. Do not implement local model deployment, Ollama, vLLM, Xinference, or GPU inference unless explicitly instructed later.
+34. Use the OpenAI Python SDK to call Kimi API through the OpenAI-compatible endpoint.
+35. Default backend model configuration should be:
+
+    * `OPENAI_BASE_URL=https://api.moonshot.cn/v1`
+    * `MODEL_NAME=kimi-k2.6`
+36. Keep all real Kimi API keys only in `backend/.env`.
+37. Do not put Kimi API keys in frontend files.
+38. Do not put Kimi API keys in README.md, DEVELOPMENT_PLAN.md, AGENTS.md, `.env.example`, or source code.
+39. Do not commit `backend/.env`.
+40. If Stage 2 changes the backend response behavior, the frontend must still receive the same response fields.
 
 ---
 
@@ -226,6 +295,7 @@ The page should include:
 8. A panel showing retrieved knowledge or tool results later.
 9. Clear loading state.
 10. Clear error message if backend or model API fails.
+11. A visible `mode` field showing `mock`, `llm`, `agent`, or `error_fallback`.
 
 The interaction should make the user feel that the system is:
 
@@ -236,7 +306,7 @@ The interaction should make the user feel that the system is:
 
 The UI should be simple, stable, and demo-friendly.
 
-Recommended Stage 1 layout:
+Recommended layout:
 
 ```text
 +--------------------------------------------------+
@@ -248,6 +318,9 @@ Recommended Stage 1 layout:
 +--------------------------------------------------+
 | Final Reply                                      |
 | ...                                              |
++--------------------------------------------------+
+| Mode                                             |
+| mock / llm / agent / error_fallback              |
 +--------------------------------------------------+
 | Intent                                           |
 | ...                                              |
@@ -266,7 +339,7 @@ Recommended Stage 1 layout:
 
 ## 6. Backend API Design
 
-The initial backend should expose these endpoints:
+The backend should expose these endpoints:
 
 ### GET `/`
 
@@ -330,12 +403,12 @@ Response fields:
 * `intent`: recognized user intent.
 * `tasks`: list of decomposed tasks.
 * `steps`: user-facing execution progress summaries.
-* `retrieved_context`: retrieved knowledge snippets. Empty in Stage 1.
-* `mode`: current backend mode, such as `mock`, `llm`, or `agent`.
+* `retrieved_context`: retrieved knowledge snippets. Empty before RAG.
+* `mode`: current backend mode, such as `mock`, `llm`, `agent`, or `error_fallback`.
 
-In Stage 1, this endpoint should return mock data.
+In Stage 1, this endpoint returns mock data.
 
-In Stage 2, this endpoint should optionally call an LLM API.
+In Stage 2, this endpoint should optionally call Kimi API.
 
 In Stage 3 and later, this endpoint should call the agent orchestrator.
 
@@ -353,36 +426,42 @@ Use `.env.example` to document required variables.
 
 ### Backend Environment Variables
 
-Backend should support OpenAI-compatible API configuration.
+This project uses cloud API only.
 
-This makes the backend compatible with both cloud model providers and local model services.
+Primary model provider:
 
-Supported examples:
+* Kimi API / Moonshot Open Platform
 
-* OpenAI API
-* DeepSeek API
-* OpenRouter API
-* Alibaba Cloud DashScope OpenAI-compatible endpoint
-* Local Ollama OpenAI-compatible endpoint
-* Local vLLM OpenAI-compatible server
-* Local Xinference OpenAI-compatible server
+Kimi API is OpenAI-compatible, so the backend should use the OpenAI Python SDK.
 
 Backend `.env.example`:
 
 ```env
+# Kimi API / Moonshot Open Platform
 OPENAI_API_KEY=
-OPENAI_BASE_URL=https://api.openai.com/v1
-MODEL_NAME=gpt-4o-mini
+OPENAI_BASE_URL=https://api.moonshot.cn/v1
+MODEL_NAME=kimi-k2.6
+```
+
+Backend real `.env` example:
+
+```env
+OPENAI_API_KEY=your_real_kimi_api_key_here
+OPENAI_BASE_URL=https://api.moonshot.cn/v1
+MODEL_NAME=kimi-k2.6
 ```
 
 Rules:
 
 * Do not hardcode API keys.
 * Do not expose backend API keys to frontend.
+* Do not commit `backend/.env`.
+* The backend should read the API key from `backend/.env`.
 * If `OPENAI_API_KEY` is missing, backend should use mock mode.
-* If `OPENAI_BASE_URL` is missing, use a safe default or mock mode.
-* If `MODEL_NAME` is missing, use a safe default or mock mode.
+* If `OPENAI_BASE_URL` is missing, default to `https://api.moonshot.cn/v1`.
+* If `MODEL_NAME` is missing, default to `kimi-k2.6`.
 * If model API call fails, return a friendly error and keep the response format stable.
+* Do not implement local model inference, Ollama, vLLM, Xinference, or GPU deployment in this project.
 
 ### Frontend Environment Variables
 
@@ -390,6 +469,12 @@ Frontend `.env.example`:
 
 ```env
 VITE_API_BASE_URL=http://YOUR_SERVER_PUBLIC_IP:8000
+```
+
+Actual development `frontend/.env`:
+
+```env
+VITE_API_BASE_URL=http://39.106.227.41:8000
 ```
 
 Important Vite rules:
@@ -409,12 +494,6 @@ process.env
 
 * Vite environment variables are statically embedded during `npm run build`.
 * If `VITE_API_BASE_URL` changes in production, the frontend must be rebuilt.
-
-For development, the actual `frontend/.env` can contain:
-
-```env
-VITE_API_BASE_URL=http://SERVER_PUBLIC_IP:8000
-```
 
 For production behind Nginx reverse proxy, the frontend can later use:
 
@@ -454,20 +533,20 @@ TCP 443/443    0.0.0.0/0   HTTPS production access
 TCP 22/22      restricted to developer IP if possible
 ```
 
-For Stage 1 browser testing:
+For development browser testing:
 
 ```text
 Frontend:
-http://SERVER_PUBLIC_IP:5173
+http://39.106.227.41:5173
 
 Backend:
-http://SERVER_PUBLIC_IP:8000
+http://39.106.227.41:8000
 ```
 
 For final production demo:
 
 ```text
-http://SERVER_PUBLIC_IP
+http://39.106.227.41
 ```
 
 In final production, users should not need to manually visit `:5173` or `:8000`.
@@ -480,19 +559,25 @@ In final production, users should not need to manually visit `:5173` or `:8000`.
 
 # Stage 1: Minimum Runnable Chat Web App
 
-## Goal
+## Status
 
-Build the simplest runnable frontend-backend chat system.
+Stage 1 has already been implemented and manually verified.
 
-Current focus: **Stage 1 ONLY**.
+Verified features:
 
-Do not implement real LLM calls, RAG, ReAct, multi-agent orchestration, multimodal upload, or Nginx production deployment in this stage.
+1. Backend starts without errors.
+2. Frontend starts without errors.
+3. Browser can access frontend page.
+4. Frontend can send a message to backend.
+5. Backend returns mock structured response.
+6. Frontend displays reply, intent, tasks, and steps.
+7. No API key is required.
+8. No real LLM call is made.
+9. No Nginx config is modified.
 
-## Stage 1 Backend Requirements
+## Stage 1 Backend Summary
 
-Create a FastAPI backend in `backend/`.
-
-Backend files should include:
+Backend files:
 
 ```text
 backend/
@@ -503,44 +588,11 @@ backend/
 
 Required endpoints:
 
-### GET `/`
+* `GET /`
+* `GET /api/health`
+* `POST /api/chat`
 
-Health check.
-
-Expected response:
-
-```json
-{
-  "status": "ok",
-  "message": "AI Agent Chat Backend is running"
-}
-```
-
-### GET `/api/health`
-
-Frontend health check.
-
-Expected response:
-
-```json
-{
-  "status": "ok"
-}
-```
-
-### POST `/api/chat`
-
-Main mock chat endpoint.
-
-Request:
-
-```json
-{
-  "message": "user input here"
-}
-```
-
-Response:
+Stage 1 response format:
 
 ```json
 {
@@ -561,196 +613,127 @@ Response:
 }
 ```
 
-Backend must include CORS configuration.
+Backend includes CORS configuration.
 
-Use:
+Backend must continue to support mock mode as fallback in later stages.
 
-```python
-from fastapi.middleware.cors import CORSMiddleware
+## Stage 1 Frontend Summary
+
+Frontend files:
+
+```text
+frontend/
+├── index.html
+├── package.json
+├── package-lock.json
+├── vite.config.js
+├── .env.example
+└── src/
+    ├── App.jsx
+    ├── index.css
+    └── main.jsx
 ```
 
-Development CORS policy:
+Frontend must continue to:
 
-* Allow `http://localhost:5173`
-* Allow `http://127.0.0.1:5173`
-* Allow `http://SERVER_PUBLIC_IP:5173`
-* During early development, `allow_origins=["*"]` is acceptable for quick testing.
+1. Display input box.
+2. Send message to backend.
+3. Display reply.
+4. Display intent.
+5. Display task decomposition.
+6. Display execution steps.
+7. Display mode if provided.
 
-Backend must not use real LLM API in Stage 1.
+---
 
-Backend must not introduce database, Redis, vector database, Celery, Docker, or any complex infrastructure in Stage 1.
+# Stage 2: Kimi API Integration
 
-If chat history is needed in Stage 1, store it only in frontend state or simple in-memory backend data. Do not add persistent storage.
+## Goal
 
-Backend `requirements.txt` must include at least:
+Replace the Stage 1 mock final answer with an optional real Kimi API call while keeping the same `/api/chat` response format.
+
+The backend should use Kimi API / Moonshot Open Platform as the primary and only cloud model provider.
+
+Kimi API is OpenAI-compatible, so the backend should use the OpenAI Python SDK.
+
+Do not implement:
+
+* Local model deployment
+* Ollama
+* vLLM
+* Xinference
+* GPU inference
+* Any local LLM service
+* RAG
+* ReAct
+* Multi-agent orchestration
+* File upload
+* Multimodal features
+* Nginx production deployment
+
+## Required Backend Environment Variables
+
+Backend should read these variables from:
+
+```text
+/root/ai-agent-chat/backend/.env
+```
+
+Required content:
+
+```env
+OPENAI_API_KEY=
+OPENAI_BASE_URL=https://api.moonshot.cn/v1
+MODEL_NAME=kimi-k2.6
+```
+
+Real example:
+
+```env
+OPENAI_API_KEY=your_real_kimi_api_key_here
+OPENAI_BASE_URL=https://api.moonshot.cn/v1
+MODEL_NAME=kimi-k2.6
+```
+
+Important:
+
+* The real API key must only be placed in `backend/.env`.
+* Never commit `backend/.env`.
+* Never put real API key into `.env.example`.
+* Never put real API key into frontend files.
+* Never put real API key into README.md.
+* Never put real API key into source code.
+
+## Required Dependencies
+
+Backend `requirements.txt` should include:
 
 ```text
 fastapi
 uvicorn[standard]
 python-dotenv
 pydantic
+openai
 ```
 
-## Stage 1 Frontend Requirements
+## Stage 2 Backend Rules
 
-Create a React + Vite frontend in `frontend/`.
+1. Keep `/api/chat` response format unchanged.
+2. Use the OpenAI Python SDK to call Kimi API.
+3. Read `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `MODEL_NAME` from environment variables.
+4. If `OPENAI_API_KEY` is missing, continue using mock mode.
+5. If `OPENAI_BASE_URL` is missing, default to `https://api.moonshot.cn/v1`.
+6. If `MODEL_NAME` is missing, default to `kimi-k2.6`.
+7. Do not expose API keys to frontend.
+8. Do not write API keys into source code.
+9. Do not commit `backend/.env`.
+10. If API call fails, return a friendly fallback response while preserving the same response schema.
+11. Do not modify frontend page structure unless necessary.
+12. Do not implement RAG, ReAct, multi-agent orchestration, file upload, or Nginx deployment in Stage 2.
 
-Use JavaScript + JSX.
+## Expected `/api/chat` Response Schema
 
-Do not use TypeScript unless explicitly instructed.
-
-Frontend should include:
-
-1. Title/header area.
-2. Chat input box.
-3. Send button.
-4. Loading state.
-5. Error state.
-6. Reply display.
-7. Intent display.
-8. Task decomposition display.
-9. Execution steps display.
-
-Frontend must read backend API address from:
-
-```js
-import.meta.env.VITE_API_BASE_URL
-```
-
-Do not use:
-
-```js
-process.env
-```
-
-Frontend `.env.example` should include:
-
-```env
-VITE_API_BASE_URL=http://YOUR_SERVER_PUBLIC_IP:8000
-```
-
-For development, the actual `frontend/.env` can contain:
-
-```env
-VITE_API_BASE_URL=http://SERVER_PUBLIC_IP:8000
-```
-
-The frontend should call:
-
-```text
-POST ${VITE_API_BASE_URL}/api/chat
-```
-
-## Stage 1 Security Group Requirements
-
-Alibaba Cloud security group must allow these ports during development:
-
-```text
-TCP 5173/5173  0.0.0.0/0   Vite frontend dev server
-TCP 8000/8000  0.0.0.0/0   FastAPI backend
-TCP 80/80      0.0.0.0/0   Nginx production web access
-TCP 443/443    0.0.0.0/0   HTTPS production access
-TCP 22/22      restricted or 0.0.0.0/0 for SSH
-```
-
-For Stage 1 browser testing:
-
-```text
-http://SERVER_PUBLIC_IP:5173
-```
-
-Backend health check:
-
-```text
-http://SERVER_PUBLIC_IP:8000
-```
-
-## Stage 1 Test Commands
-
-Backend:
-
-```bash
-cd /root/ai-agent-chat/backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn main:app --host 0.0.0.0 --port 8000
-```
-
-Frontend:
-
-```bash
-cd /root/ai-agent-chat/frontend
-npm install
-npm run dev -- --host 0.0.0.0
-```
-
-Expected browser access:
-
-```text
-http://SERVER_PUBLIC_IP:5173
-```
-
-Expected backend access:
-
-```text
-http://SERVER_PUBLIC_IP:8000
-```
-
-## Stage 1 Completion Criteria
-
-Stage 1 is complete only if:
-
-1. Backend can start without errors.
-2. Frontend can start without errors.
-3. Browser can access the frontend page.
-4. Frontend can send a message to backend.
-5. Backend returns mock structured response.
-6. Frontend displays reply, intent, tasks, and steps.
-7. No API key is required.
-8. No real LLM call is made.
-9. No Nginx config is modified.
-10. README.md includes the correct Stage 1 run commands.
-
----
-
-# Stage 2: LLM API Integration
-
-## Goal
-
-Replace mock final answer with optional LLM call while keeping the same `/api/chat` response format.
-
-Backend should use an OpenAI-compatible API client, such as the OpenAI Python SDK.
-
-This design should support:
-
-* OpenAI cloud API
-* DeepSeek API
-* OpenRouter API
-* Alibaba Cloud DashScope OpenAI-compatible API
-* Local Ollama OpenAI-compatible endpoint
-* Local vLLM OpenAI-compatible server
-* Local Xinference OpenAI-compatible server
-
-Required environment variables:
-
-```env
-OPENAI_API_KEY=
-OPENAI_BASE_URL=
-MODEL_NAME=
-```
-
-Rules:
-
-1. If `OPENAI_API_KEY` is missing, use mock mode.
-2. If `OPENAI_BASE_URL` is missing, use mock mode or a safe default.
-3. If `MODEL_NAME` is missing, use mock mode or a safe default.
-4. Do not expose API keys to frontend.
-5. Keep `/api/chat` response format unchanged.
-6. Add clear error handling.
-7. If model API fails, return a friendly error while preserving the same response schema.
-
-The API response should still include:
+The response must still include:
 
 ```json
 {
@@ -763,7 +746,112 @@ The API response should still include:
 }
 ```
 
-Do not implement multi-agent orchestration in Stage 2.
+## Suggested Kimi API Call Behavior
+
+When `OPENAI_API_KEY` exists:
+
+1. Build a concise system prompt.
+2. Send the user message to Kimi API.
+3. Use the model answer as `reply`.
+4. Keep `intent`, `tasks`, and `steps` generated through simple deterministic logic for now.
+5. Set `mode` to `llm`.
+
+When `OPENAI_API_KEY` is missing:
+
+1. Use the existing Stage 1 mock response.
+2. Set `mode` to `mock`.
+
+When Kimi API fails:
+
+1. Return a user-friendly fallback reply.
+2. Set `mode` to `error_fallback` or `mock`.
+3. Include a safe execution step such as:
+
+   * `Kimi API call failed, returned fallback response`
+4. Do not expose sensitive error details to frontend.
+5. Do not expose API key, request headers, stack traces, or internal paths.
+
+## Suggested System Prompt for Kimi API
+
+Use a short system prompt:
+
+```text
+You are an AI task assistant for a cloud-deployed AI Agent Chat Platform. 
+Answer the user's question clearly and helpfully. 
+When appropriate, explain tasks in a structured way. 
+Do not reveal hidden chain-of-thought. 
+Only provide concise user-facing reasoning summaries.
+```
+
+The backend should not rely on Kimi to return JSON in Stage 2. The backend can use Kimi only for the final `reply`, and keep `intent`, `tasks`, and `steps` deterministic.
+
+## Stage 2 Test Commands
+
+Install dependency:
+
+```bash
+cd /root/ai-agent-chat/backend
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Create backend `.env`:
+
+```bash
+cd /root/ai-agent-chat/backend
+nano .env
+```
+
+Content:
+
+```env
+OPENAI_API_KEY=your_real_kimi_api_key_here
+OPENAI_BASE_URL=https://api.moonshot.cn/v1
+MODEL_NAME=kimi-k2.6
+```
+
+Run backend:
+
+```bash
+cd /root/ai-agent-chat/backend
+source .venv/bin/activate
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+Test backend:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"请用三句话介绍一下人工智能 Agent"}'
+```
+
+Expected:
+
+* If `.env` contains valid Kimi API key, response `mode` should be `llm`.
+* If `.env` is missing or key is empty, response `mode` should be `mock`.
+* If Kimi API fails, response should keep the schema and use friendly fallback.
+
+## Stage 2 Completion Criteria
+
+Stage 2 is complete only if:
+
+1. Backend starts without errors.
+2. `/api/chat` works without `backend/.env` and returns mock mode.
+3. `/api/chat` works with valid Kimi API key and returns LLM-generated reply.
+4. API key is not committed.
+5. Frontend still works without structural changes.
+6. Response fields remain:
+
+   * `reply`
+   * `intent`
+   * `tasks`
+   * `steps`
+   * `retrieved_context`
+   * `mode`
+7. README.md explains how to configure Kimi API.
+8. `.env.example` documents Kimi API variables but contains no real key.
+9. `.gitignore` prevents `backend/.env` from being committed.
 
 ---
 
@@ -785,7 +873,9 @@ orchestrator.handle_chat(message)
 
 However, the response format of `/api/chat` must remain unchanged.
 
-This ensures the frontend does not need to be modified when the backend evolves from direct LLM call to agent orchestration.
+This ensures the frontend does not need to be modified when the backend evolves from direct Kimi API call to agent orchestration.
+
+Starting from Stage 3, the Kimi API call should be moved into or reused by the agent orchestrator. The orchestrator may call Kimi API internally through the same OpenAI-compatible client wrapper introduced in Stage 2.
 
 Required modules:
 
@@ -816,7 +906,7 @@ The orchestrator should:
 2. Call IntentAgent.
 3. Call PlannerAgent.
 4. Generate execution steps.
-5. Generate final reply.
+5. Generate final reply using Kimi API when available.
 6. Return the same response schema used in Stage 1 and Stage 2.
 
 Do not change frontend code unless absolutely necessary.
@@ -976,11 +1066,12 @@ Tasks:
 
 Future extension options:
 
-* Image understanding API
-* OCR
-* Speech-to-text
-* Text-to-speech
-* Voice chat
+* Kimi vision-capable model if available through API.
+* Image understanding API.
+* OCR.
+* Speech-to-text.
+* Text-to-speech.
+* Voice chat.
 
 Stage 7 should not break the text chat flow.
 
@@ -999,7 +1090,7 @@ Target:
 Final public access should be:
 
 ```text
-http://SERVER_PUBLIC_IP
+http://39.106.227.41
 ```
 
 Users should not need to manually visit `:5173` or `:8000`.
@@ -1042,12 +1133,6 @@ Backend should listen on:
 127.0.0.1:8000
 ```
 
-or:
-
-```text
-0.0.0.0:8000
-```
-
 For Nginx reverse proxy, `127.0.0.1:8000` is preferred.
 
 ## Suggested Nginx Reverse Proxy Template
@@ -1088,7 +1173,7 @@ systemctl reload nginx
 Final test:
 
 ```text
-http://SERVER_PUBLIC_IP
+http://39.106.227.41
 ```
 
 ---
@@ -1105,10 +1190,10 @@ Demo flow:
 2. Show server deployment URL.
 3. Open public web page.
 4. Ask a simple question.
-5. Show intent recognition.
-6. Show task decomposition.
-7. Show execution steps.
-8. Show final answer.
+5. Show real Kimi API answer.
+6. Show intent recognition.
+7. Show task decomposition.
+8. Show execution steps.
 9. Optionally show RAG or multi-agent modules.
 10. Briefly explain architecture.
 
@@ -1125,6 +1210,7 @@ Expected demo highlights:
 * Public web page is accessible.
 * Chat interface works.
 * Backend responds.
+* Kimi API is called successfully.
 * System recognizes intent.
 * System decomposes task.
 * System shows execution steps.
@@ -1196,7 +1282,7 @@ Suggested commits:
 ```text
 Add development plan
 Implement minimum chat web app
-Add LLM API integration
+Add Kimi API integration
 Add intent recognition and planning
 Add ReAct-style agent workflow
 Add simple RAG retrieval
@@ -1218,76 +1304,146 @@ __pycache__/
 *.log
 ```
 
----
+Before committing Stage 2, always run:
 
-## 12. First Task for Kimi Code
+```bash
+git status
+git add --dry-run .
+```
 
-Start with Stage 1 only.
-
-Do not implement LLM, RAG, ReAct, multi-agent, upload, or Nginx deployment yet.
-
-Task:
-
-1. Read `AGENTS.md`, `README.md`, and `DEVELOPMENT_PLAN.md`.
-2. Implement only Stage 1.
-3. Create React + Vite frontend in `frontend/`.
-4. Create FastAPI backend in `backend/`.
-5. Implement mock `/api/chat`.
-6. Configure backend CORS.
-7. Build a clean chat UI.
-8. Display reply, intent, tasks, steps, retrieved context, and mode.
-9. Use `import.meta.env.VITE_API_BASE_URL` in frontend.
-10. Provide exact test commands.
-11. Do not modify Nginx configuration.
-12. Do not delete existing files.
-13. Do not commit automatically unless explicitly asked.
-
-After finishing Stage 1, report:
-
-1. Files created or modified.
-2. How to run backend.
-3. How to run frontend.
-4. How to test in browser.
-5. Any required security group ports.
-6. Any known limitations.
-
----
-
-## 13. Prompt to Give Kimi Code for Stage 1
-
-Use this prompt when asking Kimi Code to start Stage 1:
+Confirm that these files are not included:
 
 ```text
-请先阅读 AGENTS.md、README.md 和 DEVELOPMENT_PLAN.md。
-
-当前只允许执行 Stage 1：Minimum Runnable Chat Web App。
-
-严格要求：
-1. 不要实现真实 LLM。
-2. 不要实现 RAG。
-3. 不要实现 ReAct。
-4. 不要实现多 Agent。
-5. 不要实现文件上传或多模态。
-6. 不要修改 Nginx。
-7. 不要引入数据库、Redis、Docker、Celery。
-8. 如果文件已经存在，先读取内容再修改，不要直接覆盖。
-9. 前端使用 React + Vite + JavaScript + JSX。
-10. 后端使用 FastAPI。
-11. 后端必须配置 CORS。
-12. 前端必须通过 import.meta.env.VITE_API_BASE_URL 读取后端地址。
-13. /api/chat 必须返回 reply、intent、tasks、steps、retrieved_context、mode。
-14. 完成后告诉我：修改了哪些文件、如何启动后端、如何启动前端、需要开放哪些端口、如何在浏览器测试。
-
-现在开始实现 Stage 1。
+backend/.env
+frontend/.env
+backend/.venv/
+frontend/node_modules/
+frontend/dist/
 ```
 
 ---
 
-## 14. Stage 1 Manual Verification Checklist
+## 12. Prompt to Give Kimi Code for Stage 2
 
-After Kimi Code finishes Stage 1, manually verify:
+Use this prompt when asking Kimi Code to start Stage 2:
 
-### Backend
+```text
+请先阅读 AGENTS.md、README.md 和 DEVELOPMENT_PLAN.md。
+
+Stage 1 已经验收通过。现在只允许执行 Stage 2：Kimi API Integration。
+
+严格要求：
+
+1. 只做 Kimi API 云端模型接入，不做本地模型部署。
+2. 不要实现 Ollama、vLLM、Xinference、本地 GPU 推理或任何本地 LLM 服务。
+3. 后端使用 OpenAI Python SDK 调用 Kimi API / Moonshot Open Platform。
+4. Kimi API 使用 OpenAI-compatible 配置：
+   - OPENAI_BASE_URL=https://api.moonshot.cn/v1
+   - MODEL_NAME=kimi-k2.6
+5. 从 backend/.env 读取：
+   - OPENAI_API_KEY
+   - OPENAI_BASE_URL
+   - MODEL_NAME
+6. 如果 OPENAI_API_KEY 缺失，继续使用 Stage 1 的 mock mode，不要报错。
+7. 如果 OPENAI_BASE_URL 缺失，默认使用 https://api.moonshot.cn/v1。
+8. 如果 MODEL_NAME 缺失，默认使用 kimi-k2.6。
+9. 不要把 API Key 写入代码。
+10. 不要提交 backend/.env。
+11. 更新 backend/.env.example、根目录 .env.example 和 README.md，说明如何配置 Kimi API。
+12. backend/requirements.txt 增加 openai。
+13. 保持 /api/chat 的响应格式不变，必须仍然返回：
+    - reply
+    - intent
+    - tasks
+    - steps
+    - retrieved_context
+    - mode
+14. 当前不要实现 RAG、ReAct、多 Agent、文件上传、多模态或 Nginx 部署。
+15. 不要大改前端页面结构，只允许为了显示 mode 或错误信息做必要小改。
+16. API 调用失败时要返回友好 fallback，不要把敏感错误堆栈暴露给前端。
+17. 完成后告诉我：
+    - 修改了哪些文件
+    - 如何创建 backend/.env
+    - 如何启动后端
+    - 如何测试 mock mode
+    - 如何测试 Kimi API mode
+
+现在开始实现 Stage 2。
+```
+
+---
+
+## 13. Stage 2 Manual Verification Checklist
+
+After Kimi Code finishes Stage 2, manually verify:
+
+### Check `.gitignore`
+
+```bash
+cd /root/ai-agent-chat
+cat .gitignore
+```
+
+Must include:
+
+```gitignore
+.env
+.env.local
+backend/.env
+frontend/.env
+.venv/
+venv/
+node_modules/
+dist/
+build/
+__pycache__/
+*.pyc
+*.log
+```
+
+### Test mock mode without API key
+
+Temporarily remove backend `.env` if it exists:
+
+```bash
+cd /root/ai-agent-chat/backend
+mv .env .env.bak
+source .venv/bin/activate
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+In another terminal:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"请介绍一下这个项目"}'
+```
+
+Expected:
+
+```json
+{
+  "mode": "mock"
+}
+```
+
+### Create real Kimi API `.env`
+
+```bash
+cd /root/ai-agent-chat/backend
+nano .env
+```
+
+Content:
+
+```env
+OPENAI_API_KEY=your_real_kimi_api_key_here
+OPENAI_BASE_URL=https://api.moonshot.cn/v1
+MODEL_NAME=kimi-k2.6
+```
+
+Restart backend:
 
 ```bash
 cd /root/ai-agent-chat/backend
@@ -1295,43 +1451,27 @@ source .venv/bin/activate
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-Open:
+Test Kimi API mode:
 
-```text
-http://SERVER_PUBLIC_IP:8000
+```bash
+curl -X POST http://127.0.0.1:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"请用三句话介绍一下人工智能 Agent"}'
 ```
 
 Expected:
 
 ```json
 {
-  "status": "ok",
-  "message": "AI Agent Chat Backend is running"
+  "mode": "llm"
 }
 ```
 
-Test chat API:
+`reply` should be generated by Kimi API.
 
-```bash
-curl -X POST http://127.0.0.1:8000/api/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Hello, please decompose my task."}'
-```
+### Test frontend
 
-Expected response should include:
-
-```json
-{
-  "reply": "...",
-  "intent": "...",
-  "tasks": [],
-  "steps": [],
-  "retrieved_context": [],
-  "mode": "mock"
-}
-```
-
-### Frontend
+Run frontend:
 
 ```bash
 cd /root/ai-agent-chat/frontend
@@ -1341,29 +1481,42 @@ npm run dev -- --host 0.0.0.0
 Open:
 
 ```text
-http://SERVER_PUBLIC_IP:5173
+http://39.106.227.41:5173
 ```
 
 Expected:
 
 1. Page loads.
-2. Input box is visible.
-3. Send button is visible.
-4. User can send a message.
-5. Backend reply is displayed.
-6. Intent is displayed.
-7. Tasks are displayed.
-8. Steps are displayed.
-9. No CORS error appears in browser console.
+2. User can send a message.
+3. Backend returns Kimi-generated reply if `.env` is valid.
+4. Mode displays `llm`.
+5. Intent, tasks, and steps still display normally.
+6. No CORS error appears in browser console.
 
-### Git
+### Git after verification
 
-After verification:
+Before committing:
 
 ```bash
 cd /root/ai-agent-chat
 git status
+git add --dry-run .
+```
+
+Confirm not included:
+
+```text
+backend/.env
+frontend/.env
+backend/.venv/
+frontend/node_modules/
+frontend/dist/
+```
+
+Commit:
+
+```bash
 git add .
-git commit -m "Implement minimum chat web app"
+git commit -m "Add Kimi API integration"
 git push
 ```
