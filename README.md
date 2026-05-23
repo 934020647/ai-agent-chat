@@ -422,3 +422,119 @@ Expected event sequence:
 9. Multiple `delta` events — Reply streaming
 10. `final` — Complete response with `retrieved_context`
 11. `done`
+
+
+## Stage 6: Multi-Agent Collaboration Polish
+
+### What's New
+
+Refactored the orchestrator into a clearer multi-agent collaboration architecture.
+
+**New module:** `agent/response_agent.py`
+
+- Encapsulates final reply generation (both non-streaming and streaming).
+- Internally calls `llm_client`.
+- Handles `llm`, `mock`, and `error_fallback` modes.
+- Does NOT handle intent classification, task planning, RAG retrieval, or ReAct trace generation.
+
+**New field:** `agent_flow`
+
+A user-visible collaboration summary showing how each Agent contributes:
+
+```json
+[
+  {
+    "agent": "IntentAgent",
+    "input": "user message",
+    "output": "technical_question",
+    "status": "completed"
+  },
+  {
+    "agent": "PlannerAgent",
+    "input": "intent + message",
+    "output": "4 tasks generated",
+    "status": "completed"
+  },
+  {
+    "agent": "RagAgent",
+    "input": "user message",
+    "output": "3 context snippets retrieved",
+    "status": "completed"
+  },
+  {
+    "agent": "ReactAgent",
+    "input": "intent + tasks + retrieved_context",
+    "output": "5 action/observation items generated",
+    "status": "completed"
+  },
+  {
+    "agent": "ResponseAgent",
+    "input": "message + context + trace",
+    "output": "streaming final answer",
+    "status": "completed"
+  }
+]
+```
+
+### Orchestrator Call Chain
+
+Both `handle_chat()` and `stream_chat()` now follow the same agent pipeline:
+
+```text
+Orchestrator
+  ├── IntentAgent.classify(message)       → intent
+  ├── PlannerAgent.plan(intent, message)  → tasks
+  ├── RagAgent.retrieve(message)          → retrieved_context
+  ├── ReactAgent.build_trace(...)         → react_trace
+  ├── _build_agent_flow(...)              → agent_flow
+  └── ResponseAgent.generate_response(...) → reply, mode
+```
+
+### API Changes
+
+Both `POST /api/chat` and `POST /api/chat/stream` now include:
+
+```json
+{
+  "reply": "...",
+  "intent": "...",
+  "tasks": [...],
+  "steps": [...],
+  "retrieved_context": [...],
+  "mode": "llm",
+  "react_trace": [...],
+  "agent_flow": [
+    {"agent": "IntentAgent", "input": "...", "output": "...", "status": "completed"}
+  ]
+}
+```
+
+Streaming adds a new event type:
+
+```json
+{"type": "agent_flow", "agent_flow": [...], "mode": "thinking"}
+```
+
+### Frontend Changes
+
+A new **Agent Collaboration Flow** panel displays each Agent as a card (name + status + input/output summary) between the Retrieved Context panel and the ReAct Trace panel.
+
+### Test Agent Flow (Non-Streaming)
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"这个项目的 Agent 架构是什么？"}' | python3 -c "import sys,json; d=json.load(sys.stdin); print(json.dumps(d.get('agent_flow', []), ensure_ascii=False, indent=2))"
+```
+
+Expected: `agent_flow` contains 5 items (IntentAgent, PlannerAgent, RagAgent, ReactAgent, ResponseAgent).
+
+### Test Agent Flow (Streaming)
+
+```bash
+curl -s -N -X POST http://127.0.0.1:8000/api/chat/stream \
+  -H "Content-Type: application/json" \
+  -d '{"message":"这个项目如何部署到阿里云服务器？"}' | grep -E "agent_flow|final"
+```
+
+Expected: `agent_flow` event appears before deltas; `final` event also contains `agent_flow`.

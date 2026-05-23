@@ -387,3 +387,62 @@ header p {
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+/* Agent Collaboration Flow Panel */
+.agent-flow-panel {
+  background: #f9f8fc;
+}
+
+.agent-flow-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.agent-flow-item {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.agent-flow-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.agent-flow-name {
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.agent-flow-status {
+  font-size: 11px;
+  color: #2e7d32;
+  font-weight: 600;
+  background: #e8f5e9;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.agent-flow-io {
+  color: var(--text-light);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.agent-flow-label {
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}

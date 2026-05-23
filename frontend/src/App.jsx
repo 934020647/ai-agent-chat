@@ -131,6 +131,15 @@ function App() {
                       }))
                     })
                     break
+                  case 'agent_flow':
+                    flushSync(() => {
+                      setResponse((prev) => ({
+                        ...prev,
+                        agent_flow: event.agent_flow,
+                        mode: event.mode,
+                      }))
+                    })
+                    break
                   case 'delta':
                     flushSync(() => {
                       setResponse((prev) => {
@@ -157,6 +166,7 @@ function App() {
                         retrieved_context: event.retrieved_context,
                         mode: event.mode,
                         react_trace: event.react_trace || prev.react_trace,
+                        agent_flow: event.agent_flow || prev.agent_flow,
                       }))
                       setIsStreamingReply(false)
                     })
@@ -332,6 +342,34 @@ function App() {
               <div className="panel retrieved-context-panel">
                 <h3>Retrieved Context</h3>
                 <p className="empty">No retrieved context for this query.</p>
+              </div>
+            )
+          )}
+
+          {/* Agent Collaboration Flow Panel */}
+          {displayResponse.agent_flow && displayResponse.agent_flow.length > 0 ? (
+            <div className="panel agent-flow-panel">
+              <h3>Agent Collaboration Flow</h3>
+              <div className="agent-flow-list">
+                {displayResponse.agent_flow.map((item, i) => (
+                  <div key={i} className="agent-flow-item">
+                    <div className="agent-flow-header">
+                      <span className="agent-flow-name">{item.agent}</span>
+                      <span className="agent-flow-status">{item.status}</span>
+                    </div>
+                    <div className="agent-flow-io">
+                      <div><span className="agent-flow-label">Input:</span> {item.input}</div>
+                      <div><span className="agent-flow-label">Output:</span> {item.output}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            !loading && (
+              <div className="panel agent-flow-panel">
+                <h3>Agent Collaboration Flow</h3>
+                <p className="empty">No agent flow yet.</p>
               </div>
             )
           )}

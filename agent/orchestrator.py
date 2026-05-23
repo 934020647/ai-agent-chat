@@ -24,6 +24,7 @@ from agent.intent_agent import classify
 from agent.planner_agent import plan
 from agent.react_agent import build_trace
 from agent import rag_agent
+from agent import response_agent
 import llm_client
 
 
@@ -52,63 +53,53 @@ def _build_steps(intent: str, mode: str, api_failed: bool = False) -> List[str]:
     return steps
 
 
-def _build_mock_reply(user_message: str, intent: str) -> str:
-    """Build a Stage 1-style mock reply when no API key is available."""
-    if not user_message:
-        return "I didn't receive a message. How can I help you today?"
-
-    if intent == "multimodal_request":
-        return (
-            f"You mentioned a multimodal request: '{user_message}'. "
-            "The current system supports text chat only. "
-            "Multimodal features (image, audio, video) are planned for future stages."
-        )
-    if intent == "deployment_help":
-        return (
-            f"You asked about deployment: '{user_message}'. "
-            "In a real setup, I'd walk you through server configuration, "
-            "environment setup, and service startup steps."
-        )
-    if intent == "coding_task":
-        return (
-            f"You asked about coding: '{user_message}'. "
-            "In a real setup, I'd analyze the code, identify issues, and suggest fixes."
-        )
-    if intent == "technical_question":
-        return (
-            f"You asked a technical question: '{user_message}'. "
-            "In a real setup, I'd explain the concepts clearly with examples."
-        )
-    if intent == "research_summary":
-        return (
-            f"You asked for a summary/research on: '{user_message}'. "
-            "In a real setup, I'd synthesize key findings and present them concisely."
-        )
-    if intent == "document_qa":
-        return (
-            f"You asked about document Q&A: '{user_message}'. "
-            "In a real setup, I'd retrieve relevant passages and answer based on the source material."
-        )
-
-    return f"You asked: '{user_message}'. This is a mock response demonstrating the structured chat format."
-
-
 def _typing_chunks(text: str, chunk_size: int = 6):
     """Slice text into small chunks for typing fallback effect."""
     for i in range(0, len(text), chunk_size):
         yield text[i:i + chunk_size]
 
 
-def _sync_collect_reply(message: str, intent: str, tasks: List[str], retrieved_context: List[dict] = None) -> str:
-    """
-    Synchronous function that collects the full reply from Kimi stream.
-    Runs inside a thread pool so the async event loop stays free.
-    """
-    parts = []
-    for delta in llm_client.stream_reply_sync(message, intent, tasks, retrieved_context):
-        if delta:
-            parts.append(delta)
-    return "".join(parts)
+def _build_agent_flow(
+    intent: str,
+    tasks: List[str],
+    retrieved_context: List[dict],
+    react_trace: List[dict],
+    mode: str = "llm",
+) -> List[Dict[str, str]]:
+    """Build a user-visible multi-agent collaboration flow summary."""
+    flow = [
+        {
+            "agent": "IntentAgent",
+            "input": "user message",
+            "output": intent,
+            "status": "completed",
+        },
+        {
+            "agent": "PlannerAgent",
+            "input": "intent + message",
+            "output": f"{len(tasks)} tasks generated",
+            "status": "completed",
+        },
+        {
+            "agent": "RagAgent",
+            "input": "user message",
+            "output": f"{len(retrieved_context)} context snippets retrieved",
+            "status": "completed",
+        },
+        {
+            "agent": "ReactAgent",
+            "input": "intent + tasks + retrieved_context",
+            "output": f"{len(react_trace)} action/observation items generated",
+            "status": "completed",
+        },
+        {
+            "agent": "ResponseAgent",
+            "input": "message + context + trace",
+            "output": "streaming final answer" if mode != "mock" else "mock answer generated",
+            "status": "completed",
+        },
+    ]
+    return flow
 
 
 def _heartbeat_steps(base_steps: List[str], extra: str, max_len: int = 5) -> List[str]:
@@ -215,7 +206,16 @@ async def stream_chat(user_message: str):
     }
     await asyncio.sleep(0.2)
 
-    # Step 4: generating reply
+    # Step 3.7: build and push agent collaboration flow
+    agent_flow = _build_agent_flow(intent, tasks, retrieved_context, react_trace)
+    yield {
+        "type": "agent_flow",
+        "agent_flow": agent_flow,
+        "mode": "thinking",
+    }
+    await asyncio.sleep(0.2)
+
+    # Step 4: generating reply via ResponseAgent
     base_status_steps = [
         "Received the user message",
         f"Recognized intent as {intent}",
@@ -235,8 +235,12 @@ async def stream_chat(user_message: str):
 
     if _has_api_key():
         loop = asyncio.get_running_loop()
-        # Run blocking Kimi SDK call in a background thread
-        future = loop.run_in_executor(None, _sync_collect_reply, message, intent, tasks, retrieved_context)
+        # Run blocking Kimi SDK call in a background thread via ResponseAgent
+        future = loop.run_in_executor(
+            None,
+            response_agent.collect_stream_response,
+            message, intent, tasks, retrieved_context, react_trace,
+        )
 
         heartbeat_messages = [
             "Calling Kimi API to generate the reply",
@@ -269,7 +273,7 @@ async def stream_chat(user_message: str):
             mode = "error_fallback"
             api_failed = True
     else:
-        full_reply = _build_mock_reply(message, intent)
+        full_reply = response_agent._build_mock_reply(message, intent)
         mode = "mock"
         api_failed = False
 
@@ -311,6 +315,7 @@ async def stream_chat(user_message: str):
         "retrieved_context": retrieved_context,
         "mode": mode,
         "react_trace": react_trace,
+        "agent_flow": agent_flow,
     }
 
     yield {"type": "done"}
@@ -329,22 +334,10 @@ def handle_chat(user_message: str) -> Dict[str, Any]:
     retrieved_context = rag_agent.retrieve(message)
     react_trace = build_trace(intent, message, retrieved_context)
 
-    if _has_api_key():
-        try:
-            reply = llm_client.generate_reply(message, intent, tasks, retrieved_context)
-            mode = "llm"
-            api_failed = False
-        except Exception:
-            reply = (
-                "I'm temporarily unable to reach the AI model. "
-                "Please try again in a moment."
-            )
-            mode = "error_fallback"
-            api_failed = True
-    else:
-        reply = _build_mock_reply(message, intent)
-        mode = "mock"
-        api_failed = False
+    reply, mode, api_failed = response_agent.generate_response(
+        message, intent, tasks, retrieved_context, react_trace
+    )
+    agent_flow = _build_agent_flow(intent, tasks, retrieved_context, react_trace, mode)
 
     return {
         "reply": reply,
@@ -354,4 +347,5 @@ def handle_chat(user_message: str) -> Dict[str, Any]:
         "retrieved_context": retrieved_context,
         "mode": mode,
         "react_trace": react_trace,
+        "agent_flow": agent_flow,
     }

@@ -56,6 +56,13 @@ class RetrievedContextItem(BaseModel):
     score: int
 
 
+class AgentFlowItem(BaseModel):
+    agent: str
+    input: str
+    output: str
+    status: str
+
+
 class ChatResponse(BaseModel):
     reply: str
     intent: str
@@ -64,6 +71,7 @@ class ChatResponse(BaseModel):
     retrieved_context: List[RetrievedContextItem]
     mode: str
     react_trace: List[ReactTraceItem] = []
+    agent_flow: List[AgentFlowItem] = []
 
 
 @app.get("/")
