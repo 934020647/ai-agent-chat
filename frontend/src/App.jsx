@@ -113,6 +113,15 @@ function App() {
                       }))
                     })
                     break
+                  case 'retrieved_context':
+                    flushSync(() => {
+                      setResponse((prev) => ({
+                        ...prev,
+                        retrieved_context: event.retrieved_context,
+                        mode: event.mode,
+                      }))
+                    })
+                    break
                   case 'react_trace':
                     flushSync(() => {
                       setResponse((prev) => ({
@@ -297,6 +306,35 @@ function App() {
               {displayResponse.mode === 'error_fallback' ? 'error' : displayResponse.mode}
             </p>
           </div>
+
+          {/* Retrieved Context Panel */}
+          {displayResponse.retrieved_context && displayResponse.retrieved_context.length > 0 ? (
+            <div className="panel retrieved-context-panel">
+              <h3>Retrieved Context</h3>
+              <div className="retrieved-context-list">
+                {displayResponse.retrieved_context.map((item, i) => (
+                  <div key={i} className="retrieved-context-item">
+                    <div className="retrieved-context-header">
+                      <span className="retrieved-context-title">{item.title}</span>
+                      <span className="retrieved-context-score">score: {item.score}</span>
+                    </div>
+                    <div className="retrieved-context-body">
+                      {item.content.length > 300
+                        ? item.content.slice(0, 300) + '...'
+                        : item.content}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            !loading && (
+              <div className="panel retrieved-context-panel">
+                <h3>Retrieved Context</h3>
+                <p className="empty">No retrieved context for this query.</p>
+              </div>
+            )
+          )}
 
           {displayResponse.react_trace && displayResponse.react_trace.length > 0 && (
             <div className="panel react-trace-panel">

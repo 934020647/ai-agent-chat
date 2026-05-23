@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "backend"))
 from agent.intent_agent import classify
 from agent.planner_agent import plan
 from agent.react_agent import build_trace
+from agent import rag_agent
 import llm_client
 
 
@@ -98,13 +99,13 @@ def _typing_chunks(text: str, chunk_size: int = 6):
         yield text[i:i + chunk_size]
 
 
-def _sync_collect_reply(message: str, intent: str, tasks: List[str]) -> str:
+def _sync_collect_reply(message: str, intent: str, tasks: List[str], retrieved_context: List[dict] = None) -> str:
     """
     Synchronous function that collects the full reply from Kimi stream.
     Runs inside a thread pool so the async event loop stays free.
     """
     parts = []
-    for delta in llm_client.stream_reply_sync(message, intent, tasks):
+    for delta in llm_client.stream_reply_sync(message, intent, tasks, retrieved_context):
         if delta:
             parts.append(delta)
     return "".join(parts)
@@ -181,7 +182,6 @@ async def stream_chat(user_message: str):
     await asyncio.sleep(0.2)
 
     tasks = plan(intent, message)
-    react_trace = build_trace(intent, message)
 
     yield {
         "type": "tasks",
@@ -195,7 +195,19 @@ async def stream_chat(user_message: str):
     }
     await asyncio.sleep(0.2)
 
-    # Step 3.5: push react trace
+    # Step 3.5: retrieve context from knowledge base
+    retrieved_context = rag_agent.retrieve(message)
+
+    yield {
+        "type": "retrieved_context",
+        "retrieved_context": retrieved_context,
+        "mode": "thinking",
+    }
+    await asyncio.sleep(0.2)
+
+    react_trace = build_trace(intent, message, retrieved_context)
+
+    # Step 3.6: push react trace
     yield {
         "type": "react_trace",
         "react_trace": react_trace,
@@ -224,7 +236,7 @@ async def stream_chat(user_message: str):
     if _has_api_key():
         loop = asyncio.get_running_loop()
         # Run blocking Kimi SDK call in a background thread
-        future = loop.run_in_executor(None, _sync_collect_reply, message, intent, tasks)
+        future = loop.run_in_executor(None, _sync_collect_reply, message, intent, tasks, retrieved_context)
 
         heartbeat_messages = [
             "Calling Kimi API to generate the reply",
@@ -296,7 +308,7 @@ async def stream_chat(user_message: str):
         "intent": intent,
         "tasks": tasks,
         "steps": steps,
-        "retrieved_context": [],
+        "retrieved_context": retrieved_context,
         "mode": mode,
         "react_trace": react_trace,
     }
@@ -314,11 +326,12 @@ def handle_chat(user_message: str) -> Dict[str, Any]:
     message = user_message.strip()
     intent = classify(message)
     tasks = plan(intent, message)
-    react_trace = build_trace(intent, message)
+    retrieved_context = rag_agent.retrieve(message)
+    react_trace = build_trace(intent, message, retrieved_context)
 
     if _has_api_key():
         try:
-            reply = llm_client.generate_reply(message, intent, tasks)
+            reply = llm_client.generate_reply(message, intent, tasks, retrieved_context)
             mode = "llm"
             api_failed = False
         except Exception:
@@ -338,7 +351,7 @@ def handle_chat(user_message: str) -> Dict[str, Any]:
         "intent": intent,
         "tasks": tasks,
         "steps": _build_steps(intent, mode, api_failed),
-        "retrieved_context": [],
+        "retrieved_context": retrieved_context,
         "mode": mode,
         "react_trace": react_trace,
     }

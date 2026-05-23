@@ -19,7 +19,9 @@ SYSTEM_PROMPT = (
     "Answer the user's question clearly and helpfully. "
     "When appropriate, explain tasks in a structured way. "
     "Do not reveal hidden chain-of-thought. "
-    "Only provide concise user-facing reasoning summaries."
+    "Only provide concise user-facing reasoning summaries. "
+    "You may receive retrieved project context from the local knowledge base. "
+    "Use it when relevant. If the context is insufficient, answer based on the user request and clearly state limitations when needed."
 )
 
 
@@ -65,7 +67,7 @@ def call_llm(user_message: str) -> str:
     return reply.strip() if reply else ""
 
 
-def stream_reply_sync(user_message: str, intent: str, tasks: list[str]):
+def stream_reply_sync(user_message: str, intent: str, tasks: list[str], retrieved_context: list[dict] = None):
     """
     Synchronous generator that streams deltas from Kimi API.
     Run this inside a thread pool so it does not block the asyncio event loop.
@@ -78,11 +80,26 @@ def stream_reply_sync(user_message: str, intent: str, tasks: list[str]):
     model = _get_model()
 
     tasks_text = "\n".join(f"- {t}" for t in tasks)
+    retrieved_text = ""
+    if retrieved_context:
+        snippets = []
+        for item in retrieved_context:
+            title = item.get("title", "")
+            content = item.get("content", "")
+            snippets.append(f"[{title}]\n{content}")
+        retrieved_text = "\n\n".join(snippets)
+
     context_prompt = (
         f"User intent: {intent}\n"
-        f"Planned tasks:\n{tasks_text}\n\n"
-        f"Now answer the user's question directly and helpfully."
+        f"Planned tasks:\n{tasks_text}\n"
     )
+    if retrieved_text:
+        context_prompt += (
+            f"\nRetrieved project context:\n{retrieved_text}\n\n"
+            f"Now answer the user's question directly and helpfully, using the retrieved context when relevant."
+        )
+    else:
+        context_prompt += "\nNow answer the user's question directly and helpfully."
 
     response = client.chat.completions.create(
         model=model,
@@ -103,7 +120,7 @@ def stream_reply_sync(user_message: str, intent: str, tasks: list[str]):
             yield delta
 
 
-def generate_reply(user_message: str, intent: str, tasks: list[str]) -> str:
+def generate_reply(user_message: str, intent: str, tasks: list[str], retrieved_context: list[dict] = None) -> str:
     """
     Generate a reply using Kimi API with enriched context.
     Keeps the same client configuration as call_llm().
@@ -115,11 +132,26 @@ def generate_reply(user_message: str, intent: str, tasks: list[str]) -> str:
     model = _get_model()
 
     tasks_text = "\n".join(f"- {t}" for t in tasks)
+    retrieved_text = ""
+    if retrieved_context:
+        snippets = []
+        for item in retrieved_context:
+            title = item.get("title", "")
+            content = item.get("content", "")
+            snippets.append(f"[{title}]\n{content}")
+        retrieved_text = "\n\n".join(snippets)
+
     context_prompt = (
         f"User intent: {intent}\n"
-        f"Planned tasks:\n{tasks_text}\n\n"
-        f"Now answer the user's question directly and helpfully."
+        f"Planned tasks:\n{tasks_text}\n"
     )
+    if retrieved_text:
+        context_prompt += (
+            f"\nRetrieved project context:\n{retrieved_text}\n\n"
+            f"Now answer the user's question directly and helpfully, using the retrieved context when relevant."
+        )
+    else:
+        context_prompt += "\nNow answer the user's question directly and helpfully."
 
     response = client.chat.completions.create(
         model=model,

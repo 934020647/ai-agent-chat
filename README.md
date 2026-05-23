@@ -311,3 +311,114 @@ curl -X POST http://127.0.0.1:8000/api/chat \
 ```
 
 Expected: `react_trace` contains action/observation pairs, no `thought` or `chain_of_thought` fields.
+
+
+## Stage 5: Simple RAG Retrieval
+
+### What's New
+
+Added lightweight keyword-based RAG retrieval from `data/knowledge_base.md`.
+
+**New files:**
+
+- `data/knowledge_base.md` — Project knowledge base for demo retrieval.
+- `agent/rag_agent.py` — Keyword-based retrieval agent.
+
+**RagAgent behavior:**
+
+- Loads `data/knowledge_base.md` at runtime.
+- Splits content into chunks by `##` headings.
+- Extracts keywords from the user query (with synonym expansion).
+- Scores chunks by keyword overlap count.
+- Returns up to 3 most relevant snippets.
+
+**No vector database, no embeddings, no Chroma/FAISS.**
+
+### API Changes
+
+Both `POST /api/chat` and `POST /api/chat/stream` now include:
+
+```json
+{
+  "reply": "...",
+  "intent": "...",
+  "tasks": [...],
+  "steps": [...],
+  "retrieved_context": [
+    {
+      "title": "Agent Architecture",
+      "content": "IntentAgent is responsible for...",
+      "score": 3
+    }
+  ],
+  "mode": "llm",
+  "react_trace": [...]
+}
+```
+
+Streaming adds a new event type:
+
+```json
+{"type": "retrieved_context", "retrieved_context": [...], "mode": "thinking"}
+```
+
+### Prompt Changes
+
+If `retrieved_context` is non-empty, it is injected into the Kimi API prompt as "Retrieved project context". Kimi is instructed to use it when relevant and not to invent information.
+
+### Frontend Changes
+
+A new **Retrieved Context** panel displays retrieved knowledge snippets as cards (title + score + content snippet) below the Mode panel.
+
+### Test RAG Retrieval
+
+**Architecture question:**
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"这个项目的 Agent 架构是什么？"}'
+```
+
+Expected: `retrieved_context` contains "Agent Architecture" or "Project Overview" snippets.
+
+**Deployment question:**
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"这个项目如何部署到阿里云服务器？"}'
+```
+
+Expected: `retrieved_context` contains "Deployment Notes" snippets.
+
+**Security question:**
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"为什么不能把 API Key 提交到 GitHub？"}'
+```
+
+Expected: `retrieved_context` contains "Security Notes" snippets; reply references `backend/.env` without leaking any real key.
+
+### Test Streaming with RAG
+
+```bash
+curl -s -N -X POST http://127.0.0.1:8000/api/chat/stream \
+  -H "Content-Type: application/json" \
+  -d '{"message":"系统有哪些 Agent？"}'
+```
+
+Expected event sequence:
+1. `status` — Received
+2. `status` — Recognizing
+3. `intent` — Intent recognized
+4. `status` — Decomposing
+5. `tasks` — Task list generated
+6. **`retrieved_context`** — Knowledge snippets retrieved
+7. `react_trace` — Action/observation trace
+8. `status` — Calling Kimi API
+9. Multiple `delta` events — Reply streaming
+10. `final` — Complete response with `retrieved_context`
+11. `done`

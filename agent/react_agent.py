@@ -62,9 +62,21 @@ _TRACES = {
 }
 
 
-def build_trace(intent: str, user_message: str) -> List[Dict[str, Any]]:
+def build_trace(intent: str, user_message: str, retrieved_context: List[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
     """
     Return a ReAct-style action trace for the given intent.
     No hidden reasoning. Only user-facing action/observation pairs.
+    If retrieved_context is provided and non-empty, adds a retrieve_context action.
     """
-    return list(_TRACES.get(intent, _TRACES["unknown"]))
+    trace = list(_TRACES.get(intent, _TRACES["unknown"]))
+
+    if retrieved_context:
+        count = len(retrieved_context)
+        # Insert after decompose_task (index 1) if possible
+        insert_idx = 2 if len(trace) >= 2 else len(trace)
+        trace.insert(insert_idx, {
+            "action": "retrieve_context",
+            "observation": f"Retrieved {count} relevant project knowledge snippet{'s' if count > 1 else ''}",
+        })
+
+    return trace

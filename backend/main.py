@@ -50,12 +50,18 @@ class ReactTraceItem(BaseModel):
     observation: str
 
 
+class RetrievedContextItem(BaseModel):
+    title: str
+    content: str
+    score: int
+
+
 class ChatResponse(BaseModel):
     reply: str
     intent: str
     tasks: List[str]
     steps: List[str]
-    retrieved_context: List[str]
+    retrieved_context: List[RetrievedContextItem]
     mode: str
     react_trace: List[ReactTraceItem] = []
 
