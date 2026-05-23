@@ -299,3 +299,39 @@ header p {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
+
+.react-trace-panel {
+  background: #f8f9fc;
+}
+
+.react-trace-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.react-trace-item {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.react-trace-action {
+  color: #1a1a1a;
+  margin-bottom: 2px;
+}
+
+.react-trace-observation {
+  color: var(--text-light);
+}
+
+.react-trace-label {
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+}

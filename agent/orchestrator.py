@@ -22,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "backend"))
 
 from agent.intent_agent import classify
 from agent.planner_agent import plan
+from agent.react_agent import build_trace
 import llm_client
 
 
@@ -180,6 +181,7 @@ async def stream_chat(user_message: str):
     await asyncio.sleep(0.2)
 
     tasks = plan(intent, message)
+    react_trace = build_trace(intent, message)
 
     yield {
         "type": "tasks",
@@ -189,6 +191,14 @@ async def stream_chat(user_message: str):
             f"Recognized intent as {intent}",
             "Generated task decomposition",
         ],
+        "mode": "thinking",
+    }
+    await asyncio.sleep(0.2)
+
+    # Step 3.5: push react trace
+    yield {
+        "type": "react_trace",
+        "react_trace": react_trace,
         "mode": "thinking",
     }
     await asyncio.sleep(0.2)
@@ -288,6 +298,7 @@ async def stream_chat(user_message: str):
         "steps": steps,
         "retrieved_context": [],
         "mode": mode,
+        "react_trace": react_trace,
     }
 
     yield {"type": "done"}
@@ -298,11 +309,12 @@ def handle_chat(user_message: str) -> Dict[str, Any]:
     Main orchestration entry point (non-streaming).
 
     Returns a dict with keys:
-        reply, intent, tasks, steps, retrieved_context, mode
+        reply, intent, tasks, steps, retrieved_context, mode, react_trace
     """
     message = user_message.strip()
     intent = classify(message)
     tasks = plan(intent, message)
+    react_trace = build_trace(intent, message)
 
     if _has_api_key():
         try:
@@ -328,4 +340,5 @@ def handle_chat(user_message: str) -> Dict[str, Any]:
         "steps": _build_steps(intent, mode, api_failed),
         "retrieved_context": [],
         "mode": mode,
+        "react_trace": react_trace,
     }

@@ -113,6 +113,15 @@ function App() {
                       }))
                     })
                     break
+                  case 'react_trace':
+                    flushSync(() => {
+                      setResponse((prev) => ({
+                        ...prev,
+                        react_trace: event.react_trace,
+                        mode: event.mode,
+                      }))
+                    })
+                    break
                   case 'delta':
                     flushSync(() => {
                       setResponse((prev) => {
@@ -138,6 +147,7 @@ function App() {
                         steps: event.steps,
                         retrieved_context: event.retrieved_context,
                         mode: event.mode,
+                        react_trace: event.react_trace || prev.react_trace,
                       }))
                       setIsStreamingReply(false)
                     })
@@ -170,7 +180,10 @@ function App() {
 
       const data = await res.json()
       flushSync(() => {
-        setResponse(data)
+        setResponse((prev) => ({
+          ...prev,
+          ...data,
+        }))
         setIsStreamingReply(false)
       })
     }
@@ -284,6 +297,26 @@ function App() {
               {displayResponse.mode === 'error_fallback' ? 'error' : displayResponse.mode}
             </p>
           </div>
+
+          {displayResponse.react_trace && displayResponse.react_trace.length > 0 && (
+            <div className="panel react-trace-panel">
+              <h3>ReAct Trace</h3>
+              <div className="react-trace-list">
+                {displayResponse.react_trace.map((item, i) => (
+                  <div key={i} className="react-trace-item">
+                    <div className="react-trace-action">
+                      <span className="react-trace-label">Action:</span>{' '}
+                      {item.action}
+                    </div>
+                    <div className="react-trace-observation">
+                      <span className="react-trace-label">Observation:</span>{' '}
+                      {item.observation}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
     </>

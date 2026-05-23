@@ -33,6 +33,7 @@ ai-agent-chat/
 │   ├── __init__.py
 │   ├── intent_agent.py
 │   ├── planner_agent.py
+│   ├── react_agent.py
 │   └── orchestrator.py
 ├── backend/
 │   ├── main.py
@@ -236,3 +237,77 @@ Expected event sequence:
 ### Fallback
 
 If the streaming endpoint fails, the frontend automatically falls back to the non-streaming `POST /api/chat`.
+
+## Stage 4: ReAct-style Workflow
+
+### What's New
+
+Added a lightweight ReAct-style action trace to show safe, user-visible execution steps.
+
+**New module:** `agent/react_agent.py`
+
+- Generates action/observation pairs based on intent
+- Does **not** expose hidden chain-of-thought
+- Does **not** call external tools
+- Only produces demo-friendly execution summaries
+
+**Example `react_trace`:**
+
+```json
+[
+  {
+    "action": "classify_intent",
+    "observation": "Recognized user intent as deployment_help"
+  },
+  {
+    "action": "decompose_task",
+    "observation": "Generated deployment steps for cloud environment"
+  },
+  {
+    "action": "prepare_model_prompt",
+    "observation": "Prepared context with deployment checklist"
+  },
+  {
+    "action": "stream_response",
+    "observation": "Streaming deployment guide to frontend"
+  }
+]
+```
+
+### API Changes
+
+Both `POST /api/chat` and `POST /api/chat/stream` now return:
+
+```json
+{
+  "reply": "...",
+  "intent": "...",
+  "tasks": [...],
+  "steps": [...],
+  "retrieved_context": [],
+  "mode": "llm",
+  "react_trace": [
+    {"action": "...", "observation": "..."}
+  ]
+}
+```
+
+Streaming adds a new event type:
+
+```json
+{"type": "react_trace", "react_trace": [...], "mode": "thinking"}
+```
+
+### Frontend Changes
+
+A new **ReAct Trace** panel displays action/observation cards below Mode.
+
+### Test ReAct Trace
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"我想把 React 和 FastAPI 项目部署到阿里云服务器上，应该怎么做？"}'
+```
+
+Expected: `react_trace` contains action/observation pairs, no `thought` or `chain_of_thought` fields.

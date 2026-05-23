@@ -22,7 +22,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict, Any
 
 from agent import orchestrator
 
@@ -45,6 +45,11 @@ class ChatRequest(BaseModel):
     message: str
 
 
+class ReactTraceItem(BaseModel):
+    action: str
+    observation: str
+
+
 class ChatResponse(BaseModel):
     reply: str
     intent: str
@@ -52,6 +57,7 @@ class ChatResponse(BaseModel):
     steps: List[str]
     retrieved_context: List[str]
     mode: str
+    react_trace: List[ReactTraceItem] = []
 
 
 @app.get("/")
