@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import UserProfilePanel from './UserProfilePanel'
 import ResumeReviewPanel from './ResumeReviewPanel'
 import InterviewConfigPanel from './InterviewConfigPanel'
+import AgentAssistantPanel from './AgentAssistantPanel'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 
@@ -328,299 +329,304 @@ function InterviewMode() {
   const showQuestionPanel = !!currentQuestion && !showInterviewCompleted
 
   return (
-    <div className="interview-mode">
-      <header className="interview-header">
-        <h1>OfferDrill</h1>
-        <p>面经驱动 AI 模拟面试官</p>
-      </header>
+    <div className="interview-layout">
+      <div className="interview-main">
+        <div className="interview-mode">
+          <header className="interview-header">
+            <h1>OfferDrill</h1>
+            <p>面经驱动 AI 模拟面试官</p>
+          </header>
 
-      <div className="interview-tabs">
-        <button
-          className={activeTab === 'profile' ? 'interview-tab active' : 'interview-tab'}
-          onClick={() => setActiveTab('profile')}
-        >
-          个人资料
-        </button>
-        <button
-          className={activeTab === 'review' ? 'interview-tab active' : 'interview-tab'}
-          onClick={() => setActiveTab('review')}
-        >
-          简历测评
-        </button>
-        <button
-          className={activeTab === 'interview' ? 'interview-tab active' : 'interview-tab'}
-          onClick={() => setActiveTab('interview')}
-        >
-          模拟面试
-        </button>
-      </div>
-
-      {activeTab === 'profile' && (
-        <UserProfilePanel
-          profile={profile}
-          onSave={handleProfileSave}
-          resumeSessionId={resumeSessionId}
-          onResumeUpload={handleResumeUpload}
-        />
-      )}
-
-      {activeTab === 'review' && (
-        <ResumeReviewPanel
-          review={review}
-          loading={reviewLoading}
-          progress={reviewProgress}
-          onRequestReview={handleRequestReview}
-          canReview={!!resolveResumeId()}
-          resumeId={resolveResumeId()}
-          profileId={profileId}
-        />
-      )}
-
-      {activeTab === 'interview' && !showQuestionPanel && !showInterviewCompleted && (
-        <InterviewConfigPanel
-          profile={profile}
-          mode={mode}
-          focus={focus}
-          target={target}
-          onModeChange={setMode}
-          onFocusChange={setFocus}
-          onTargetChange={setTarget}
-          onStartInterview={startInterview}
-          isStarting={isStarting}
-        />
-      )}
-
-      {activeTab === 'interview' && isStarting && (
-        <div className="loading">正在基于个人资料和面经题库生成面试题...</div>
-      )}
-
-      {activeTab === 'interview' && startError && (
-        <div className="error">{startError}</div>
-      )}
-
-      {activeTab === 'interview' && startSuccess && !showQuestionPanel && !showInterviewCompleted && (
-        <div className="success">{startSuccess}</div>
-      )}
-
-      {activeTab === 'interview' && showQuestionPanel && (
-        <div className="interview-session">
-          <div className="interview-progress">
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{
-                  width: `${(progress.current / Math.max(progress.total, 1)) * 100}%`,
-                }}
-              />
-            </div>
-            <div className="progress-text">
-              {progress.total > 0
-                ? `第 ${progress.current} / ${progress.total} 题`
-                : '面试题加载中...'}
-            </div>
+          <div className="interview-tabs">
+            <button
+              className={activeTab === 'profile' ? 'interview-tab active' : 'interview-tab'}
+              onClick={() => setActiveTab('profile')}
+            >
+              个人资料
+            </button>
+            <button
+              className={activeTab === 'review' ? 'interview-tab active' : 'interview-tab'}
+              onClick={() => setActiveTab('review')}
+            >
+              简历测评
+            </button>
+            <button
+              className={activeTab === 'interview' ? 'interview-tab active' : 'interview-tab'}
+              onClick={() => setActiveTab('interview')}
+            >
+              模拟面试
+            </button>
           </div>
 
-          {startSuccess && (
+          {activeTab === 'profile' && (
+            <UserProfilePanel
+              profile={profile}
+              onSave={handleProfileSave}
+              resumeSessionId={resumeSessionId}
+              onResumeUpload={handleResumeUpload}
+            />
+          )}
+
+          {activeTab === 'review' && (
+            <ResumeReviewPanel
+              review={review}
+              loading={reviewLoading}
+              progress={reviewProgress}
+              onRequestReview={handleRequestReview}
+              canReview={!!resolveResumeId()}
+              resumeId={resolveResumeId()}
+              profileId={profileId}
+            />
+          )}
+
+          {activeTab === 'interview' && !showQuestionPanel && !showInterviewCompleted && (
+            <InterviewConfigPanel
+              profile={profile}
+              mode={mode}
+              focus={focus}
+              target={target}
+              onModeChange={setMode}
+              onFocusChange={setFocus}
+              onTargetChange={setTarget}
+              onStartInterview={startInterview}
+              isStarting={isStarting}
+            />
+          )}
+
+          {activeTab === 'interview' && isStarting && (
+            <div className="loading">正在基于个人资料和面经题库生成面试题...</div>
+          )}
+
+          {activeTab === 'interview' && startError && (
+            <div className="error">{startError}</div>
+          )}
+
+          {activeTab === 'interview' && startSuccess && !showQuestionPanel && !showInterviewCompleted && (
             <div className="success">{startSuccess}</div>
           )}
 
-          {interviewerReply && (
-            <div className="panel interviewer-panel">
-              <h3>面试官</h3>
-              <ReactMarkdown>{interviewerReply}</ReactMarkdown>
-            </div>
-          )}
-
-          {evaluation && (
-            <div className="panel evaluation-panel">
-              <h3>评分反馈</h3>
-              <div className="evaluation-grid">
-                <div className="evaluation-item">
-                  <span className="evaluation-label">准确性</span>
-                  {renderScore(evaluation.accuracy)}
+          {activeTab === 'interview' && showQuestionPanel && (
+            <div className="interview-session">
+              <div className="interview-progress">
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill"
+                    style={{
+                      width: `${(progress.current / Math.max(progress.total, 1)) * 100}%`,
+                    }}
+                  />
                 </div>
-                <div className="evaluation-item">
-                  <span className="evaluation-label">结构</span>
-                  {renderScore(evaluation.structure)}
-                </div>
-                <div className="evaluation-item">
-                  <span className="evaluation-label">深度</span>
-                  {renderScore(evaluation.depth)}
-                </div>
-                <div className="evaluation-item">
-                  <span className="evaluation-label">表达</span>
-                  {renderScore(evaluation.communication)}
+                <div className="progress-text">
+                  {progress.total > 0
+                    ? `第 ${progress.current} / ${progress.total} 题`
+                    : '面试题加载中...'}
                 </div>
               </div>
-              {evaluation.overall_feedback && (
-                <div className="evaluation-feedback">
-                  {evaluation.overall_feedback}
+
+              {startSuccess && (
+                <div className="success">{startSuccess}</div>
+              )}
+
+              {interviewerReply && (
+                <div className="panel interviewer-panel">
+                  <h3>面试官</h3>
+                  <ReactMarkdown>{interviewerReply}</ReactMarkdown>
                 </div>
               )}
-            </div>
-          )}
 
-          <div className="panel question-panel">
-            <div className="question-meta">
-              <span className="question-tag">{currentQuestion.topic}</span>
-              <span className="question-tag">{currentQuestion.focus_mode}</span>
-            </div>
-            <h3>{currentQuestion.question}</h3>
-            {currentQuestion.answer_points && currentQuestion.answer_points.length > 0 && (
-              <div className="answer-points">
-                <div className="answer-points-title">答题要点：</div>
-                <ul>
-                  {currentQuestion.answer_points.map((pt, i) => (
-                    <li key={i}>{pt}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {loading && answerProgress.percent > 0 && (
-            <div className="progress-feedback">
-              <div className="progress-stage">{answerProgress.stage}</div>
-              <div className="progress-bar-container">
-                <div
-                  className="progress-fill-animated"
-                  style={{ width: `${answerProgress.percent}%` }}
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="answer-area">
-            <textarea
-              placeholder="请输入你的回答..."
-              value={answerText}
-              onChange={(e) => setAnswerText(e.target.value)}
-              rows={6}
-              disabled={loading}
-            />
-            <button
-              type="button"
-              onClick={submitAnswer}
-              disabled={loading || !answerText.trim()}
-            >
-              {loading ? '评分中...' : '提交回答'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'interview' && showInterviewCompleted && (
-        <div className="interview-summary">
-          <div className="interview-progress">
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: '100%' }} />
-            </div>
-            <div className="progress-text">面试已完成 {progress.total} / {progress.total} 题</div>
-          </div>
-
-          {interviewerReply && (
-            <div className="panel interviewer-panel">
-              <h3>面试官</h3>
-              <ReactMarkdown>{interviewerReply}</ReactMarkdown>
-            </div>
-          )}
-
-          {evaluation && (
-            <div className="panel evaluation-panel">
-              <h3>最后一题评分</h3>
-              <div className="evaluation-grid">
-                <div className="evaluation-item">
-                  <span className="evaluation-label">准确性</span>
-                  {renderScore(evaluation.accuracy)}
-                </div>
-                <div className="evaluation-item">
-                  <span className="evaluation-label">结构</span>
-                  {renderScore(evaluation.structure)}
-                </div>
-                <div className="evaluation-item">
-                  <span className="evaluation-label">深度</span>
-                  {renderScore(evaluation.depth)}
-                </div>
-                <div className="evaluation-item">
-                  <span className="evaluation-label">表达</span>
-                  {renderScore(evaluation.communication)}
-                </div>
-              </div>
-              {evaluation.overall_feedback && (
-                <div className="evaluation-feedback">{evaluation.overall_feedback}</div>
-              )}
-            </div>
-          )}
-
-          {closingMessage && (
-            <div className="panel closing-panel">
-              <h3>面试结束</h3>
-              <div className="closing-message">{closingMessage}</div>
-            </div>
-          )}
-
-          <div className="panel summary-panel">
-            <h3>面试总结</h3>
-            {summary && (
-              <>
-                <div className="summary-scores">
-                  {Object.entries(summary.overall_scores || {}).map(([key, val]) => {
-                    const labelMap = {
-                      accuracy: '准确性',
-                      structure: '结构',
-                      depth: '深度',
-                      communication: '表达',
-                    }
-                    return (
-                      <div className="summary-score-item" key={key}>
-                        <span className="summary-score-label">{labelMap[key] || key}</span>
-                        <span className="summary-score-value">{renderScore(val)}</span>
-                      </div>
-                    )
-                  })}
-                </div>
-                <div className="summary-detail">
-                  <ReactMarkdown>{summary.summary}</ReactMarkdown>
-                </div>
-              </>
-            )}
-          </div>
-
-          {history.length > 0 && (
-            <div className="panel history-panel">
-              <h3>答题回顾</h3>
-              <div className="history-list">
-                {history.map((item, idx) => (
-                  <div className="history-item" key={idx}>
-                    <div className="history-question">
-                      <span className="history-num">Q{idx + 1}</span>
-                      {item.question?.question}
+              {evaluation && (
+                <div className="panel evaluation-panel">
+                  <h3>评分反馈</h3>
+                  <div className="evaluation-grid">
+                    <div className="evaluation-item">
+                      <span className="evaluation-label">准确性</span>
+                      {renderScore(evaluation.accuracy)}
                     </div>
-                    <div className="history-answer">
-                      <strong>你的回答：</strong>
-                      {item.answer}
+                    <div className="evaluation-item">
+                      <span className="evaluation-label">结构</span>
+                      {renderScore(evaluation.structure)}
                     </div>
-                    {item.evaluation && (
-                      <div className="history-eval">
-                        准确性 {item.evaluation.accuracy ?? 'N/A'} | 结构{' '}
-                        {item.evaluation.structure ?? 'N/A'} | 深度{' '}
-                        {item.evaluation.depth ?? 'N/A'} | 表达{' '}
-                        {item.evaluation.communication ?? 'N/A'}
-                      </div>
-                    )}
+                    <div className="evaluation-item">
+                      <span className="evaluation-label">深度</span>
+                      {renderScore(evaluation.depth)}
+                    </div>
+                    <div className="evaluation-item">
+                      <span className="evaluation-label">表达</span>
+                      {renderScore(evaluation.communication)}
+                    </div>
                   </div>
-                ))}
+                  {evaluation.overall_feedback && (
+                    <div className="evaluation-feedback">
+                      {evaluation.overall_feedback}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="panel question-panel">
+                <div className="question-meta">
+                  <span className="question-tag">{currentQuestion.topic}</span>
+                  <span className="question-tag">{currentQuestion.focus_mode}</span>
+                </div>
+                <h3>{currentQuestion.question}</h3>
+                {currentQuestion.answer_points && currentQuestion.answer_points.length > 0 && (
+                  <div className="answer-points">
+                    <div className="answer-points-title">答题要点：</div>
+                    <ul>
+                      {currentQuestion.answer_points.map((pt, i) => (
+                        <li key={i}>{pt}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              {loading && answerProgress.percent > 0 && (
+                <div className="progress-feedback">
+                  <div className="progress-stage">{answerProgress.stage}</div>
+                  <div className="progress-bar-container">
+                    <div
+                      className="progress-fill-animated"
+                      style={{ width: `${answerProgress.percent}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="answer-area">
+                <textarea
+                  placeholder="请输入你的回答..."
+                  value={answerText}
+                  onChange={(e) => setAnswerText(e.target.value)}
+                  rows={6}
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={submitAnswer}
+                  disabled={loading || !answerText.trim()}
+                >
+                  {loading ? '评分中...' : '提交回答'}
+                </button>
               </div>
             </div>
           )}
 
-          <button className="start-btn" onClick={resetInterview}>
-            重新开始
-          </button>
-        </div>
-      )}
+          {activeTab === 'interview' && showInterviewCompleted && (
+            <div className="interview-summary">
+              <div className="interview-progress">
+                <div className="progress-bar">
+                  <div className="progress-fill" style={{ width: '100%' }} />
+                </div>
+                <div className="progress-text">面试已完成 {progress.total} / {progress.total} 题</div>
+              </div>
 
-      {error && <div className="error">{error}</div>}
+              {interviewerReply && (
+                <div className="panel interviewer-panel">
+                  <h3>面试官</h3>
+                  <ReactMarkdown>{interviewerReply}</ReactMarkdown>
+                </div>
+              )}
+
+              {evaluation && (
+                <div className="panel evaluation-panel">
+                  <h3>最后一题评分</h3>
+                  <div className="evaluation-grid">
+                    <div className="evaluation-item">
+                      <span className="evaluation-label">准确性</span>
+                      {renderScore(evaluation.accuracy)}
+                    </div>
+                    <div className="evaluation-item">
+                      <span className="evaluation-label">结构</span>
+                      {renderScore(evaluation.structure)}
+                    </div>
+                    <div className="evaluation-item">
+                      <span className="evaluation-label">深度</span>
+                      {renderScore(evaluation.depth)}
+                    </div>
+                    <div className="evaluation-item">
+                      <span className="evaluation-label">表达</span>
+                      {renderScore(evaluation.communication)}
+                    </div>
+                  </div>
+                  {evaluation.overall_feedback && (
+                    <div className="evaluation-feedback">{evaluation.overall_feedback}</div>
+                  )}
+                </div>
+              )}
+
+              {closingMessage && (
+                <div className="panel closing-panel">
+                  <h3>面试结束</h3>
+                  <div className="closing-message">{closingMessage}</div>
+                </div>
+              )}
+
+              <div className="panel summary-panel">
+                <h3>面试总结</h3>
+                {summary && (
+                  <>
+                    <div className="summary-scores">
+                      {Object.entries(summary.overall_scores || {}).map(([key, val]) => {
+                        const labelMap = {
+                          accuracy: '准确性',
+                          structure: '结构',
+                          depth: '深度',
+                          communication: '表达',
+                        }
+                        return (
+                          <div className="summary-score-item" key={key}>
+                            <span className="summary-score-label">{labelMap[key] || key}</span>
+                            <span className="summary-score-value">{renderScore(val)}</span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                    <div className="summary-detail">
+                      <ReactMarkdown>{summary.summary}</ReactMarkdown>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {history.length > 0 && (
+                <div className="panel history-panel">
+                  <h3>答题回顾</h3>
+                  <div className="history-list">
+                    {history.map((item, idx) => (
+                      <div className="history-item" key={idx}>
+                        <div className="history-question">
+                          <span className="history-num">Q{idx + 1}</span>
+                          {item.question?.question}
+                        </div>
+                        <div className="history-answer">
+                          <strong>你的回答：</strong>
+                          {item.answer}
+                        </div>
+                        {item.evaluation && (
+                          <div className="history-eval">
+                            准确性 {item.evaluation.accuracy ?? 'N/A'} | 结构{' '}
+                            {item.evaluation.structure ?? 'N/A'} | 深度{' '}
+                            {item.evaluation.depth ?? 'N/A'} | 表达{' '}
+                            {item.evaluation.communication ?? 'N/A'}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <button className="start-btn" onClick={resetInterview}>
+                重新开始
+              </button>
+            </div>
+          )}
+
+          {error && <div className="error">{error}</div>}
+        </div>
+      </div>
+      <AgentAssistantPanel />
     </div>
   )
 }
