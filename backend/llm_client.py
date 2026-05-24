@@ -44,7 +44,7 @@ def _get_model():
     return model if model else DEFAULT_MODEL
 
 
-def call_llm(user_message: str) -> str:
+def call_llm(user_message: str, system_prompt: str = None) -> str:
     """
     Call the Kimi API and return the assistant's reply text.
     Raises an exception on failure so the caller can decide how to handle it.
@@ -57,7 +57,7 @@ def call_llm(user_message: str) -> str:
     response = client.chat.completions.create(
         model=model,
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt if system_prompt else SYSTEM_PROMPT},
             {"role": "user", "content": user_message},
         ],
         temperature=1,
@@ -67,7 +67,7 @@ def call_llm(user_message: str) -> str:
     return reply.strip() if reply else ""
 
 
-def stream_reply_sync(user_message: str, intent: str, tasks: list[str], retrieved_context: list[dict] = None):
+def stream_reply_sync(user_message: str, intent: str, tasks: list[str], retrieved_context: list[dict] = None, system_prompt: str = None):
     """
     Synchronous generator that streams deltas from Kimi API.
     Run this inside a thread pool so it does not block the asyncio event loop.
@@ -104,7 +104,7 @@ def stream_reply_sync(user_message: str, intent: str, tasks: list[str], retrieve
     response = client.chat.completions.create(
         model=model,
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt if system_prompt else SYSTEM_PROMPT},
             {"role": "user", "content": user_message},
             {"role": "assistant", "content": context_prompt},
         ],
@@ -120,7 +120,7 @@ def stream_reply_sync(user_message: str, intent: str, tasks: list[str], retrieve
             yield delta
 
 
-def generate_reply(user_message: str, intent: str, tasks: list[str], retrieved_context: list[dict] = None) -> str:
+def generate_reply(user_message: str, intent: str, tasks: list[str], retrieved_context: list[dict] = None, system_prompt: str = None) -> str:
     """
     Generate a reply using Kimi API with enriched context.
     Keeps the same client configuration as call_llm().
@@ -156,7 +156,7 @@ def generate_reply(user_message: str, intent: str, tasks: list[str], retrieved_c
     response = client.chat.completions.create(
         model=model,
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt if system_prompt else SYSTEM_PROMPT},
             {"role": "user", "content": user_message},
             {"role": "assistant", "content": context_prompt},
         ],

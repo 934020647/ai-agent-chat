@@ -21,3 +21,7 @@ frontend/.env
 # OS / Editor
 .DS_Store
 .vscode/
+
+# Reference open-source projects for local reading only
+_reference_projects/
+uploads/

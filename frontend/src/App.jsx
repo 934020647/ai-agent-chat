@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { flushSync } from 'react-dom'
 import ReactMarkdown from 'react-markdown'
+import InterviewMode from './InterviewMode'
 import './App.css'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
@@ -37,6 +38,7 @@ const ERROR_RESPONSE = {
 }
 
 function App() {
+  const [appMode, setAppMode] = useState('chat') // 'chat' | 'interview'
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -233,165 +235,186 @@ function App() {
 
   return (
     <>
-      <header>
-        <h1>AI Agent Chat Platform</h1>
-        <p>A transparent task-oriented AI assistant</p>
-      </header>
-
-      <div className="input-area">
-        <input
-          type="text"
-          placeholder="Type your message..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          disabled={loading}
-        />
-        <button onClick={handleSend} disabled={loading || !message.trim()}>
-          {loading ? 'Thinking...' : 'Send'}
+      <div className="mode-tabs">
+        <button
+          className={appMode === 'chat' ? 'mode-tab active' : 'mode-tab'}
+          onClick={() => setAppMode('chat')}
+        >
+          AI Agent Chat
+        </button>
+        <button
+          className={appMode === 'interview' ? 'mode-tab active' : 'mode-tab'}
+          onClick={() => setAppMode('interview')}
+        >
+          OfferDrill 模拟面试
         </button>
       </div>
 
-      {loading && (
-        <div className="loading">
-          The agent is analyzing your request...
-        </div>
-      )}
-      {error && (
-        <div className="error">
-          Error: {error}
-        </div>
-      )}
-
-      {response && (
+      {appMode === 'interview' ? (
+        <InterviewMode />
+      ) : (
         <>
-          <div className="panel reply-panel">
-            <h3>Final Reply</h3>
-            <div className={`markdown-body ${loading ? 'dimmed' : ''}`}>
-              {showPlainText ? (
-                <div className="streaming-text">
-                  {displayResponse.reply}
-                  <span className="cursor">▌</span>
+          <header>
+            <h1>AI Agent Chat Platform</h1>
+            <p>A transparent task-oriented AI assistant</p>
+          </header>
+
+          <div className="input-area">
+            <input
+              type="text"
+              placeholder="Type your message..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={loading}
+            />
+            <button onClick={handleSend} disabled={loading || !message.trim()}>
+              {loading ? 'Thinking...' : 'Send'}
+            </button>
+          </div>
+
+          {loading && (
+            <div className="loading">
+              The agent is analyzing your request...
+            </div>
+          )}
+          {error && (
+            <div className="error">
+              Error: {error}
+            </div>
+          )}
+
+          {response && (
+            <>
+              <div className="panel reply-panel">
+                <h3>Final Reply</h3>
+                <div className={`markdown-body ${loading ? 'dimmed' : ''}`}>
+                  {showPlainText ? (
+                    <div className="streaming-text">
+                      {displayResponse.reply}
+                      <span className="cursor">▌</span>
+                    </div>
+                  ) : (
+                    <ReactMarkdown>{displayResponse.reply || ''}</ReactMarkdown>
+                  )}
+                </div>
+              </div>
+
+              <div className="panel">
+                <h3>Intent</h3>
+                <p className={loading ? 'dimmed' : ''}>{displayResponse.intent}</p>
+              </div>
+
+              <div className="panel">
+                <h3>Task Decomposition</h3>
+                {displayResponse.tasks && displayResponse.tasks.length > 0 ? (
+                  <ul className={loading ? 'dimmed' : ''}>
+                    {displayResponse.tasks.map((task, i) => (
+                      <li key={i}>{task}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="empty">No tasks</p>
+                )}
+              </div>
+
+              <div className="panel">
+                <h3>Execution Steps</h3>
+                {displayResponse.steps && displayResponse.steps.length > 0 ? (
+                  <ul className={loading ? 'dimmed' : ''}>
+                    {displayResponse.steps.map((step, i) => (
+                      <li key={i}>{step}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="empty">No steps</p>
+                )}
+              </div>
+
+              <div className="panel">
+                <h3>Mode</h3>
+                <p className={loading ? 'dimmed' : ''}>
+                  {displayResponse.mode === 'error_fallback' ? 'error' : displayResponse.mode}
+                </p>
+              </div>
+
+              {/* Retrieved Context Panel */}
+              {displayResponse.retrieved_context && displayResponse.retrieved_context.length > 0 ? (
+                <div className="panel retrieved-context-panel">
+                  <h3>Retrieved Context</h3>
+                  <div className="retrieved-context-list">
+                    {displayResponse.retrieved_context.map((item, i) => (
+                      <div key={i} className="retrieved-context-item">
+                        <div className="retrieved-context-header">
+                          <span className="retrieved-context-title">{item.title}</span>
+                          <span className="retrieved-context-score">score: {item.score}</span>
+                        </div>
+                        <div className="retrieved-context-body">
+                          {item.content.length > 300
+                            ? item.content.slice(0, 300) + '...'
+                            : item.content}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ) : (
-                <ReactMarkdown>{displayResponse.reply || ''}</ReactMarkdown>
+                !loading && (
+                  <div className="panel retrieved-context-panel">
+                    <h3>Retrieved Context</h3>
+                    <p className="empty">No retrieved context for this query.</p>
+                  </div>
+                )
               )}
-            </div>
-          </div>
 
-          <div className="panel">
-            <h3>Intent</h3>
-            <p className={loading ? 'dimmed' : ''}>{displayResponse.intent}</p>
-          </div>
-
-          <div className="panel">
-            <h3>Task Decomposition</h3>
-            {displayResponse.tasks && displayResponse.tasks.length > 0 ? (
-              <ul className={loading ? 'dimmed' : ''}>
-                {displayResponse.tasks.map((task, i) => (
-                  <li key={i}>{task}</li>
-                ))}
-              </ul>
-            ) : (
-              <p className="empty">No tasks</p>
-            )}
-          </div>
-
-          <div className="panel">
-            <h3>Execution Steps</h3>
-            {displayResponse.steps && displayResponse.steps.length > 0 ? (
-              <ul className={loading ? 'dimmed' : ''}>
-                {displayResponse.steps.map((step, i) => (
-                  <li key={i}>{step}</li>
-                ))}
-              </ul>
-            ) : (
-              <p className="empty">No steps</p>
-            )}
-          </div>
-
-          <div className="panel">
-            <h3>Mode</h3>
-            <p className={loading ? 'dimmed' : ''}>
-              {displayResponse.mode === 'error_fallback' ? 'error' : displayResponse.mode}
-            </p>
-          </div>
-
-          {/* Retrieved Context Panel */}
-          {displayResponse.retrieved_context && displayResponse.retrieved_context.length > 0 ? (
-            <div className="panel retrieved-context-panel">
-              <h3>Retrieved Context</h3>
-              <div className="retrieved-context-list">
-                {displayResponse.retrieved_context.map((item, i) => (
-                  <div key={i} className="retrieved-context-item">
-                    <div className="retrieved-context-header">
-                      <span className="retrieved-context-title">{item.title}</span>
-                      <span className="retrieved-context-score">score: {item.score}</span>
-                    </div>
-                    <div className="retrieved-context-body">
-                      {item.content.length > 300
-                        ? item.content.slice(0, 300) + '...'
-                        : item.content}
-                    </div>
+              {/* Agent Collaboration Flow Panel */}
+              {displayResponse.agent_flow && displayResponse.agent_flow.length > 0 ? (
+                <div className="panel agent-flow-panel">
+                  <h3>Agent Collaboration Flow</h3>
+                  <div className="agent-flow-list">
+                    {displayResponse.agent_flow.map((item, i) => (
+                      <div key={i} className="agent-flow-item">
+                        <div className="agent-flow-header">
+                          <span className="agent-flow-name">{item.agent}</span>
+                          <span className="agent-flow-status">{item.status}</span>
+                        </div>
+                        <div className="agent-flow-io">
+                          <div><span className="agent-flow-label">Input:</span> {item.input}</div>
+                          <div><span className="agent-flow-label">Output:</span> {item.output}</div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            !loading && (
-              <div className="panel retrieved-context-panel">
-                <h3>Retrieved Context</h3>
-                <p className="empty">No retrieved context for this query.</p>
-              </div>
-            )
-          )}
-
-          {/* Agent Collaboration Flow Panel */}
-          {displayResponse.agent_flow && displayResponse.agent_flow.length > 0 ? (
-            <div className="panel agent-flow-panel">
-              <h3>Agent Collaboration Flow</h3>
-              <div className="agent-flow-list">
-                {displayResponse.agent_flow.map((item, i) => (
-                  <div key={i} className="agent-flow-item">
-                    <div className="agent-flow-header">
-                      <span className="agent-flow-name">{item.agent}</span>
-                      <span className="agent-flow-status">{item.status}</span>
-                    </div>
-                    <div className="agent-flow-io">
-                      <div><span className="agent-flow-label">Input:</span> {item.input}</div>
-                      <div><span className="agent-flow-label">Output:</span> {item.output}</div>
-                    </div>
+                </div>
+              ) : (
+                !loading && (
+                  <div className="panel agent-flow-panel">
+                    <h3>Agent Collaboration Flow</h3>
+                    <p className="empty">No agent flow yet.</p>
                   </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            !loading && (
-              <div className="panel agent-flow-panel">
-                <h3>Agent Collaboration Flow</h3>
-                <p className="empty">No agent flow yet.</p>
-              </div>
-            )
-          )}
+                )
+              )}
 
-          {displayResponse.react_trace && displayResponse.react_trace.length > 0 && (
-            <div className="panel react-trace-panel">
-              <h3>ReAct Trace</h3>
-              <div className="react-trace-list">
-                {displayResponse.react_trace.map((item, i) => (
-                  <div key={i} className="react-trace-item">
-                    <div className="react-trace-action">
-                      <span className="react-trace-label">Action:</span>{' '}
-                      {item.action}
-                    </div>
-                    <div className="react-trace-observation">
-                      <span className="react-trace-label">Observation:</span>{' '}
-                      {item.observation}
-                    </div>
+              {displayResponse.react_trace && displayResponse.react_trace.length > 0 && (
+                <div className="panel react-trace-panel">
+                  <h3>ReAct Trace</h3>
+                  <div className="react-trace-list">
+                    {displayResponse.react_trace.map((item, i) => (
+                      <div key={i} className="react-trace-item">
+                        <div className="react-trace-action">
+                          <span className="react-trace-label">Action:</span>{' '}
+                          {item.action}
+                        </div>
+                        <div className="react-trace-observation">
+                          <span className="react-trace-label">Observation:</span>{' '}
+                          {item.observation}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
+              )}
+            </>
           )}
         </>
       )}

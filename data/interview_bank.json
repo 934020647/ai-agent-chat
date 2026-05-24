@@ -1,0 +1,916 @@
+[
+  {
+    "id": "grad_bal_001",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "balanced",
+    "role_or_major": "计算机科学与技术保研",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "科研兴趣",
+    "question": "请用两分钟介绍你的科研兴趣，以及你为什么选择这个方向？",
+    "answer_points": [
+      "明确说明感兴趣的研究方向",
+      "解释兴趣来源（课程、项目、论文等）",
+      "展示对该方向前沿动态的了解",
+      "说明与目标院校导师方向的契合度"
+    ],
+    "follow_up": [
+      "你读过该领域哪些代表性论文？",
+      "如果导师的研究方向和你兴趣不完全一致，你会怎么调整？"
+    ],
+    "standard_answer": "一个好的回答应该结构清晰：先说明具体方向（如分布式系统、NLP、计算机视觉等），再解释兴趣来源（某门课、某个项目或某篇论文的启发），然后提及1-2篇近期相关论文或工作，最后自然过渡到目标院校该方向的优势。",
+    "rubric": {
+      "accuracy": "是否明确具体方向而非泛泛而谈",
+      "structure": "是否有逻辑链条：兴趣→来源→了解→契合",
+      "depth": "是否展示对该方向的实际了解而非空话",
+      "communication": "表达是否流畅、自信、有条理"
+    }
+  },
+  {
+    "id": "grad_fund_002",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "fundamentals",
+    "role_or_major": "计算机科学与技术保研",
+    "grade_range": ["大三", "大四"],
+    "topic": "专业基础",
+    "question": "请解释进程和线程的区别，什么场景下应该使用多线程，什么场景下应该使用多进程？",
+    "answer_points": [
+      "定义进程和线程",
+      "比较内存空间、调度开销、通信方式",
+      "CPU密集型 vs IO密集型的选择",
+      "举例说明实际应用场景"
+    ],
+    "follow_up": [
+      "Python 的 GIL 对多线程有什么影响？",
+      "如果有一个爬虫任务需要并发抓取1000个网页，你选多线程还是多进程？"
+    ],
+    "standard_answer": "进程是资源分配的基本单位，拥有独立的地址空间；线程是CPU调度的基本单位，共享进程内存。多线程适合IO密集型任务（如网络请求、文件读写），因为线程切换开销小；多进程适合CPU密集型任务（如数值计算、图像处理），可以绕过GIL充分利用多核。",
+    "rubric": {
+      "accuracy": "是否准确区分进程和线程的核心差异",
+      "structure": "是否按定义→差异→场景→举例的结构回答",
+      "depth": "是否提到 GIL、调度开销、通信成本等深层因素",
+      "communication": "表达是否清晰、使用恰当的技术术语"
+    }
+  },
+  {
+    "id": "grad_proj_003",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "project_experience",
+    "role_or_major": "计算机科学与技术保研",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "项目经历",
+    "question": "请详细介绍一个你认为最能体现你能力的项目，你在其中承担什么角色，遇到了什么技术挑战，如何解决的？",
+    "answer_points": [
+      "项目背景和目标（1-2句话）",
+      "个人职责和贡献",
+      "遇到的核心技术难点",
+      "解决方案和取舍思考",
+      "项目成果和个人收获"
+    ],
+    "follow_up": [
+      "如果让你重新做这个项目，你会在架构上做什么改进？",
+      "项目中有没有用到导师论文中的方法？"
+    ],
+    "standard_answer": "回答建议采用 STAR-L 结构：Situation（背景）→ Task（任务）→ Action（行动）→ Result（结果）→ Learning（收获）。重点突出个人贡献而非团队整体，难点选择有技术含量的（如性能瓶颈、一致性难题），解决方案要体现工程权衡。",
+    "rubric": {
+      "accuracy": "是否真实、具体，数据支撑充分",
+      "structure": "是否使用 STAR 或类似结构化表达",
+      "depth": "难点和解决方案是否有技术深度",
+      "communication": "讲述是否引人入胜，重点突出"
+    }
+  },
+  {
+    "id": "grad_bal_004",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "balanced",
+    "role_or_major": "人工智能保研",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "英文自我介绍",
+    "question": "Please give a two-minute self-introduction in English.",
+    "answer_points": [
+      "Greeting and basic info",
+      "Academic background and GPA/ranking",
+      "Research or project experience",
+      "Why this university and this lab",
+      "Future research plan"
+    ],
+    "follow_up": [
+      "What is your favorite paper recently? Summarize it briefly.",
+      "Why do you want to pursue a master's/PhD degree?"
+    ],
+    "standard_answer": "一个完整的英文自我介绍应包含：问候、基本信息、学术背景（学校、专业、排名）、科研/项目经历（1-2个亮点）、申请动机（为什么选该校该导师）、未来规划。时长控制在90-120秒，语速适中，避免背诵感。",
+    "rubric": {
+      "accuracy": "内容是否完整、真实",
+      "structure": "是否有清晰的开头-主体-结尾",
+      "depth": "是否突出学术亮点而非流水账",
+      "communication": "发音、流利度、自信心"
+    }
+  },
+  {
+    "id": "grad_fund_005",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "fundamentals",
+    "role_or_major": "软件工程保研",
+    "grade_range": ["大三", "大四"],
+    "topic": "专业基础",
+    "question": "什么是数据库的事务？请解释 ACID 特性，并说明在实际系统中如何保证一致性？",
+    "answer_points": [
+      "事务的定义和作用",
+      "ACID 四个特性逐一解释",
+      "隔离级别和并发问题",
+      "实际应用中的一致性策略"
+    ],
+    "follow_up": [
+      "分布式事务和单机事务有什么区别？",
+      "你项目中的数据库设计有没有用到事务？"
+    ],
+    "standard_answer": "事务是数据库执行的基本工作单位，具有 ACID 特性：Atomicity（原子性，通过 undo log 实现）、Consistency（一致性，由约束和触发器保证）、Isolation（隔离性，通过锁和 MVCC 实现）、Durability（持久性，通过 redo log 和 WAL 实现）。实际系统中常根据业务选择适当的隔离级别，在性能和一致性之间权衡。",
+    "rubric": {
+      "accuracy": "ACID 解释是否准确",
+      "structure": "是否按定义→特性→实现→应用的逻辑展开",
+      "depth": "是否提到隔离级别、MVCC、锁机制等",
+      "communication": "技术术语使用是否规范"
+    }
+  },
+  {
+    "id": "grad_proj_006",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "project_experience",
+    "role_or_major": "人工智能保研",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "项目经历",
+    "question": "你项目中用到的深度学习模型是什么？请解释它的核心结构和 loss 函数设计。",
+    "answer_points": [
+      "模型名称和任务类型",
+      "网络结构关键组件",
+      "Loss 函数公式和物理意义",
+      "训练 tricks 和调参经验"
+    ],
+    "follow_up": [
+      "这个模型和当时 SOTA 的差距在哪里？",
+      "如果数据量扩大10倍，你的模型和训练流程需要怎么调整？"
+    ],
+    "standard_answer": "回答时应先说明任务类型（分类、检测、生成等），然后画出/描述网络结构（输入→骨干→ neck → head → 输出），解释 loss 函数为什么这样设计（如分类用 CrossEntropy，检测用 IoU + cls loss），最后提及 batch size、learning rate schedule、数据增强等训练细节。",
+    "rubric": {
+      "accuracy": "模型结构描述是否准确",
+      "structure": "是否按输入→网络→输出→loss→训练的逻辑展开",
+      "depth": "是否深入解释 loss 设计原理和训练策略",
+      "communication": "是否用图示或比喻辅助说明"
+    }
+  },
+  {
+    "id": "grad_bal_007",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "balanced",
+    "role_or_major": "计算机科学与技术保研",
+    "grade_range": ["大四", "研一"],
+    "topic": "目标院校专业动机",
+    "question": "你为什么选择我们实验室？你了解我们组最近哪些工作？",
+    "answer_points": [
+      "对实验室方向的了解和认同",
+      "提及具体论文或项目（至少1-2篇）",
+      "个人兴趣与该方向的契合",
+      "希望在实验室获得什么成长"
+    ],
+    "follow_up": [
+      "如果进组后导师给的方向和你预期不同怎么办？",
+      "你有没有联系过组里的师兄师姐？"
+    ],
+    "standard_answer": "回答的关键是真诚+具体。不要说空话（如'贵校很好'），而要提到具体的工作：'我读过您组里2024年发表在XX会议上的论文《XXX》，其中提出的XXX方法让我印象深刻，因为它解决了我在做XXX项目时遇到的XXX问题。' 然后自然过渡到个人兴趣和未来想做的工作。",
+    "rubric": {
+      "accuracy": "是否真实了解实验室工作，而非泛泛而谈",
+      "structure": "是否有明确的动机链条",
+      "depth": "是否提到具体论文、方法、技术细节",
+      "communication": "是否真诚、自信、有礼貌"
+    }
+  },
+  {
+    "id": "ind_fund_008",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "后端开发实习",
+    "grade_range": ["大二", "大三", "研一"],
+    "topic": "计算机基础",
+    "question": "请解释 TCP 三次握手的过程，以及为什么需要三次而不是两次或四次？",
+    "answer_points": [
+      "三次握手的每一步（SYN、SYN-ACK、ACK）",
+      "每次握手交换的信息",
+      "为什么不能两次（防止历史连接初始化）",
+      "为什么不需要四次（四次是四次挥手）"
+    ],
+    "follow_up": [
+      "SYN Flood 攻击是什么？怎么防御？",
+      "TCP 和 UDP 在你的项目中分别用在什么场景？"
+    ],
+    "standard_answer": "三次握手：①客户端发送 SYN(seq=x)；②服务端回复 SYN-ACK(seq=y,ack=x+1)；③客户端回复 ACK(ack=y+1)。三次是为了防止历史连接初始化造成的资源浪费，同时同步双方初始序列号。两次握手无法让服务端确认客户端是否收到了自己的 SYN-ACK，可能导致服务端资源被半开连接耗尽。",
+    "rubric": {
+      "accuracy": "三次握手步骤是否准确",
+      "structure": "是否按步骤拆解并解释原因",
+      "depth": "是否解释为什么不是两次/四次",
+      "communication": "是否使用清晰的技术语言"
+    }
+  },
+  {
+    "id": "ind_proj_009",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "后端开发实习",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "项目深挖",
+    "question": "介绍一下你项目中的缓存设计，为什么这样设计？",
+    "answer_points": [
+      "说明业务场景和数据特点",
+      "说明缓存位置（本地/分布式）和 key 设计",
+      "说明一致性策略（过期时间、更新策略）",
+      "说明异常处理（击穿、穿透、雪崩）"
+    ],
+    "follow_up": [
+      "如果缓存和数据库不一致怎么办？",
+      "高并发下如何防止热点 key 失效？"
+    ],
+    "standard_answer": "一个较好的回答应该先说明业务场景（如读多写少的热点配置），再解释缓存位置（Redis 集群）、key 设计（业务前缀+ID，如 user:profile:12345）、一致性策略（Cache-Aside 模式，设置 TTL + 更新时双删）、异常处理（布隆过滤器防穿透、随机 TTL 防雪崩、互斥锁防击穿）。",
+    "rubric": {
+      "accuracy": "是否覆盖核心技术点",
+      "structure": "是否按背景-方案-权衡-结果回答",
+      "depth": "是否能解释取舍和边界",
+      "communication": "表达是否清晰具体"
+    }
+  },
+  {
+    "id": "ind_fund_010",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "后端开发实习",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "计算机基础",
+    "question": "Redis 的五种基本数据类型分别是什么？你在项目中主要用到了哪些？",
+    "answer_points": [
+      "String、Hash、List、Set、Sorted Set",
+      "每种类型的典型使用场景",
+      "项目中具体使用了哪些类型",
+      "类型选择的考虑因素"
+    ],
+    "follow_up": [
+      "Sorted Set 的底层实现是什么？",
+      "String 类型的最大容量是多少？"
+    ],
+    "standard_answer": "五种基本类型：String（缓存、计数器）、Hash（对象存储，如用户信息）、List（消息队列、时间线）、Set（去重、共同关注）、Sorted Set（排行榜、延迟队列）。项目中我用 String 存热点配置，Hash 存用户资料，Sorted Set 做实时排行榜。选择类型时主要考虑查询模式、去重需求和排序需求。",
+    "rubric": {
+      "accuracy": "五种类型是否说全，描述是否准确",
+      "structure": "是否按类型→场景→项目应用的逻辑展开",
+      "depth": "是否提到底层实现或容量限制",
+      "communication": "是否结合实际项目经验"
+    }
+  },
+  {
+    "id": "ind_proj_011",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI工程/大模型应用实习",
+    "grade_range": ["大三", "大四", "研一", "研二"],
+    "topic": "项目深挖",
+    "question": "你做过的大模型应用项目是怎么做 prompt engineering 的？有没有用到 RAG？",
+    "answer_points": [
+      "项目背景和目标",
+      "Prompt 设计策略（角色设定、Few-shot、CoT）",
+      "RAG 架构（检索→重排序→生成）",
+      "效果评估和迭代优化"
+    ],
+    "follow_up": [
+      "Prompt 被攻击或产生幻觉时你怎么处理？",
+      "RAG 检索不到相关内容时怎么办？"
+    ],
+    "standard_answer": "我做过一个基于 RAG 的智能问答系统。Prompt 工程方面，我采用了角色设定（'你是一位专业的XX顾问'）+ Few-shot 示例（提供3个高质量问答对）+ Chain-of-Thought（要求模型先分析再回答）。RAG 流程是：用户问题 → Embedding 检索 Top5 → 重排序 → 拼接上下文到 Prompt → 调用大模型生成回答。评估指标包括回答准确率、检索召回率和用户满意度。",
+    "rubric": {
+      "accuracy": "技术方案描述是否准确",
+      "structure": "是否有清晰的项目-技术-评估链条",
+      "depth": "是否深入 prompt 策略和 RAG 细节",
+      "communication": "是否展示迭代优化思维"
+    }
+  },
+  {
+    "id": "ind_fund_012",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "后端开发实习",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "计算机基础",
+    "question": "什么是死锁？死锁产生的四个必要条件是什么？如何预防死锁？",
+    "answer_points": [
+      "死锁的定义和现象",
+      "互斥、占有且等待、不可剥夺、循环等待",
+      "预防策略（破坏四个条件之一）",
+      "避免策略（银行家算法）和检测恢复"
+    ],
+    "follow_up": [
+      "你在项目中有没有遇到过死锁？怎么排查的？",
+      "MySQL 中哪些场景容易产生死锁？"
+    ],
+    "standard_answer": "死锁是多个进程/线程因竞争资源而相互等待，导致都无法继续执行的现象。四个必要条件：互斥（资源独占）、占有且等待（持有资源同时等待新资源）、不可剥夺（资源只能主动释放）、循环等待（形成等待环）。预防策略：一次性申请所有资源（破坏占有且等待）、资源有序分配（破坏循环等待）。实际工程中更常用的是设置锁超时和死锁检测。",
+    "rubric": {
+      "accuracy": "四个条件是否准确",
+      "structure": "是否按定义→条件→预防→应用的逻辑展开",
+      "depth": "是否提到银行家算法、超时、检测等",
+      "communication": "是否结合实际排查经验"
+    }
+  },
+  {
+    "id": "ind_proj_013",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "后端开发实习",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "项目深挖",
+    "question": "你的项目是怎么做数据库设计的？有没有遇到过性能瓶颈，怎么优化的？",
+    "answer_points": [
+      "表结构设计原则和范式",
+      "索引设计策略",
+      "遇到的性能瓶颈（慢查询、高并发）",
+      "优化手段（索引、分表、读写分离、缓存）"
+    ],
+    "follow_up": [
+      "分库分表后怎么保证全局唯一 ID？",
+      "你项目中最大的表有多少数据量？"
+    ],
+    "standard_answer": "我的项目遵循第三范式做初始设计，但在查询热点场景做了适当反范式化。索引方面，主键用自增 ID，查询字段建立联合索引（最左前缀原则）。性能瓶颈出现在用户行为日志表，单表超过500万行后查询变慢。优化措施：①对 time+user_id 建联合索引；②按月份分表；③冷热数据分离（近3个月热数据在 MySQL，历史数据归档到 OSS）。",
+    "rubric": {
+      "accuracy": "数据库设计原则是否准确",
+      "structure": "是否按设计→瓶颈→优化→结果的逻辑展开",
+      "depth": "是否涉及索引原理、分表策略、读写分离等",
+      "communication": "是否有具体数据支撑（如500万行）"
+    }
+  },
+  {
+    "id": "ind_fund_014",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI工程/大模型应用实习",
+    "grade_range": ["大三", "大四", "研一", "研二"],
+    "topic": "计算机基础",
+    "question": "请解释 Transformer 的核心结构，Self-Attention 机制解决了什么问题？",
+    "answer_points": [
+      "Transformer 整体架构（Encoder-Decoder）",
+      "Self-Attention 的计算过程（Q、K、V）",
+      "解决了 RNN/LSTM 的什么问题（长距离依赖、并行化）",
+      "Multi-Head Attention 的作用"
+    ],
+    "follow_up": [
+      "Attention 的计算复杂度是多少？有什么优化方法？",
+      "BERT 和 GPT 在 Transformer 使用上有什么区别？"
+    ],
+    "standard_answer": "Transformer 由 Encoder 和 Decoder 组成，核心创新是 Self-Attention。计算过程：输入 X 通过三个线性变换得到 Q、K、V，然后 Attention(Q,K,V)=softmax(QK^T/√d_k)V。Self-Attention 解决了 RNN 无法并行计算和长距离依赖衰减的问题，可以直接建模任意两个 token 之间的关系。Multi-Head Attention 将 Q/K/V 投影到多个子空间并行计算，捕获不同维度的依赖关系。",
+    "rubric": {
+      "accuracy": "Self-Attention 公式和原理是否准确",
+      "structure": "是否按结构→机制→问题→优化的逻辑展开",
+      "depth": "是否提到复杂度、BERT vs GPT 差异",
+      "communication": "是否用公式或图示辅助说明"
+    }
+  },
+  {
+    "id": "ind_proj_015",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "后端开发实习",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "项目深挖",
+    "question": "请介绍你项目中的微服务拆分思路，服务之间是怎么通信的？",
+    "answer_points": [
+      "单体到微服务的演进原因",
+      "拆分维度（业务边界、数据独立性）",
+      "通信方式（同步 HTTP/gRPC vs 异步消息队列）",
+      "服务治理（注册发现、熔断、限流）"
+    ],
+    "follow_up": [
+      "分布式事务怎么处理的？",
+      "服务拆分后测试和部署复杂度怎么解决？"
+    ],
+    "standard_answer": "我的项目最初是单体架构，随着用户量增长，将用户服务、订单服务、支付服务拆分为独立微服务。拆分依据是业务边界和数据独立性：每个服务拥有独立数据库。服务间通信：同步场景用 gRPC（内部服务调用），异步场景用 Kafka（订单状态变更通知）。服务治理使用 Consul 做服务注册发现，Sentinel 做熔断限流。",
+    "rubric": {
+      "accuracy": "微服务概念和通信方式是否准确",
+      "structure": "是否按演进→拆分→通信→治理的逻辑展开",
+      "depth": "是否涉及分布式事务、一致性等深层问题",
+      "communication": "是否有清晰的服务拆分图或数据流描述"
+    }
+  },
+  {
+    "id": "gen_bal_016",
+    "interview_mode": "general_mock",
+    "focus_mode": "balanced",
+    "role_or_major": "综合模拟面试",
+    "grade_range": ["大一", "大二", "大三", "大四", "研一", "研二"],
+    "topic": "表达能力",
+    "question": "请用一分钟向一个非技术背景的人解释什么是 API。",
+    "answer_points": [
+      "使用生活中的类比（如餐厅点餐）",
+      "解释请求-响应模式",
+      "说明 API 的作用（让不同系统对话）",
+      "举一个具体例子"
+    ],
+    "follow_up": [
+      "REST API 和 GraphQL 有什么区别？",
+      "一个好的 API 设计应该遵循什么原则？"
+    ],
+    "standard_answer": "好的回答应该用一个生活类比：'API 就像餐厅的服务员。你（客户端）不用去厨房（服务端）自己拿菜，而是看菜单（API 文档），告诉服务员你要什么（发送请求），服务员把菜端给你（返回响应）。' 然后过渡到技术定义：API 是不同软件系统之间的通信协议，定义了请求格式、参数和返回数据结构。",
+    "rubric": {
+      "accuracy": "概念解释是否准确且易懂",
+      "structure": "是否有类比→定义→例子的层次",
+      "depth": "是否展示将复杂概念简单化的能力",
+      "communication": "语言是否通俗、流畅、有感染力"
+    }
+  },
+  {
+    "id": "gen_bal_017",
+    "interview_mode": "general_mock",
+    "focus_mode": "balanced",
+    "role_or_major": "综合模拟面试",
+    "grade_range": ["大三", "大四", "研一", "研二"],
+    "topic": "动机问题",
+    "question": "你为什么想做后端开发/AI工程？你对自己的职业规划是什么？",
+    "answer_points": [
+      "真实的兴趣来源（项目经历、课程启发）",
+      "具体的能力匹配点",
+      "短期目标（1-3年）",
+      "长期目标（5年+）"
+    ],
+    "follow_up": [
+      "如果工作内容和预期不符，你会怎么处理？",
+      "你最近在学习什么新技术？"
+    ],
+    "standard_answer": "回答应该真诚具体：'我在大二做课程项目时第一次用 Flask 搭了一个简易博客，发现我很喜欢设计系统架构和解决高并发问题。之后我读了《Designing Data-Intensive Applications》，对分布式系统产生了浓厚兴趣。短期目标是成为一名能独立负责模块的后端工程师，长期目标是成长为系统架构师，能设计高可用的分布式系统。'",
+    "rubric": {
+      "accuracy": "是否真实、具体，而非套话",
+      "structure": "是否有过去→现在→未来的时间线",
+      "depth": "是否有具体的书、项目、技术支撑",
+      "communication": "是否真诚、自信、有逻辑"
+    }
+  },
+  {
+    "id": "gen_fund_018",
+    "interview_mode": "general_mock",
+    "focus_mode": "fundamentals",
+    "role_or_major": "综合模拟面试",
+    "grade_range": ["大二", "大三", "大四", "研一"],
+    "topic": "基础与项目混合",
+    "question": "Git 中 merge 和 rebase 有什么区别？你在团队项目中怎么选择？",
+    "answer_points": [
+      "merge 的原理和结果（保留历史，产生 merge commit）",
+      "rebase 的原理和结果（线性历史，重写 commit）",
+      "各自适用场景",
+      "团队协作中的选择策略"
+    ],
+    "follow_up": [
+      "rebase 的 golden rule 是什么？",
+      "如果 rebase 出现冲突怎么处理？"
+    ],
+    "standard_answer": "merge 将两个分支的历史合并，保留所有 commit，产生一个 merge commit，适合需要完整记录协作历史的场景。rebase 将当前分支的 commit 在目标分支上重新播放，产生线性历史，适合个人功能分支在合并前保持整洁。团队规范：个人功能分支用 rebase 同步 main，合并到 main 时用 merge（保留功能分支的完整历史）。绝对不要对已经 push 到远程的公共分支做 rebase。",
+    "rubric": {
+      "accuracy": "merge 和 rebase 的原理是否准确",
+      "structure": "是否按原理→差异→场景→规范的逻辑展开",
+      "depth": "是否提到 golden rule、冲突处理",
+      "communication": "是否有明确的团队协作规范"
+    }
+  },
+  {
+    "id": "gen_proj_019",
+    "interview_mode": "general_mock",
+    "focus_mode": "project_experience",
+    "role_or_major": "综合模拟面试",
+    "grade_range": ["大三", "大四", "研一", "研二"],
+    "topic": "基础与项目混合",
+    "question": "你项目中最有成就感的一个优化是什么？优化前后的数据对比是怎样的？",
+    "answer_points": [
+      "优化前的痛点和数据",
+      "优化方案的选择和对比",
+      "优化后的效果数据",
+      "从中学到了什么"
+    ],
+    "follow_up": [
+      "如果数据量再扩大10倍，这个优化还够用吗？",
+      "有没有尝试其他方案但最终没选的？为什么？"
+    ],
+    "standard_answer": "最有成就感的优化是将系统 QPS 从 200 提升到 1800。痛点是促销活动期间接口响应时间超过 3 秒。我做了三个优化：①加 Redis 缓存热点数据（命中率 85%）；②数据库查询加索引（慢查询从 200ms 降到 10ms）；③接口做异步化改造。最终 P99 延迟从 3.2s 降到 180ms，QPS 提升 9 倍。这个经历让我明白性能优化要 profiling 先行，不能凭感觉优化。",
+    "rubric": {
+      "accuracy": "数据是否真实可信",
+      "structure": "是否按痛点→方案→数据→收获的 STAR 结构",
+      "depth": "是否展示工程思维和取舍能力",
+      "communication": "是否有具体数据支撑，令人信服"
+    }
+  },
+  {
+    "id": "gen_bal_020",
+    "interview_mode": "general_mock",
+    "focus_mode": "balanced",
+    "role_or_major": "综合模拟面试",
+    "grade_range": ["大三", "大四", "研一", "研二"],
+    "topic": "表达能力",
+    "question": "请描述一次你在团队中遇到冲突的经历，你是怎么解决的？",
+    "answer_points": [
+      "具体场景（和谁、因为什么）",
+      "各方的立场和诉求",
+      "你采取的沟通和协调措施",
+      "最终结果和反思"
+    ],
+    "follow_up": [
+      "如果重新处理，你会怎么做？",
+      "你认为技术意见分歧时应该听谁的？"
+    ],
+    "standard_answer": "在我做毕业设计时，队友想用 MongoDB（他认为灵活），我想用 PostgreSQL（我认为关系型更稳定）。我没有强行说服，而是我们一起做了一个对比实验：用两种数据库各跑1000次查询，记录性能和一致性表现。实验结果显示 PostgreSQL 在我们的查询模式下快 30%。队友接受了结果，我们还一起写了技术选型文档。这件事让我明白：技术分歧最好用数据和实验说话，而不是主观争论。",
+    "rubric": {
+      "accuracy": "场景是否真实、具体",
+      "structure": "是否按情境→冲突→行动→结果的结构展开",
+      "depth": "是否展示情商和解决问题能力",
+      "communication": "是否体现团队合作意识"
+    }
+  },
+  {
+    "id": "grad_fund_021",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "fundamentals",
+    "role_or_major": "人工智能保研",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "专业基础",
+    "question": "请解释梯度消失和梯度爆炸问题，以及常见的解决方法。",
+    "answer_points": [
+      "梯度消失和梯度爆炸的原因（链式法则）",
+      "深层网络中的具体表现",
+      "解决方法（初始化、BatchNorm、残差连接、梯度裁剪）",
+      "各自的适用场景"
+    ],
+    "follow_up": [
+      "Batch Normalization 为什么能缓解梯度消失？",
+      "ResNet 的残差连接从数学上怎么理解？"
+    ],
+    "standard_answer": "梯度消失：深层网络反向传播时，梯度通过链式法则连乘，若激活函数导数小于1（如 sigmoid 最大 0.25），梯度逐层指数级衰减，导致前面层几乎不更新。梯度爆炸：若权重初始化过大，梯度连乘后指数级增长，导致参数更新失控。解决方法：① Xavier/He 初始化控制初始梯度尺度；② BatchNorm 稳定每层输入分布；③ 残差连接提供梯度捷径；④ 梯度裁剪限制最大梯度范数。",
+    "rubric": {
+      "accuracy": "数学原理是否准确",
+      "structure": "是否按原因→表现→方法→场景的逻辑展开",
+      "depth": "是否深入解释链式法则和 BN 原理",
+      "communication": "是否用公式或图示辅助"
+    }
+  },
+  {
+    "id": "ind_fund_022",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "后端开发实习",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "计算机基础",
+    "question": "HTTP 和 HTTPS 有什么区别？HTTPS 的握手过程是怎样的？",
+    "answer_points": [
+      "HTTP 明文传输 vs HTTPS 加密传输",
+      "HTTPS 依赖 TLS/SSL",
+      "TLS 握手过程（ClientHello→ServerHello→证书交换→密钥协商→Finished）",
+      "对称加密和非对称加密的分工"
+    ],
+    "follow_up": [
+      "TLS 1.2 和 TLS 1.3 的握手有什么区别？",
+      "中间人攻击是怎么发生的？HTTPS 怎么防御？"
+    ],
+    "standard_answer": "HTTP 是明文传输，容易被窃听和篡改；HTTPS 在 HTTP 下层加了 TLS 加密层。TLS 握手：①客户端发送 ClientHello（支持的 TLS 版本、加密套件、随机数）；②服务端回复 ServerHello（选定版本和套件、证书、随机数）；③客户端验证证书并生成预主密钥，用服务端公钥加密发送；④双方用随机数和预主密钥生成会话密钥；⑤后续通信用对称加密。TLS 1.3 将握手从 2-RTT 优化到 1-RTT。",
+    "rubric": {
+      "accuracy": "TLS 握手步骤是否准确",
+      "structure": "是否按区别→协议→握手→加密的逻辑展开",
+      "depth": "是否提到 TLS 1.3、中间人攻击",
+      "communication": "是否清晰区分对称和非对称加密"
+    }
+  },
+  {
+    "id": "ind_proj_023",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI工程/大模型应用实习",
+    "grade_range": ["大三", "大四", "研一", "研二"],
+    "topic": "项目深挖",
+    "question": "你的大模型应用是怎么做效果评估的？有没有做 A/B 测试？",
+    "answer_points": [
+      "评估指标体系（准确率、召回率、用户满意度）",
+      "人工评估流程（标注、打分、一致性检验）",
+      "A/B 测试设计（对照组、实验组、指标、显著性）",
+      "迭代优化闭环"
+    ],
+    "follow_up": [
+      "大模型输出不稳定，怎么保证评估结果可信？",
+      "用户满意度怎么量化？"
+    ],
+    "standard_answer": "我建立了三层评估体系：①自动化指标（BLEU、ROUGE 用于生成质量，准确率用于分类）；②人工评估（3位标注员对 100 条样本按 1-5 分打分，计算 Fleiss Kappa 一致性）；③用户反馈（点赞/点踩比率、会话轮次）。A/B 测试：将用户随机分为对照组（旧 prompt）和实验组（新 prompt），运行两周后对比满意度（对照组 72% vs 实验组 81%，p<0.05）。基于结果持续迭代 prompt 和 RAG 策略。",
+    "rubric": {
+      "accuracy": "评估指标和 A/B 测试设计是否科学",
+      "structure": "是否按指标→人工→A/B→迭代的逻辑展开",
+      "depth": "是否涉及统计显著性、一致性检验",
+      "communication": "是否有具体数据支撑"
+    }
+  },
+  {
+    "id": "gen_fund_024",
+    "interview_mode": "general_mock",
+    "focus_mode": "fundamentals",
+    "role_or_major": "综合模拟面试",
+    "grade_range": ["大二", "大三", "大四", "研一"],
+    "topic": "基础与项目混合",
+    "question": "什么是幂等性？你在接口设计中是怎么保证幂等的？",
+    "answer_points": [
+      "幂等性的定义（多次执行结果相同）",
+      "为什么需要幂等（网络重试、重复提交）",
+      "实现方法（唯一请求 ID、Token 机制、状态机）",
+      "具体项目中的应用"
+    ],
+    "follow_up": [
+      "POST 请求天然不幂等，你怎么处理？",
+      "分布式环境下怎么保证全局唯一 ID？"
+    ],
+    "standard_answer": "幂等性指一个操作执行一次和多次的效果相同。在网络不稳定场景下，客户端重试可能导致请求重复发送。实现方法：①前端按钮置灰+防抖，减少重复点击；②后端使用唯一请求 ID（如 UUID），在 Redis 中设置短期过期标记，重复请求直接返回上次结果；③数据库唯一索引防重复写入；④状态机控制（如订单状态只能从待支付→已支付，不能反向）。我的项目中用 Redis + 唯一请求 ID 实现了 5 分钟内的接口幂等。",
+    "rubric": {
+      "accuracy": "幂等性概念和实现方法是否准确",
+      "structure": "是否按定义→原因→方法→应用的逻辑展开",
+      "depth": "是否涉及分布式唯一 ID、状态机",
+      "communication": "是否有具体实现细节和时间参数"
+    }
+  },
+  {
+    "id": "gen_proj_025",
+    "interview_mode": "general_mock",
+    "focus_mode": "project_experience",
+    "role_or_major": "综合模拟面试",
+    "grade_range": ["大三", "大四", "研一", "研二"],
+    "topic": "基础与项目混合",
+    "question": "请介绍一个你从零开始搭建的系统，它的完整技术栈是什么？",
+    "answer_points": [
+      "系统目标和用户场景",
+      "前端技术栈及选择理由",
+      "后端技术栈及选择理由",
+      "部署和运维方案",
+      "遇到的挑战和解决方案"
+    ],
+    "follow_up": [
+      "如果用户量扩大100倍，哪个组件最先成为瓶颈？",
+      "为什么选择这个技术栈而不是其他方案？"
+    ],
+    "standard_answer": "我搭建了一个面向校园二手交易的小程序。前端用微信小程序原生框架（用户触达成本低），后端用 FastAPI + PostgreSQL（开发效率高、SQL 支持完善），部署在阿里云 ECS + Nginx 反向代理。挑战：图片上传慢。解决：接入 OSS + CDN，图片上传从 3s 降到 200ms。运维：用 systemd 管理服务，配置 logrotate 轮转日志。如果扩大100倍，数据库会是第一个瓶颈，我会先引入 Redis 缓存 + 读写分离。",
+    "rubric": {
+      "accuracy": "技术栈选择理由是否合理",
+      "structure": "是否按场景→技术→挑战→扩展的逻辑展开",
+      "depth": "是否展示架构演进思维",
+      "communication": "是否清晰展示全栈能力"
+    }
+  },
+  {
+    "id": "grad_bal_026",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "balanced",
+    "role_or_major": "软件工程保研",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "科研兴趣",
+    "question": "如果研究生期间导师给你的方向和你预想的不太一样，你会怎么调整自己？",
+    "answer_points": [
+      "表达对导师专业判断的尊重",
+      "说明自己快速学习和适应的能力",
+      "提到寻找交叉点的策略",
+      "展示积极心态和成长型思维"
+    ],
+    "follow_up": [
+      "你有没有遇到过类似需要调整方向的情况？",
+      "如果方向完全不喜欢怎么办？"
+    ],
+    "standard_answer": "首先我会相信导师在领域内的专业判断，因为导师对前沿趋势和团队优势的理解通常更深。其次我会主动阅读该方向的代表性论文，寻找它和我原有兴趣的交叉点。比如我原本想做推荐系统，如果导师让我做图神经网络，我会探索 Graph Neural Network 在推荐场景的应用（如 Pinterest 的 PinSage）。如果经过 3-6 个月深入尝试后确实不合适，我会以数据和实验为依据，礼貌地和导师沟通，提出一个结合双方意见的折中方案。",
+    "rubric": {
+      "accuracy": "态度是否成熟、务实",
+      "structure": "是否按尊重→学习→寻找交叉→沟通的逻辑展开",
+      "depth": "是否展示适应能力和解决问题思维",
+      "communication": "是否体现情商和沟通技巧"
+    }
+  },
+  {
+    "id": "ind_fund_027",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "后端开发实习",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "计算机基础",
+    "question": "请解释一致性哈希的原理，以及它在分布式缓存中的应用。",
+    "answer_points": [
+      "传统哈希取模的问题（节点变化时大量数据迁移）",
+      "一致性哈希的环状结构",
+      "虚拟节点解决数据倾斜",
+      "在 Redis Cluster 或分布式缓存中的应用"
+    ],
+    "follow_up": [
+      "虚拟节点一般设置多少个？",
+      "一致性哈希和槽分区（如 Redis Cluster 的 16384 槽）有什么区别？"
+    ],
+    "standard_answer": "传统哈希取模 hash(key) % N，当节点数 N 变化时，几乎所有 key 的映射都会改变，导致大规模数据迁移。一致性哈希将节点和 key 都映射到一个虚拟环上（0~2^32-1），每个 key 顺时针找到最近的节点。节点增减时只影响该节点相邻的一小段数据。虚拟节点：每个物理节点在环上对应多个虚拟节点，解决数据倾斜问题（如 150 个虚拟节点/物理节点）。Redis Cluster 使用 16384 个哈希槽，比一致性哈希更直观易管理。",
+    "rubric": {
+      "accuracy": "一致性哈希原理是否准确",
+      "structure": "是否按问题→原理→优化→应用的逻辑展开",
+      "depth": "是否提到虚拟节点、槽分区对比",
+      "communication": "是否用环状图辅助说明"
+    }
+  },
+  {
+    "id": "ind_proj_028",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "后端开发实习",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "项目深挖",
+    "question": "你项目中的日志系统是怎么设计的？日志量大了之后怎么处理？",
+    "answer_points": [
+      "日志分级（DEBUG/INFO/WARNING/ERROR）",
+      "日志格式和结构化日志",
+      "日志采集和存储方案",
+      "日志量大时的处理（采样、分级存储、归档）"
+    ],
+    "follow_up": [
+      "日志中能不能打印用户敏感信息？",
+      "怎么从日志中快速定位线上问题？"
+    ],
+    "standard_answer": "我的项目使用 Python logging 模块，按级别分离：DEBUG 只在开发环境开启，生产环境记录 INFO 及以上。格式：时间|级别|模块|请求ID|消息。每个请求生成唯一 trace_id，贯穿所有服务调用，便于串联日志。存储：本地保留 7 天，超过 10MB 自动轮转（logrotate），同时用 Filebeat 采集到 Elasticsearch，Kibana 做查询。日志量大时：①ERROR 级别 100% 保留，INFO 做 10% 采样；②7 天以上日志压缩归档到 OSS；③敏感信息（手机号、密码）统一脱敏处理。",
+    "rubric": {
+      "accuracy": "日志设计是否规范",
+      "structure": "是否按分级→格式→采集→治理的逻辑展开",
+      "depth": "是否涉及 trace_id、脱敏、采样、归档",
+      "communication": "是否有明确的运维规范"
+    }
+  },
+  {
+    "id": "gen_bal_029",
+    "interview_mode": "general_mock",
+    "focus_mode": "balanced",
+    "role_or_major": "综合模拟面试",
+    "grade_range": ["大三", "大四", "研一", "研二"],
+    "topic": "动机问题",
+    "question": "你最大的缺点是什么？你是怎么克服的？",
+    "answer_points": [
+      "选择一个真实但非致命的缺点",
+      "说明这个缺点在什么场景下会影响工作",
+      "描述具体的改进措施",
+      "展示已经取得的进步"
+    ],
+    "follow_up": [
+      "这个缺点现在完全克服了吗？",
+      "如果再次遇到类似场景，你会怎么处理？"
+    ],
+    "standard_answer": "我过去的一个缺点是在技术方案讨论中不够主动表达不同意见。有一次团队讨论技术选型时，我发现了方案中的一个潜在风险，但没有及时提出，导致后期返工。之后我刻意练习：①会前提前准备问题和观点；②会议中给自己设定'至少提出1个疑问'的目标；③会后主动和相关负责人沟通。现在我能更自信地表达技术观点，同时也能以建设性的方式提出反对意见，而不是单纯否定。",
+    "rubric": {
+      "accuracy": "缺点是否真实、非致命",
+      "structure": "是否按缺点→影响→措施→进步的逻辑展开",
+      "depth": "是否展示自我认知和成长能力",
+      "communication": "是否真诚、不回避、不虚假"
+    }
+  },
+  {
+    "id": "grad_fund_030",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "fundamentals",
+    "role_or_major": "计算机科学与技术保研",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "专业基础",
+    "question": "请解释操作系统中的虚拟内存，以及页面置换算法有哪些？",
+    "answer_points": [
+      "虚拟内存的定义和作用",
+      "页表和地址转换",
+      "页面置换算法（FIFO、LRU、LFU、Clock）",
+      "各算法的优缺点和适用场景"
+    ],
+    "follow_up": [
+      "LRU 怎么实现？时间复杂度是多少？",
+      "Linux 实际用的是什么页面置换策略？"
+    ],
+    "standard_answer": "虚拟内存让进程以为自己拥有连续的大内存，实际通过页表映射到物理内存和磁盘。虚拟地址→页表→物理地址。页面置换算法：FIFO（先进先出，简单但可能淘汰常用页）、LRU（最近最少使用，性能好但实现复杂）、LFU（最少使用）、Clock（近似 LRU，用访问位环形扫描）。Linux 使用改进的 Clock 算法（LRU 双链表：active 和 inactive list）。LRU 可用 HashMap + 双向链表实现，O(1) 查询和更新。",
+    "rubric": {
+      "accuracy": "虚拟内存和置换算法是否准确",
+      "structure": "是否按定义→机制→算法→实现的逻辑展开",
+      "depth": "是否提到 Linux 实际策略、LRU 实现",
+      "communication": "是否用类比辅助理解"
+    }
+  },
+  {
+    "id": "ind_fund_031",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI工程/大模型应用实习",
+    "grade_range": ["大三", "大四", "研一", "研二"],
+    "topic": "算法思路",
+    "question": "给定一个数组，找出其中第 K 大的元素，要求时间复杂度优于 O(n log n)。",
+    "answer_points": [
+      "快速选择算法（QuickSelect）",
+      "平均 O(n) 时间复杂度",
+      "最坏 O(n^2) 及优化（随机 pivot）",
+      "最小堆方法 O(n log k)"
+    ],
+    "follow_up": [
+      "如果数据量非常大（10亿条），内存放不下怎么办？",
+      "如果数据是流式输入的，怎么找 Top K？"
+    ],
+    "standard_answer": "最优解是 QuickSelect：类似快排，每次随机选一个 pivot，将数组分为大于 pivot 和小于 pivot 两部分。如果 pivot 正好是第 K 大，直接返回；否则在对应的一半继续查找。平均时间复杂度 O(n)，最坏 O(n^2)，随机 pivot 可大幅降低最坏情况概率。最小堆方法：维护一个大小为 K 的最小堆，遍历数组，比堆顶大就替换，最终堆顶就是第 K 大。时间复杂度 O(n log k)，适合流式数据或 K 远小于 n 的场景。",
+    "rubric": {
+      "accuracy": "QuickSelect 原理和复杂度是否准确",
+      "structure": "是否按思路→算法→复杂度→优化的逻辑展开",
+      "depth": "是否涉及随机 pivot、堆方法、大数据场景",
+      "communication": "是否用伪代码或步骤说明"
+    }
+  },
+  {
+    "id": "gen_proj_032",
+    "interview_mode": "general_mock",
+    "focus_mode": "project_experience",
+    "role_or_major": "综合模拟面试",
+    "grade_range": ["大三", "大四", "研一", "研二"],
+    "topic": "基础与项目混合",
+    "question": "你的项目有没有做监控和告警？出问题的时候你怎么排查？",
+    "answer_points": [
+      "监控指标（CPU、内存、QPS、延迟、错误率）",
+      "监控工具（Prometheus + Grafana）",
+      "告警规则（P99 延迟 > 200ms，错误率 > 1%）",
+      "排查流程（日志→指标→链路→根因）"
+    ],
+    "follow_up": [
+      "有没有做过故障复盘？",
+      "怎么防止同样的问题再次发生？"
+    ],
+    "standard_answer": "我的项目接入了 Prometheus + Grafana 监控，核心指标：QPS、P99 延迟、错误率、CPU/内存使用率。告警规则：P99 延迟 > 200ms 持续 5 分钟，或错误率 > 1% 持续 2 分钟，通过钉钉机器人通知。排查流程：①看 Grafana 大盘确认问题范围；②查错误日志定位异常堆栈；③用 trace_id 串联分布式调用链；④复现问题并修复；⑤写故障复盘文档，记录根因、影响、修复方案、预防措施。曾遇到 Redis 连接池耗尽导致接口超时，修复后增加了连接池监控和自动扩缩容策略。",
+    "rubric": {
+      "accuracy": "监控和告警方案是否规范",
+      "structure": "是否按监控→告警→排查→复盘的逻辑展开",
+      "depth": "是否涉及 trace_id、故障复盘、预防措施",
+      "communication": "是否有具体案例支撑"
+    }
+  },
+  {
+    "id": "ind_proj_033",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "后端开发实习",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "项目深挖",
+    "question": "你项目中有没有用到消息队列？什么场景下用的？怎么保证消息不丢失？",
+    "answer_points": [
+      "使用场景（异步处理、削峰填谷、解耦）",
+      "消息队列选型理由",
+      "生产者确认机制",
+      "消费者 ACK 机制",
+      "消息持久化"
+    ],
+    "follow_up": [
+      "消息重复消费怎么办？",
+      "消息顺序性怎么保证？"
+    ],
+    "standard_answer": "我的项目在订单支付通知场景用了 Kafka：支付成功后发消息到 Kafka，库存服务、物流服务、短信服务各自消费，实现系统解耦。削峰：大促时支付峰值 5000 QPS，下游服务只支持 2000 QPS，Kafka 做缓冲避免下游被打垮。保证不丢失：①生产者开启 acks=all，等所有副本确认；②Kafka 配置 replica.factor=3，min.insync.replicas=2；③消费者手动 ACK，处理完业务再提交 offset；④消息持久化到磁盘（log.flush）。防重复：消费者做幂等（唯一订单 ID + 状态机），防重发导致重复处理。",
+    "rubric": {
+      "accuracy": "消息队列原理和可靠性机制是否准确",
+      "structure": "是否按场景→选型→机制→优化的逻辑展开",
+      "depth": "是否涉及副本、ISR、幂等、顺序性",
+      "communication": "是否有具体 QPS 数据支撑"
+    }
+  },
+  {
+    "id": "grad_proj_034",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "project_experience",
+    "role_or_major": "人工智能保研",
+    "grade_range": ["大三", "大四", "研一"],
+    "topic": "项目经历",
+    "question": "你项目的创新点是什么？和现有工作相比有什么优势？",
+    "answer_points": [
+      "明确说明创新点（方法创新、应用创新、效率提升）",
+      "和现有 SOTA 或经典方法的对比",
+      "定量实验结果支撑",
+      "局限性及未来改进方向"
+    ],
+    "follow_up": [
+      "审稿人如果质疑你的创新点不够，你怎么回应？",
+      "这个工作如果投稿，你打算投哪个会议？"
+    ],
+    "standard_answer": "我的项目创新点是提出了一种轻量化的注意力机制，在保持模型精度不变的前提下，将推理速度提升了 35%。和现有工作对比：①相比 Transformer 标准自注意力（O(n^2)），我的方法通过局部窗口注意力将复杂度降到 O(n log n)；②相比 Swin Transformer，我的方法不需要复杂的窗口移位操作，实现更简单。实验结果：在 CIFAR-100 上，Top-1 准确率 87.2%（对比基线 86.9%），推理速度从 45ms 降到 29ms。局限性：仅在图像分类任务验证，尚未在检测和分割任务测试。未来计划扩展到多尺度特征融合。",
+    "rubric": {
+      "accuracy": "创新点是否明确、具体",
+      "structure": "是否按创新→对比→数据→局限的逻辑展开",
+      "depth": "是否展示对领域现状的了解",
+      "communication": "是否有定量数据支撑，令人信服"
+    }
+  },
+  {
+    "id": "gen_bal_035",
+    "interview_mode": "general_mock",
+    "focus_mode": "balanced",
+    "role_or_major": "综合模拟面试",
+    "grade_range": ["大三", "大四", "研一", "研二"],
+    "topic": "表达能力",
+    "question": "请用一句话概括你的核心竞争力，然后用两分钟展开说明。",
+    "answer_points": [
+      "一句话核心（如：全栈开发能力+系统优化经验）",
+      "展开说明 2-3 个支撑点",
+      "每个支撑点配一个具体案例",
+      "和目标岗位的匹配度"
+    ],
+    "follow_up": [
+      "和你竞争同一个岗位的人，你比他们强在哪里？",
+      "你的核心竞争力如果放到5年后，还够用吗？"
+    ],
+    "standard_answer": "我的核心竞争力是'能独立负责从 0 到 1 的系统开发，并在高并发场景下做性能优化'。支撑点一：全栈能力。我独立完成了一个校园二手交易平台，从前端小程序到后端 API 到数据库设计到阿里云部署，全流程自己负责。支撑点二：性能优化经验。在项目中遇到接口响应慢的问题，通过加缓存、建索引、异步化改造，将 QPS 从 200 提升到 1800，P99 延迟从 3 秒降到 180ms。支撑点三：工程规范。我注重代码质量、日志监控和故障复盘，写过 3 篇团队技术分享文档。这些能力让我能快速上手后端开发工作，并为团队带来可量化的性能提升。",
+    "rubric": {
+      "accuracy": "核心竞争力是否真实、具体",
+      "structure": "是否按一句话→展开→案例→匹配的结构",
+      "depth": "是否有数据支撑、展示成长潜力",
+      "communication": "是否自信、有说服力、有感染力"
+    }
+  }
+]
