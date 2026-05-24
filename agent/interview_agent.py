@@ -34,6 +34,36 @@ _QUESTION_BANK: List[Dict[str, Any]] = []
 # In-memory stores (no database per constraints)
 RESUME_STORE: Dict[str, str] = {}
 INTERVIEW_SESSIONS: Dict[str, Dict[str, Any]] = {}
+USER_PROFILE_STORE: Dict[str, Dict[str, Any]] = {}
+
+
+def save_profile(profile_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Save or update a user profile. Returns the saved profile with profile_id."""
+    profile_id = profile_data.get("profile_id")
+    if not profile_id:
+        profile_id = str(uuid.uuid4())[:12]
+
+    now = datetime.now().isoformat()
+    profile = {
+        "profile_id": profile_id,
+        "grade": profile_data.get("grade", ""),
+        "major": profile_data.get("major", ""),
+        "school_or_background": profile_data.get("school_or_background", ""),
+        "target": profile_data.get("target", ""),
+        "target_school_or_major": profile_data.get("target_school_or_major", ""),
+        "preferred_interview_mode": profile_data.get("preferred_interview_mode", "general_mock"),
+        "preferred_focus_mode": profile_data.get("preferred_focus_mode", "balanced"),
+        "resume_id": profile_data.get("resume_id", ""),
+        "resume_preview": profile_data.get("resume_preview", ""),
+        "created_at": profile_data.get("created_at", now),
+        "updated_at": now,
+    }
+    USER_PROFILE_STORE[profile_id] = profile
+    return profile
+
+
+def get_profile(profile_id: str) -> Optional[Dict[str, Any]]:
+    return USER_PROFILE_STORE.get(profile_id)
 
 
 def _load_bank() -> List[Dict[str, Any]]:
@@ -83,6 +113,7 @@ def _build_interviewer_system_prompt(
     role_or_major: str,
     grade: str,
     resume_text: str,
+    profile: Optional[Dict[str, Any]] = None,
 ) -> str:
     mode_label = {
         "graduate_reexam": "研究生复试/保研面试",
@@ -100,13 +131,31 @@ def _build_interviewer_system_prompt(
         "不要使用任何 Markdown 标题格式（如 # ##）。"
         "使用纯文本或简单的列表格式即可。"
     )
+
+    if profile:
+        prompt += "\n\n=== 候选人资料 ==="
+        if profile.get("major"):
+            prompt += f"\n专业: {profile['major']}"
+        if profile.get("school_or_background"):
+            prompt += f"\n学校/背景: {profile['school_or_background']}"
+        if profile.get("target"):
+            prompt += f"\n目标岗位: {profile['target']}"
+        if profile.get("target_school_or_major"):
+            prompt += f"\n目标院校/专业方向: {profile['target_school_or_major']}"
+        prompt += "\n请在面试中结合以上资料提出针对性问题。"
+
     if resume_text and resume_text.strip():
+        # Truncate resume for system prompt to avoid token bloat
+        resume_snippet = resume_text.strip()
+        if len(resume_snippet) > 3000:
+            resume_snippet = resume_snippet[:3000] + "\n\n[简历内容过长，已截断]"
         prompt += (
             "\n\n你已经阅读了候选人的简历，内容如下：\n"
             "---\n"
-            f"{resume_text}\n"
+            f"{resume_snippet}\n"
             "---\n"
             "请在面试中结合简历内容提出针对性问题或追问。"
+            "特别关注简历中提到的项目、技术栈和量化成果。"
         )
     return prompt
 
@@ -160,12 +209,22 @@ def _build_prompt_for_answer(
     current_idx = session["current_idx"]
     current_q = questions[current_idx] if current_idx < len(questions) else None
     total = len(questions)
+    profile = session.get("profile")
 
     lines = []
     lines.append("=== 面试上下文 ===")
     lines.append(f"面试类型: {session['mode']}")
     lines.append(f"目标岗位/专业: {session['role']}")
     lines.append(f"年级: {session['grade']}")
+    if profile:
+        if profile.get("major"):
+            lines.append(f"专业: {profile['major']}")
+        if profile.get("school_or_background"):
+            lines.append(f"学校/背景: {profile['school_or_background']}")
+        if profile.get("target"):
+            lines.append(f"目标岗位: {profile['target']}")
+        if profile.get("target_school_or_major"):
+            lines.append(f"目标院校/专业: {profile['target_school_or_major']}")
     lines.append("")
 
     # Previous Q&A history
@@ -201,7 +260,7 @@ def _build_prompt_for_answer(
             lines.append(
                 f"【重要规则】当前是最后一题（第 {current_idx + 1} / {total} 题）。\n"
                 "- 请完成本题点评，然后给出总体总结和对候选人的建议。\n"
-                "- 最后明确提示：现在进入反问环节，你可以向面试官提问。\n"
+                "- 最后明确提示：本轮模拟面试已完成。\n"
                 "- 绝对不要再提出新的正式面试题。\n"
             )
         else:
@@ -210,7 +269,7 @@ def _build_prompt_for_answer(
                 f"【重要规则】当前是第 {current_idx + 1} / {total} 题，不是最后一题。\n"
                 "- 你只能完成本题点评，然后自然过渡到下一道题。\n"
                 "- 绝对禁止说以下词汇或表达：反问环节、面试结束、今天就到这里、最后总结、"
-                "所有题目已完成、最后一题已经结束、进入总结、总结环节、面试到此结束、正式面试结束、提问环节。\n"
+                "所有题目已完成、最后一题已经结束、进入总结、总结环节、面试到此结束、正式面试结束、提问环节、本轮模拟面试已完成。\n"
                 "- 不要给候选人任何面试即将结束的信号。\n"
                 f"- 直接给出下一道题的题目内容：{next_q['question']}\n"
             )
@@ -228,9 +287,9 @@ def _build_prompt_for_answer(
             "[你的面试官回复。"
         )
         if is_last_question:
-            lines.append("完成本题点评并给出总体总结，最后提示进入反问环节。不要再提出新的正式面试题。]")
+            lines.append("完成本题点评并给出总体总结，最后提示本轮模拟面试已完成。不要再提出新的正式面试题。]")
         else:
-            lines.append("完成本题点评后自然过渡到下一题。绝对不要说面试结束或反问环节。]")
+            lines.append("完成本题点评后自然过渡到下一题。绝对不要说面试结束或反问环节或本轮模拟面试已完成。]")
     else:
         lines.append("面试已经结束。请给候选人一个总体评价和建议。")
 
@@ -315,6 +374,7 @@ def start_interview(
     grade: Optional[str],
     resume_session_id: Optional[str] = None,
     num_questions: int = 5,
+    profile: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Start a new interview session, pick questions, and return session info."""
     session_id = str(uuid.uuid4())[:12]
@@ -344,6 +404,7 @@ def start_interview(
         "status": "ready",
         "resume_text": resume_text,
         "resume_session_id": resume_session_id,
+        "profile": profile,
     }
 
     INTERVIEW_SESSIONS[session_id] = session
@@ -381,7 +442,7 @@ def submit_answer(
         summary["interviewer_reply"] = ""
         summary["evaluation"] = {}
         summary["next_question"] = None
-        summary["closing_message"] = "现在进入反问环节，你可以向面试官提问。"
+        summary["closing_message"] = "本轮模拟面试已完成。"
         return summary
 
     current_q = questions[current_idx]
@@ -395,6 +456,7 @@ def submit_answer(
         session["role"],
         session["grade"],
         session.get("resume_text", ""),
+        session.get("profile"),
     )
 
     llm_response = ""
@@ -424,7 +486,7 @@ def submit_answer(
                     f"总体反馈: 系统暂时无法评分。\n\n"
                     f"INTERVIEWER:\n"
                     f"感谢你的回答。由于系统原因，本次评分由系统暂代。\n\n"
-                    f"现在进入反问环节，你可以向面试官提问。"
+                    f"本轮模拟面试已完成。"
                 )
     else:
         # Mock mode: generate simple feedback
@@ -460,7 +522,7 @@ def submit_answer(
             "evaluation": evaluation,
             "next_question": None,
             "summary": summary,
-            "closing_message": "现在进入反问环节，你可以向面试官提问。",
+            "closing_message": "本轮模拟面试已完成。",
             "progress": {"current": total, "total": total},
         }
 
@@ -504,7 +566,7 @@ def _build_mock_evaluation(
             f"感谢你的回答。下面是对你整场面试的总结。\n\n"
             f"你在面试中展现了良好的基础知识和表达能力。建议在后续学习中多关注实际项目经验，"
             f"并在回答中增加具体的数据和案例支撑。\n\n"
-            f"现在进入反问环节，你可以向面试官提问。"
+            f"本轮模拟面试已完成。"
         )
 
     next_q_text = f"下一题：{questions[current_idx + 1]['question']}"
@@ -531,7 +593,7 @@ def _build_summary(session: Dict[str, Any]) -> Dict[str, Any]:
             "summary": "未作答任何题目。",
             "overall_scores": {},
             "answers": [],
-            "closing_message": "现在进入反问环节，你可以向面试官提问。",
+            "closing_message": "本轮模拟面试已完成。",
             "progress": {"current": 0, "total": 0},
         }
 
@@ -574,7 +636,7 @@ def _build_summary(session: Dict[str, Any]) -> Dict[str, Any]:
         "summary": summary_text,
         "overall_scores": overall,
         "answers": answers,
-        "closing_message": "现在进入反问环节，你可以向面试官提问。",
+        "closing_message": "本轮模拟面试已完成。",
         "progress": {"current": total, "total": total},
     }
 

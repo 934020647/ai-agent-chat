@@ -1,31 +1,32 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
+import UserProfilePanel from './UserProfilePanel'
+import ResumeReviewPanel from './ResumeReviewPanel'
+import InterviewConfigPanel from './InterviewConfigPanel'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 
-const MODE_OPTIONS = [
-  { value: 'graduate_reexam', label: '研究生复试/保研' },
-  { value: 'industry_interview', label: '互联网大厂实习/校招' },
-  { value: 'general_mock', label: '综合模拟面试' },
-]
-
-const FOCUS_OPTIONS = [
-  { value: 'balanced', label: '综合均衡' },
-  { value: 'fundamentals', label: '专业基础' },
-  { value: 'project_experience', label: '项目经历' },
-]
-
-const GRADE_OPTIONS = ['大一', '大二', '大三', '大四', '研一', '研二']
-
 function InterviewMode() {
+  // Tabs: profile | review | interview
+  const [activeTab, setActiveTab] = useState('profile')
+
+  // Profile state
+  const [profile, setProfile] = useState(null)
+  const [profileId, setProfileId] = useState(null)
+
+  // Resume state
+  const [resumeSessionId, setResumeSessionId] = useState(null)
+
+  // Review state
+  const [review, setReview] = useState(null)
+  const [reviewLoading, setReviewLoading] = useState(false)
+
+  // Interview config state
   const [mode, setMode] = useState('general_mock')
   const [focus, setFocus] = useState('balanced')
-  const [grade, setGrade] = useState('大三')
-  const [role, setRole] = useState('')
-  const [resumeFile, setResumeFile] = useState(null)
-  const [resumeSessionId, setResumeSessionId] = useState(null)
-  const [uploading, setUploading] = useState(false)
+  const [target, setTarget] = useState('')
 
+  // Interview session state
   const [sessionId, setSessionId] = useState(null)
   const [currentQuestion, setCurrentQuestion] = useState(null)
   const [answerText, setAnswerText] = useState('')
@@ -37,62 +38,119 @@ function InterviewMode() {
   const [summary, setSummary] = useState(null)
   const [closingMessage, setClosingMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const [isStarting, setIsStarting] = useState(false)
+  const [startError, setStartError] = useState('')
+  const [startSuccess, setStartSuccess] = useState('')
   const [error, setError] = useState(null)
 
-  const fileInputRef = useRef(null)
-
-  const handleUpload = async (file) => {
-    if (!file) return
-    setUploading(true)
-    setError(null)
-    const formData = new FormData()
-    formData.append('file', file)
+  // Load profile from localStorage on mount
+  useEffect(() => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/interview/upload-resume`, {
+      const savedId = localStorage.getItem('offerdrill_profile_id')
+      const savedData = localStorage.getItem('offerdrill_profile_data')
+      if (savedId && savedData) {
+        const parsed = JSON.parse(savedData)
+        setProfileId(savedId)
+        setProfile(parsed)
+        setMode(parsed.preferred_interview_mode || 'general_mock')
+        setFocus(parsed.preferred_focus_mode || 'balanced')
+        setTarget(parsed.target || '')
+        if (parsed.resume_id) setResumeSessionId(parsed.resume_id)
+      }
+    } catch {
+      // ignore parse errors
+    }
+  }, [])
+
+  const handleProfileSave = (newProfileId, newProfile) => {
+    setProfileId(newProfileId)
+    setProfile(newProfile)
+    localStorage.setItem('offerdrill_profile_id', newProfileId)
+    localStorage.setItem('offerdrill_profile_data', JSON.stringify(newProfile))
+    setMode(newProfile.preferred_interview_mode || 'general_mock')
+    setFocus(newProfile.preferred_focus_mode || 'balanced')
+    setTarget(newProfile.target || '')
+    if (newProfile.resume_id) setResumeSessionId(newProfile.resume_id)
+    setError(null)
+  }
+
+  const handleResumeUpload = (resumeId, preview) => {
+    setResumeSessionId(resumeId)
+    // Sync resume_id into profile state and localStorage
+    setProfile((prev) => {
+      if (!prev) {
+        const minimal = { resume_id: resumeId, resume_preview: preview }
+        localStorage.setItem('offerdrill_profile_data', JSON.stringify(minimal))
+        return minimal
+      }
+      const updated = { ...prev, resume_id: resumeId, resume_preview: preview }
+      localStorage.setItem('offerdrill_profile_data', JSON.stringify(updated))
+      return updated
+    })
+  }
+
+  const resolveResumeId = () => {
+    // Priority: explicit state > profile > localStorage
+    if (resumeSessionId) return resumeSessionId
+    if (profile?.resume_id) return profile.resume_id
+    try {
+      const saved = localStorage.getItem('offerdrill_profile_data')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed.resume_id) return parsed.resume_id
+      }
+    } catch { /* ignore */ }
+    return null
+  }
+
+  const handleRequestReview = async () => {
+    const rid = resolveResumeId()
+    if (!rid) {
+      setError('请先在个人资料页上传 PDF 简历，或确认简历已成功绑定到个人资料。')
+      return
+    }
+    setReviewLoading(true)
+    setError(null)
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/resume/review`, {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          resume_id: rid,
+          profile_id: profileId || undefined,
+        }),
       })
       const data = await res.json()
-      if (data.error) throw new Error(data.error)
-      setResumeSessionId(data.resume_session_id)
-      setResumeFile(file)
+      if (data.error) {
+        if (data.error === 'Resume not found' || data.error.includes('not found')) {
+          throw new Error('后端未找到该简历，可能是服务重启导致内存中的简历丢失。请重新上传简历后再生成测评。')
+        }
+        throw new Error(data.error)
+      }
+      setReview(data)
     } catch (err) {
-      setError('简历上传失败: ' + err.message)
+      setError('简历测评失败: ' + err.message)
     } finally {
-      setUploading(false)
+      setReviewLoading(false)
     }
-  }
-
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0]
-    if (file) handleUpload(file)
-  }
-
-  const handleDrop = (e) => {
-    e.preventDefault()
-    const file = e.dataTransfer.files?.[0]
-    if (file && file.type === 'application/pdf') {
-      handleUpload(file)
-    } else {
-      setError('请上传 PDF 文件')
-    }
-  }
-
-  const handleDragOver = (e) => {
-    e.preventDefault()
   }
 
   const startInterview = async () => {
-    setLoading(true)
+    setIsStarting(true)
+    setStartError('')
+    setStartSuccess('')
     setError(null)
     try {
       const payload = {
         interview_mode: mode,
         focus_mode: focus,
-        role_or_major: role || undefined,
-        grade: grade || undefined,
+        role_or_major: target || undefined,
+        grade: profile?.grade || undefined,
         resume_session_id: resumeSessionId || undefined,
         num_questions: 5,
+      }
+      if (profileId) {
+        payload.profile_id = profileId
       }
       const res = await fetch(`${API_BASE_URL}/api/interview/start`, {
         method: 'POST',
@@ -102,19 +160,29 @@ function InterviewMode() {
       const data = await res.json()
       if (data.error) throw new Error(data.error)
 
+      const total = data.total_questions ?? data.progress?.total ?? 0
+      const current = data.progress?.current ?? 1
+      const question = data.current_question || null
+
+      if (!question || total === 0) {
+        throw new Error('后端未返回有效面试题，请检查题库或面试配置。')
+      }
+
       setSessionId(data.session_id)
-      setCurrentQuestion(data.current_question)
-      setProgress(data.progress)
-      setInterviewStatus(data.status)
+      setCurrentQuestion(question)
+      setProgress({ current, total })
+      setInterviewStatus(data.status || 'ready')
       setHistory([])
       setSummary(null)
       setInterviewerReply('')
       setEvaluation(null)
       setAnswerText('')
+      setStartSuccess('已基于个人资料和面经题库生成本轮面试。')
     } catch (err) {
-      setError('开始面试失败: ' + err.message)
+      console.error('[startInterview] error:', err)
+      setStartError('启动面试失败：' + (err.message || '未知错误'))
     } finally {
-      setLoading(false)
+      setIsStarting(false)
     }
   }
 
@@ -131,7 +199,6 @@ function InterviewMode() {
       const data = await res.json()
       if (data.error) throw new Error(data.error)
 
-      // Record history
       setHistory((prev) => [
         ...prev,
         {
@@ -177,6 +244,8 @@ function InterviewMode() {
     setClosingMessage('')
     setAnswerText('')
     setError(null)
+    setStartError('')
+    setStartSuccess('')
   }
 
   const renderScore = (val) => {
@@ -187,6 +256,10 @@ function InterviewMode() {
     return <span style={{ color, fontWeight: 700 }}>{val}</span>
   }
 
+  const showInterviewActive = interviewStatus === 'ready' || interviewStatus === 'in_progress'
+  const showInterviewCompleted = interviewStatus === 'completed'
+  const showQuestionPanel = !!currentQuestion && !showInterviewCompleted
+
   return (
     <div className="interview-mode">
       <header className="interview-header">
@@ -194,93 +267,74 @@ function InterviewMode() {
         <p>面经驱动 AI 模拟面试官</p>
       </header>
 
-      {interviewStatus === 'idle' && (
-        <div className="interview-config">
-          <div className="config-grid">
-            <div className="config-field">
-              <label>面试类型</label>
-              <select value={mode} onChange={(e) => setMode(e.target.value)}>
-                {MODE_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+      <div className="interview-tabs">
+        <button
+          className={activeTab === 'profile' ? 'interview-tab active' : 'interview-tab'}
+          onClick={() => setActiveTab('profile')}
+        >
+          个人资料
+        </button>
+        <button
+          className={activeTab === 'review' ? 'interview-tab active' : 'interview-tab'}
+          onClick={() => setActiveTab('review')}
+        >
+          简历测评
+        </button>
+        <button
+          className={activeTab === 'interview' ? 'interview-tab active' : 'interview-tab'}
+          onClick={() => setActiveTab('interview')}
+        >
+          模拟面试
+        </button>
+      </div>
 
-            <div className="config-field">
-              <label>考察侧重</label>
-              <select value={focus} onChange={(e) => setFocus(e.target.value)}>
-                {FOCUS_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="config-field">
-              <label>年级</label>
-              <select value={grade} onChange={(e) => setGrade(e.target.value)}>
-                {GRADE_OPTIONS.map((g) => (
-                  <option key={g} value={g}>
-                    {g}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="config-field">
-              <label>目标岗位/专业（可选）</label>
-              <input
-                type="text"
-                placeholder="如：后端开发实习、计算机保研..."
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div
-            className="resume-dropzone"
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="application/pdf"
-              style={{ display: 'none' }}
-              onChange={handleFileChange}
-            />
-            {resumeFile ? (
-              <div className="resume-info">
-                <span className="resume-filename">{resumeFile.name}</span>
-                <span className="resume-status">已上传</span>
-              </div>
-            ) : (
-              <div className="resume-placeholder">
-                <div className="resume-icon">📄</div>
-                <div>点击或拖拽上传简历 PDF</div>
-                <div className="resume-hint">支持 PDF 格式，自动提取文本</div>
-              </div>
-            )}
-          </div>
-
-          {uploading && <div className="loading">正在解析简历...</div>}
-
-          <button
-            className="start-btn"
-            onClick={startInterview}
-            disabled={loading}
-          >
-            {loading ? '准备中...' : '开始面试'}
-          </button>
-        </div>
+      {activeTab === 'profile' && (
+        <UserProfilePanel
+          profile={profile}
+          onSave={handleProfileSave}
+          resumeSessionId={resumeSessionId}
+          onResumeUpload={handleResumeUpload}
+        />
       )}
 
-      {(interviewStatus === 'ready' || interviewStatus === 'in_progress') && (
+      {activeTab === 'review' && (
+        <ResumeReviewPanel
+          review={review}
+          loading={reviewLoading}
+          onRequestReview={handleRequestReview}
+          canReview={!!resolveResumeId()}
+          resumeId={resolveResumeId()}
+          profileId={profileId}
+        />
+      )}
+
+      {activeTab === 'interview' && !showQuestionPanel && !showInterviewCompleted && (
+        <InterviewConfigPanel
+          profile={profile}
+          mode={mode}
+          focus={focus}
+          target={target}
+          onModeChange={setMode}
+          onFocusChange={setFocus}
+          onTargetChange={setTarget}
+          onStartInterview={startInterview}
+          isStarting={isStarting}
+        />
+      )}
+
+      {activeTab === 'interview' && isStarting && (
+        <div className="loading">正在基于个人资料和面经题库生成面试题...</div>
+      )}
+
+      {activeTab === 'interview' && startError && (
+        <div className="error">{startError}</div>
+      )}
+
+      {activeTab === 'interview' && startSuccess && !showQuestionPanel && !showInterviewCompleted && (
+        <div className="success">{startSuccess}</div>
+      )}
+
+      {activeTab === 'interview' && showQuestionPanel && (
         <div className="interview-session">
           <div className="interview-progress">
             <div className="progress-bar">
@@ -292,9 +346,15 @@ function InterviewMode() {
               />
             </div>
             <div className="progress-text">
-              第 {progress.current} / {progress.total} 题
+              {progress.total > 0
+                ? `第 ${progress.current} / ${progress.total} 题`
+                : '面试题加载中...'}
             </div>
           </div>
+
+          {startSuccess && (
+            <div className="success">{startSuccess}</div>
+          )}
 
           {interviewerReply && (
             <div className="panel interviewer-panel">
@@ -332,25 +392,23 @@ function InterviewMode() {
             </div>
           )}
 
-          {currentQuestion && (
-            <div className="panel question-panel">
-              <div className="question-meta">
-                <span className="question-tag">{currentQuestion.topic}</span>
-                <span className="question-tag">{currentQuestion.focus_mode}</span>
-              </div>
-              <h3>{currentQuestion.question}</h3>
-              {currentQuestion.answer_points && currentQuestion.answer_points.length > 0 && (
-                <div className="answer-points">
-                  <div className="answer-points-title">答题要点：</div>
-                  <ul>
-                    {currentQuestion.answer_points.map((pt, i) => (
-                      <li key={i}>{pt}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+          <div className="panel question-panel">
+            <div className="question-meta">
+              <span className="question-tag">{currentQuestion.topic}</span>
+              <span className="question-tag">{currentQuestion.focus_mode}</span>
             </div>
-          )}
+            <h3>{currentQuestion.question}</h3>
+            {currentQuestion.answer_points && currentQuestion.answer_points.length > 0 && (
+              <div className="answer-points">
+                <div className="answer-points-title">答题要点：</div>
+                <ul>
+                  {currentQuestion.answer_points.map((pt, i) => (
+                    <li key={i}>{pt}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
 
           <div className="answer-area">
             <textarea
@@ -361,6 +419,7 @@ function InterviewMode() {
               disabled={loading}
             />
             <button
+              type="button"
               onClick={submitAnswer}
               disabled={loading || !answerText.trim()}
             >
@@ -370,14 +429,11 @@ function InterviewMode() {
         </div>
       )}
 
-      {interviewStatus === 'completed' && (
+      {activeTab === 'interview' && showInterviewCompleted && (
         <div className="interview-summary">
           <div className="interview-progress">
             <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: '100%' }}
-              />
+              <div className="progress-fill" style={{ width: '100%' }} />
             </div>
             <div className="progress-text">面试已完成 {progress.total} / {progress.total} 题</div>
           </div>
@@ -411,16 +467,14 @@ function InterviewMode() {
                 </div>
               </div>
               {evaluation.overall_feedback && (
-                <div className="evaluation-feedback">
-                  {evaluation.overall_feedback}
-                </div>
+                <div className="evaluation-feedback">{evaluation.overall_feedback}</div>
               )}
             </div>
           )}
 
           {closingMessage && (
             <div className="panel closing-panel">
-              <h3>反问环节</h3>
+              <h3>面试结束</h3>
               <div className="closing-message">{closingMessage}</div>
             </div>
           )}

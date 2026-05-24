@@ -538,3 +538,149 @@ curl -s -N -X POST http://127.0.0.1:8000/api/chat/stream \
 ```
 
 Expected: `agent_flow` event appears before deltas; `final` event also contains `agent_flow`.
+
+
+## Stage 8: User Profile + Resume Evaluation
+
+### What's New
+
+Added user profile management, resume review, and personalized interview context.
+
+**New files:**
+
+- `agent/resume_review_agent.py` — Resume review agent that generates structured evaluation.
+- `frontend/src/UserProfilePanel.jsx` — User profile form with resume upload.
+- `frontend/src/ResumeReviewPanel.jsx` — Resume review results display.
+- `frontend/src/InterviewConfigPanel.jsx` — Interview configuration with profile defaults.
+
+**New backend endpoints:**
+
+- `POST /api/profile/save` — Save or update a user profile.
+- `GET /api/profile/{profile_id}` — Get a user profile by ID.
+- `POST /api/resume/review` — Generate structured resume review.
+
+**Enhanced endpoints:**
+
+- `POST /api/interview/start` — Now supports `profile_id`. Profile fields are used as defaults and can be overridden by explicit request parameters.
+- `POST /api/interview/upload-resume` — Now returns `size`, `extracted_text_preview`, `status`, and `warning` (for scanned PDFs).
+
+**In-memory stores (no database):**
+
+- `USER_PROFILE_STORE` — Maps `profile_id` to user profile.
+- `RESUME_STORE` — Maps `resume_id` to extracted resume text (existing, reused).
+
+### Profile Structure
+
+```json
+{
+  "profile_id": "abc123",
+  "grade": "大三",
+  "major": "计算机科学与技术",
+  "school_or_background": "普通本科，有后端项目经历",
+  "target": "后端开发实习",
+  "target_school_or_major": "",
+  "preferred_interview_mode": "industry_interview",
+  "preferred_focus_mode": "project_experience",
+  "resume_id": "def456",
+  "resume_preview": "...",
+  "created_at": "2026-05-23T12:00:00",
+  "updated_at": "2026-05-23T12:00:00"
+}
+```
+
+### Resume Review Output Structure
+
+```json
+{
+  "overall_score": 82,
+  "summary": "这份简历适合后端开发实习...",
+  "strengths": ["项目经历完整", "技术栈与目标岗位相关"],
+  "risks": ["缺少量化指标", "技术深度容易被追问"],
+  "likely_questions": [
+    {
+      "area": "项目深挖",
+      "question": "你项目中的缓存一致性如何保证？",
+      "follow_ups": ["如果 Redis 宕机怎么办？"]
+    }
+  ],
+  "revision_suggestions": ["补充量化指标..."],
+  "suitable_roles": ["后端开发实习", "全栈开发实习"],
+  "skill_gap_suggestions": ["补充分布式系统基础..."]
+}
+```
+
+### Parameter Priority for Interview Start
+
+When `profile_id` is provided:
+
+1. Explicit request parameters (e.g., `target="前端开发实习"`) — highest priority
+2. Profile fields (e.g., `profile.target="后端开发实习"`) — fallback
+3. Hardcoded defaults — lowest priority
+
+### Test Save Profile
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/api/profile/save \
+  -H "Content-Type: application/json" \
+  -d '{
+    "grade": "大三",
+    "major": "计算机科学与技术",
+    "school_or_background": "普通本科，有后端项目经历",
+    "target": "后端开发实习",
+    "preferred_interview_mode": "industry_interview",
+    "preferred_focus_mode": "project_experience"
+  }'
+```
+
+Expected: `profile_id`, `profile`, `status: "success"`.
+
+### Test Get Profile
+
+```bash
+curl -s http://127.0.0.1:8000/api/profile/{profile_id}
+```
+
+Expected: `profile_id`, `profile`, `resume_preview`.
+
+### Test Resume Review
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/api/resume/review \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resume_id": "your_resume_id",
+    "profile_id": "your_profile_id"
+  }'
+```
+
+Expected: `overall_score`, `summary`, `strengths`, `risks`, `likely_questions`, `revision_suggestions`, `suitable_roles`, `skill_gap_suggestions`.
+
+### Test Interview with Profile
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/api/interview/start \
+  -H "Content-Type: application/json" \
+  -d '{
+    "profile_id": "your_profile_id",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "target": "后端开发实习"
+  }'
+```
+
+Expected: Interview questions are personalized based on profile + resume context.
+
+### Frontend Usage
+
+1. Open **个人资料** tab — fill in grade, major, target, upload resume PDF, click Save.
+2. Open **简历测评** tab — click "生成简历测评" to get structured review.
+3. Open **模拟面试** tab — configure this round's mode/focus/target, then start.
+
+Profile data is persisted to `localStorage` (keys: `offerdrill_profile_id`, `offerdrill_profile_data`).
+
+### Privacy and Security Notes
+
+- `backend/.env` and `uploads/` are ignored by Git.
+- Resume text is stored in memory only (lost on server restart).
+- No OCR support for scanned/image PDFs.
+- No database, Redis, or vector store introduced.

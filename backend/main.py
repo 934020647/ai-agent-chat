@@ -30,6 +30,7 @@ from typing import List, Dict, Any, Optional
 
 from agent import orchestrator
 from agent import interview_agent
+from agent import resume_review_agent
 
 # Load environment variables from backend/.env
 load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
@@ -169,11 +170,21 @@ def upload_resume(file: UploadFile = File(...)):
     except Exception:
         pass
 
+    preview = resume_text[:500] if resume_text else ""
+    status = "ok"
+    warning = None
+    if not resume_text or not resume_text.strip():
+        status = "warning"
+        warning = "未能从 PDF 中提取文本，可能是扫描版图片 PDF。当前版本不支持 OCR。"
+
     return {
         "resume_session_id": resume_session_id,
+        "resume_id": resume_session_id,
         "filename": file.filename,
-        "text_length": len(resume_text),
-        "status": "ok",
+        "size": len(resume_text),
+        "extracted_text_preview": preview,
+        "status": status,
+        "warning": warning,
     }
 
 
@@ -184,18 +195,34 @@ class InterviewStartRequest(BaseModel):
     grade: Optional[str] = None  # 大一, 大二, ..., 研二
     resume_session_id: Optional[str] = None
     num_questions: int = 5
+    profile_id: Optional[str] = None
 
 
 @app.post("/api/interview/start")
 def interview_start(request: InterviewStartRequest):
-    """Start a new interview session with selected configuration."""
+    """Start a new interview session with selected configuration.
+    If profile_id is provided, profile fields are used as defaults
+    and can be overridden by explicit request parameters.
+    """
+    profile = None
+    if request.profile_id:
+        profile = interview_agent.get_profile(request.profile_id)
+
+    # Resolve parameters: request explicit > profile > default
+    grade = request.grade if request.grade is not None else (profile.get("grade") if profile else None)
+    role_or_major = request.role_or_major if request.role_or_major is not None else (profile.get("target") if profile else None)
+    resume_session_id = request.resume_session_id if request.resume_session_id is not None else (profile.get("resume_id") if profile else None)
+    interview_mode = request.interview_mode if request.interview_mode is not None else (profile.get("preferred_interview_mode") if profile else "general_mock")
+    focus_mode = request.focus_mode if request.focus_mode is not None else (profile.get("preferred_focus_mode") if profile else None)
+
     result = interview_agent.start_interview(
-        interview_mode=request.interview_mode,
-        focus_mode=request.focus_mode,
-        role_or_major=request.role_or_major,
-        grade=request.grade,
-        resume_session_id=request.resume_session_id,
+        interview_mode=interview_mode,
+        focus_mode=focus_mode,
+        role_or_major=role_or_major,
+        grade=grade,
+        resume_session_id=resume_session_id,
         num_questions=request.num_questions,
+        profile=profile,
     )
     return result
 
@@ -241,3 +268,89 @@ def interview_status(session_id: str):
 def interview_bank():
     """Return question bank summary for frontend dropdown configuration."""
     return interview_agent.get_bank_summary()
+
+
+# ---------- Profile Endpoints ----------
+
+class ProfileSaveRequest(BaseModel):
+    grade: Optional[str] = None
+    major: Optional[str] = None
+    school_or_background: Optional[str] = None
+    target: Optional[str] = None
+    target_school_or_major: Optional[str] = None
+    preferred_interview_mode: Optional[str] = "general_mock"
+    preferred_focus_mode: Optional[str] = "balanced"
+    resume_id: Optional[str] = None
+    resume_session_id: Optional[str] = None
+    resume_preview: Optional[str] = None
+    profile_id: Optional[str] = None
+
+
+@app.post("/api/profile/save")
+def profile_save(request: ProfileSaveRequest):
+    """Save or update a user profile."""
+    data = request.model_dump(exclude_none=True)
+    # Compatibility: resume_session_id maps to resume_id
+    if "resume_session_id" in data and "resume_id" not in data:
+        data["resume_id"] = data.pop("resume_session_id")
+    profile = interview_agent.save_profile(data)
+    return {
+        "profile_id": profile["profile_id"],
+        "profile": profile,
+        "status": "success",
+    }
+
+
+@app.get("/api/profile/{profile_id}")
+def profile_get(profile_id: str):
+    """Get a user profile by ID."""
+    profile = interview_agent.get_profile(profile_id)
+    if not profile:
+        return {"error": "Profile not found", "profile_id": profile_id}
+    resume_preview = ""
+    if profile.get("resume_id"):
+        resume_text = interview_agent.RESUME_STORE.get(profile.get("resume_id"), "")
+        resume_preview = resume_text[:300] if resume_text else ""
+    return {
+        "profile_id": profile["profile_id"],
+        "profile": profile,
+        "resume_preview": resume_preview,
+    }
+
+
+# ---------- Resume Review Endpoints ----------
+
+class ResumeReviewRequest(BaseModel):
+    resume_id: Optional[str] = None
+    resume_session_id: Optional[str] = None
+    profile_id: Optional[str] = None
+
+
+@app.post("/api/resume/review")
+def resume_review(request: ResumeReviewRequest):
+    """Generate a structured resume review based on resume text and optional profile.
+    Accepts resume_id, resume_session_id, or profile_id (from which resume_id is resolved).
+    """
+    candidate_resume_id = request.resume_id or request.resume_session_id
+
+    if not candidate_resume_id and request.profile_id:
+        profile = interview_agent.get_profile(request.profile_id)
+        if profile:
+            candidate_resume_id = profile.get("resume_id")
+
+    if not candidate_resume_id:
+        return {"error": "No resume_id provided. Please upload a PDF resume first."}
+
+    resume_text = interview_agent.RESUME_STORE.get(candidate_resume_id)
+    if resume_text is None:
+        return {
+            "error": "Resume not found. The server may have restarted or the resume was not uploaded successfully. Please upload the resume again.",
+            "resume_id": candidate_resume_id,
+        }
+
+    profile = None
+    if request.profile_id:
+        profile = interview_agent.get_profile(request.profile_id)
+
+    result = resume_review_agent.review_resume(resume_text, profile)
+    return result
