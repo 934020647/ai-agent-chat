@@ -201,7 +201,9 @@ def pick_questions(
         s = _score_question(q, interview_mode, focus_mode, target_keywords, grade, resume_text)
         scored.append((s, q))
 
-    # Phase 2: Sort by score descending
+    # Phase 2: Sort by score descending, then shuffle to break ties and improve variety
+    scored.sort(key=lambda x: x[0], reverse=True)
+    random.shuffle(scored)
     scored.sort(key=lambda x: x[0], reverse=True)
 
     # Phase 3: Try to pick top N with score > 0
@@ -216,6 +218,7 @@ def pick_questions(
         if q not in filtered:
             filtered.append(q)
     if len(filtered) >= num:
+        random.shuffle(filtered)
         return filtered[:num]
 
     # 4b: Same mode, any target, any focus
@@ -224,6 +227,7 @@ def pick_questions(
         if q not in filtered:
             filtered.append(q)
     if len(filtered) >= num:
+        random.shuffle(filtered)
         return filtered[:num]
 
     # 4c: general_mock fallback (universal)
@@ -232,6 +236,7 @@ def pick_questions(
         if q not in filtered:
             filtered.append(q)
     if len(filtered) >= num:
+        random.shuffle(filtered)
         return filtered[:num]
 
     # 4d: Anything left
@@ -239,6 +244,7 @@ def pick_questions(
         if q not in filtered:
             filtered.append(q)
 
+    random.shuffle(filtered)
     return filtered[:num]
 
 

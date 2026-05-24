@@ -2294,5 +2294,691 @@
       "depth": "是否涉及分层抽样、Group K-Fold、时间泄露",
       "communication": "是否有真实案例和数据"
     }
+  },
+  {
+    "id": "ai_real_lora_001",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "LoRA微调项目深挖",
+    "question": "我看到你简历里有个项目写到了微调，你先简单介绍一下 LoRA 的基本原理，然后把它的低秩分解公式也展开讲讲，为什么用 LoRA 比全量微调省显存和计算量？",
+    "answer_points": [
+      "说明 LoRA 冻结原模型权重，只训练低秩增量矩阵",
+      "解释权重更新可表示为 W + ΔW = W + BA，其中 B 和 A 是低秩矩阵",
+      "说明低秩矩阵参数量远小于完整权重矩阵",
+      "说明显存、训练参数和优化器状态开销会下降",
+      "结合具体微调任务说明为什么使用 LoRA 而不是全量微调"
+    ],
+    "follow_up": [
+      "如果 rank 设得太小或太大会有什么影响？",
+      "你在项目里是怎么选择 target modules 的？"
+    ],
+    "standard_answer": "LoRA 的核心是冻结预训练模型参数，只学习一个低秩增量。对于原始权重 W，不直接更新完整 W，而是学习 ΔW = BA，其中 A ∈ ℝ^(r×k)，B ∈ ℝ^(d×r)，rank r 远小于 d 和 k。训练参数量从 d×k 降为 r×(d+k)，这样不仅减少可训练参数，也减少梯度和优化器状态开销，适合在有限显存下对大模型进行任务适配。",
+    "rubric": {
+      "accuracy": "是否准确解释 LoRA 和低秩增量矩阵",
+      "structure": "是否按原理、公式、资源节省、项目应用展开",
+      "depth": "是否能解释 rank、target modules 和全量微调的权衡",
+      "communication": "是否能用清晰语言解释公式而不是只背概念"
+    }
+  },
+  {
+    "id": "ai_real_lora_002",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "微调项目全链路",
+    "question": "你这个微调项目，从数据准备到模型上线，完整的流程是怎么做的？数据怎么清洗、怎么分训练集验证集，训练的时候怎么监控有没有过拟合？",
+    "answer_points": [
+      "数据准备和清洗流程",
+      "训练/验证/测试集划分策略",
+      "训练过程中的监控指标（loss、perplexity、eval accuracy）",
+      "过拟合检测和应对手段",
+      "模型评估和上线方式"
+    ],
+    "follow_up": [
+      "如果验证集 loss 一直在降但训练集 loss 也降，这算过拟合吗？",
+      "微调后的模型和 base 模型相比，你在什么场景下会决定用微调版？"
+    ],
+    "standard_answer": "完整流程：①数据准备——收集领域数据，去重、过滤低质量样本，做格式统一；②划分——按 8:1:1 划分，确保分布一致；③训练——用 wandb 监控 train/val loss，设置早停（patience=3）；④过拟合检测——val loss 上升或 val perplexity 不再下降时停止；⑤评估——在 hold-out 测试集上跑自动化指标+人工抽检；⑥上线——导出 LoRA 权重，和 base 模型合并后部署。",
+    "rubric": {
+      "accuracy": "微调流程是否完整准确",
+      "structure": "是否按数据→划分→训练→监控→评估→上线展开",
+      "depth": "是否涉及过拟合检测和上线策略",
+      "communication": "是否有具体参数和决策逻辑"
+    }
+  },
+  {
+    "id": "ai_real_agent_001",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "Agent基础知识",
+    "question": "我看到你简历里有个 Agent 相关的项目。你先说说 Agent 的基本组成模块有哪些，每个模块在系统里承担什么角色？",
+    "answer_points": [
+      "Agent 的核心模块：规划（Planning）、记忆（Memory）、工具调用（Tool Use）、反思/评估（Reflection）",
+      "每个模块的职责和输入输出",
+      "模块之间的协作关系",
+      "结合项目说明具体实现"
+    ],
+    "follow_up": [
+      "如果 Agent 的规划模块一直给不出好的执行步骤，可能是什么原因？",
+      "Agent 的记忆模块如果上下文太长，你会怎么处理？"
+    ],
+    "standard_answer": "Agent 通常由四个核心模块组成：①规划（Planning）——将复杂任务拆解为可执行的子步骤，常用 ReAct、CoT 等策略；②记忆（Memory）——维护短期上下文和长期知识，短期用滑动窗口，长期用向量数据库；③工具调用（Tool Use）——根据任务需求选择和调用外部工具（搜索、计算、API），返回结果给模型；④反思/评估（Reflection）——对执行结果进行自我评估，发现错误时重新规划。模块间通过状态机或循环队列协作：规划 → 执行 → 观察 → 反思 → 再规划。",
+    "rubric": {
+      "accuracy": "Agent 模块组成是否准确",
+      "structure": "是否按模块→职责→协作→项目展开",
+      "depth": "是否涉及 ReAct、状态机、反思机制",
+      "communication": "是否有清晰的分层和项目结合"
+    }
+  },
+  {
+    "id": "ai_real_agent_002",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "prompt与skill的区别",
+    "question": "你在 Agent 项目里有没有区分 prompt 和 skill？这两个东西在实际工程里到底有什么区别，是什么关系？",
+    "answer_points": [
+      "prompt 的定义和作用（引导模型行为、格式、输出）",
+      "skill 的定义和作用（可复用的能力单元、封装工具调用和业务逻辑）",
+      "二者的关系（prompt 是 skill 的‘接口描述’，skill 是 prompt 的‘能力实现’）",
+      "工程中的组织方式"
+    ],
+    "follow_up": [
+      "如果一个 skill 需要调用多个工具，prompt 里怎么描述这个调用链？",
+      "skill 多了以后怎么管理，怎么避免 prompt 冲突？"
+    ],
+    "standard_answer": "prompt 是告诉模型‘做什么、怎么做、输出什么格式’的指令文本；skill 是封装了特定能力（如查天气、写代码、数据分析）的可复用单元，通常包含：skill 描述（做什么）、参数 schema（输入是什么）、执行逻辑（调用哪些工具）。关系上：prompt 是 skill 的‘声明’，skill 是 prompt 的‘实现’。工程中：一个 skill 对应一个 prompt 模板 + 一组工具函数，通过 skill registry 统一管理，Agent 根据用户意图从 registry 中选择匹配的 skill。",
+    "rubric": {
+      "accuracy": "prompt 和 skill 概念是否准确区分",
+      "structure": "是否按定义→区别→关系→工程展开",
+      "depth": "是否涉及 skill registry、调用链、冲突管理",
+      "communication": "是否有类比和项目实例"
+    }
+  },
+  {
+    "id": "ai_real_harness_001",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "Harness工程关键模块",
+    "question": "你说到这个 Agent 项目的 harness 工程，harness 里你认为最重要的几个模块是什么？每个模块怎么保证系统稳定运行？",
+    "answer_points": [
+      "harness 的定义和作用（Agent 的运行时框架，负责调度、通信、状态管理）",
+      "关键模块：任务调度、工具注册与发现、状态机、错误恢复、日志追踪",
+      "各模块的职责和设计要点",
+      "稳定性保障手段"
+    ],
+    "follow_up": [
+      "如果工具调用超时了，harness 会怎么恢复？",
+      "Agent 陷入循环调用时，harness 怎么检测和打断？"
+    ],
+    "standard_answer": "harness 是 Agent 的运行时骨架，最重要的模块：①任务调度器——管理任务队列，支持优先级和并发控制；②工具注册中心——动态注册和发现工具，支持版本管理；③状态机——维护 Agent 当前状态（idle/planning/executing/error），状态转换有明确规则；④错误恢复——工具调用失败时自动重试（指数退避），超过阈值降级到人工或默认回复；⑤日志追踪——每个请求分配 trace_id，贯穿所有模块，便于排查。稳定性：①限流防刷；②熔断保护下游服务；③超时控制（单工具 10 秒，全流程 60 秒）。",
+    "rubric": {
+      "accuracy": "harness 模块设计是否实用",
+      "structure": "是否按定义→模块→职责→稳定展开",
+      "depth": "是否涉及状态机、熔断、超时、循环检测",
+      "communication": "是否有具体参数和工程细节"
+    }
+  },
+  {
+    "id": "ai_real_harness_002",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "Coding Agent设计亮点",
+    "question": "你有没有研究过 Claude Code 或者类似的 coding agent？你觉得它们源码或设计里有哪些值得借鉴的地方？",
+    "answer_points": [
+      "coding agent 的核心功能（代码生成、文件操作、命令执行、上下文理解）",
+      "设计亮点：文件系统感知、增量编辑、命令执行沙箱、多轮对话上下文管理",
+      "错误处理和自我修正机制",
+      "对项目设计的启发"
+    ],
+    "follow_up": [
+      "coding agent 执行命令时如果删错了文件，怎么恢复？",
+      "如果用户代码库很大，agent 怎么高效找到相关文件？"
+    ],
+    "standard_answer": "Claude Code 类 coding agent 的设计亮点：①文件系统感知——通过工具调用实时读取文件树和文件内容，而不是把所有代码塞进 prompt；②增量编辑——只修改必要部分，用 diff 或 patch 方式减少 token 消耗和错误；③命令执行沙箱——在隔离环境中运行 shell 命令，限制权限和副作用；④上下文管理——维护‘当前工作文件集’，只把相关文件加载到上下文。错误处理：执行命令前让用户确认危险操作（如 rm、git push），执行后检查 exit code，非 0 时自动分析错误输出并尝试修复。大代码库：先用 grep/ripgrep 定位相关符号，再只读取相关文件，避免全量加载。",
+    "rubric": {
+      "accuracy": "coding agent 设计是否准确",
+      "structure": "是否按功能→亮点→错误→大库展开",
+      "depth": "是否涉及沙箱、增量编辑、上下文管理",
+      "communication": "是否有具体机制和权衡"
+    }
+  },
+  {
+    "id": "ai_real_rag_001",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "RAG全流程",
+    "question": "你简历里这个项目如果用了 RAG，那用户问题进来以后，从检索到生成回答的完整链路是怎样的？每一步你具体怎么做的？",
+    "answer_points": [
+      "Query 理解和预处理",
+      "检索阶段（向量检索 / BM25 / 混合检索）",
+      "重排序和过滤",
+      "上下文组装注入 prompt",
+      "大模型生成回答",
+      "后处理和输出"
+    ],
+    "follow_up": [
+      "BM25 和向量检索分别适合什么场景？",
+      "如果检索出来的内容和用户问题完全不相关，你的系统会怎么处理？"
+    ],
+    "standard_answer": "完整链路：①Query 预处理——query 改写、意图识别、关键词提取；②检索——同时走向量检索（语义匹配）和 BM25（关键词匹配），取并集；③重排序——用 Cross-Encoder 对候选文档重新打分，取 Top3-5；④上下文组装——把检索结果按相关性排序，拼接成上下文块，注入 system prompt；⑤生成——调用大模型，约束输出格式；⑥后处理——答案去重、敏感词过滤、引用标注。BM25 适合精确匹配（如产品名、ID），向量检索适合语义泛化（如‘怎么退款’和‘退货流程’）。检索不相关：设置相似度阈值，低于阈值时走兜底策略（告知用户未找到相关信息，或引导到人工客服）。",
+    "rubric": {
+      "accuracy": "RAG 链路是否完整准确",
+      "structure": "是否按 query→检索→重排→组装→生成→后处理展开",
+      "depth": "是否涉及 BM25 vs 向量、阈值、兜底策略",
+      "communication": "是否有清晰的分层和取舍"
+    }
+  },
+  {
+    "id": "ai_real_rag_002",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "BM25检索原理",
+    "question": "你刚才提到 BM25，那 BM25 的评分公式大概是怎么算的？它和 TF-IDF 比主要改进在哪里，为什么在 RAG 里还要保留 BM25？",
+    "answer_points": [
+      "BM25 的核心思想（基于概率检索模型，衡量词项与文档的相关性）",
+      "评分公式的主要组成部分（TF 饱和、IDF、文档长度归一化）",
+      "与 TF-IDF 的主要区别（TF 饱和函数、长度归一化更精细）",
+      "RAG 中保留 BM25 的原因（精确匹配、可解释性、补充向量检索）"
+    ],
+    "follow_up": [
+      "BM25 对短查询和长查询的表现有差异吗？",
+      "如果文档库是中文，BM25 的分词怎么做？"
+    ],
+    "standard_answer": "BM25 评分公式：score(D,Q) = Σ IDF(qi) × [f(qi,D)×(k1+1)] / [f(qi,D) + k1×(1-b+b×|D|/avgDl)]。核心改进：①TF 饱和——词频超过一定值后贡献不再线性增长（TF-IDF 是线性的）；②文档长度归一化——长文档不会仅仅因为词多就得分高。与 TF-IDF 比：BM25 在短文档和长文档混合的场景下更稳定。RAG 保留 BM25 的原因：①精确匹配优势——产品名、型号、代码片段等需要精确匹配的场景，BM25 比向量检索更可靠；②可解释性——分数可以直接看是哪些词匹配上的；③零成本——不需要 embedding 模型，响应更快。",
+    "rubric": {
+      "accuracy": "BM25 公式和原理是否准确",
+      "structure": "是否按公式→改进→对比→保留原因展开",
+      "depth": "是否涉及 TF 饱和、长度归一化、可解释性",
+      "communication": "是否能解释公式而不是只背诵"
+    }
+  },
+  {
+    "id": "ai_real_rag_003",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "Context Engineering",
+    "question": "prompt engineering、context engineering、harness engineering，这三个东西在实际项目里分别做什么？它们之间是什么关系？",
+    "answer_points": [
+      "prompt engineering——设计输入给模型的指令，引导输出格式和内容",
+      "context engineering——管理和优化注入模型的上下文信息（检索结果、历史对话、外部知识）",
+      "harness engineering——构建模型运行的基础设施（调用链路、工具集成、错误处理、监控）",
+      "三者关系：prompt 是‘说什么’，context 是‘给什么材料’，harness 是‘怎么跑起来’"
+    ],
+    "follow_up": [
+      "如果 context 太长超出了模型窗口，prompt engineering 再怎么调也没用，这时候怎么办？",
+      "harness 里如果模型 API 挂了，context engineering 怎么保证用户体验不崩？"
+    ],
+    "standard_answer": "prompt engineering 负责‘告诉模型怎么做’——角色设定、输出格式、约束条件、few-shot 示例。context engineering 负责‘给模型什么材料’——检索结果筛选、历史对话压缩、外部知识注入、上下文优先级排序。harness engineering 负责‘让系统稳定运行’——API 调用封装、超时重试、限流熔断、工具注册、日志监控。关系：prompt 决定输出的‘风格’，context 决定输出的‘内容质量’，harness 决定系统的‘可靠性’。三者缺一不可：prompt 再好，context 里给了错误材料也会答错；harness 再稳，prompt 和 context 设计不好输出也没价值。",
+    "rubric": {
+      "accuracy": "三个概念区分是否清晰",
+      "structure": "是否按定义→关系→协作→边界展开",
+      "depth": "是否涉及窗口限制、API 故障、优先级排序",
+      "communication": "是否有类比和层次划分"
+    }
+  },
+  {
+    "id": "ai_real_pipeline_001",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "数据Pipeline与质量控制",
+    "question": "你做这个项目的数据 pipeline 是怎么搭的？数据从哪儿来，怎么过滤掉垃圾数据，又怎么保证训练数据的质量是够的？",
+    "answer_points": [
+      "数据来源和采集方式",
+      "非法/低质量数据过滤策略（规则过滤、分类器、人工抽检）",
+      "数据质量评估指标（多样性、准确性、覆盖率）",
+      "清洗流程和工具"
+    ],
+    "follow_up": [
+      "如果数据里有偏见（比如某个群体的数据特别少），模型会学到什么？",
+      "数据量很大的时候，怎么高效做质量评估而不是全量人工看？"
+    ],
+    "standard_answer": "数据 pipeline：①采集——从公开数据集、API、爬虫多源采集；②过滤——第一层规则过滤（去重、去空、去敏感信息），第二层用轻量分类器过滤低质量样本（如太短、语法错误、主题不相关），第三层人工抽检 5% 做质量标注；③评估——统计数据分布（类别平衡、长度分布）、计算多样性指标（词汇丰富度）、抽样人工评分；④清洗——标准化格式、统一编码、处理缺失值。偏见问题：少数群体数据不足会导致模型对该群体表现差（如某方言识别率低），解决方法是过采样、数据增强或专门补充该群体数据。大规模评估：用聚类抽样+自动指标（perplexity、语法正确率）代替全量人工。",
+    "rubric": {
+      "accuracy": "数据 pipeline 设计是否实用",
+      "structure": "是否按采集→过滤→评估→清洗→偏见展开",
+      "depth": "是否涉及分类器过滤、聚类抽样、偏见处理",
+      "communication": "是否有具体比例和工具"
+    }
+  },
+  {
+    "id": "ai_real_pipeline_002",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "Benchmark与Reward优化",
+    "question": "你这个模型在哪些 benchmark 上评估的？如果模型的回答质量还有问题，reward 或者评估指标上有什么可以改进的地方？",
+    "answer_points": [
+      "使用的 benchmark 类型和选择理由",
+      "评估指标（自动化指标 + 人工评估）",
+      "模型回答常见问题（幻觉、不相关、格式错误）",
+      "reward 设计改进方向"
+    ],
+    "follow_up": [
+      "如果 benchmark 分数很高但用户实际体验不好，你怎么解释？",
+      "reward model 本身也可能有偏见，怎么发现和修正？"
+    ],
+    "standard_answer": "评估：①自动化 benchmark——MMLU（知识）、HumanEval（代码）、GSM8K（数学），选择理由是覆盖核心能力；②自动化指标——BLEU/ROUGE（生成质量）、Exact Match（问答）；③人工评估——3 人标注 200 条样本，按相关性、流畅度、安全性 1-5 分打分。常见问题：幻觉（生成与事实不符内容）、不相关（回答偏离问题）、格式错误（JSON/XML 输出格式不对）。Reward 改进：①从单一 reward 改为多维度 reward（准确性+流畅度+安全性各一个子 reward）；②加入人类反馈（RLHF），让 reward 更接近真实用户偏好；③对 bad case 做 reward hacking 检测（如模型发现某种格式能骗过高分，就惩罚这种投机行为）。benchmark 高体验差：benchmark 是平均情况，用户遇到的可能是长尾 bad case，需要加强真实场景测试。",
+    "rubric": {
+      "accuracy": "benchmark 和 reward 设计是否科学",
+      "structure": "是否按评估→问题→reward 改进→偏差展开",
+      "depth": "是否涉及 RLHF、reward hacking、多维度 reward",
+      "communication": "是否有具体 benchmark 和指标"
+    }
+  },
+  {
+    "id": "ai_real_foundation_001",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "KV Cache原理",
+    "question": "大模型推理的时候经常提到 KV Cache，它具体是缓存了什么？为什么能加速推理？",
+    "answer_points": [
+      "KV Cache 缓存的内容（Transformer 中每层每个 head 的 Key 和 Value 矩阵）",
+      "自回归生成时的计算特点（每次只生成一个新 token，但 attention 需要看到所有历史 token）",
+      "缓存如何避免重复计算",
+      "显存开销和优化手段"
+    ],
+    "follow_up": [
+      "如果生成的序列很长，KV Cache 的显存占用会怎么增长？",
+      "多轮对话时，KV Cache 是每轮重新计算还是可以复用？"
+    ],
+    "standard_answer": "KV Cache 缓存的是 Transformer 每一层每个 attention head 的 Key 和 Value 向量。自回归生成时，生成第 t 个 token 需要计算它和前面所有 token 的 attention，但前面 t-1 个 token 的 K、V 在上一轮已经算过了。KV Cache 把这些 K、V 存起来，下一轮直接复用，只计算新 token 的 Q、K、V 和新 token 与历史的 attention。这样把每步的计算量从 O(t²) 降到 O(t)。显存：缓存大小 = layers × heads × head_dim × sequence_length × batch_size × 2(K+V) × sizeof(dtype)。长序列优化：①分页管理（PagedAttention，像 OS 管理内存一样按块分配）；②量化压缩（INT8/INT4 KV Cache）；③滑动窗口（只缓存最近 N 个 token）。多轮对话：同一轮内可以复用，但跨轮如果上下文有修改需要部分更新。",
+    "rubric": {
+      "accuracy": "KV Cache 原理是否准确",
+      "structure": "是否按缓存内容→计算特点→加速原理→显存→优化展开",
+      "depth": "是否涉及 PagedAttention、量化、滑动窗口",
+      "communication": "是否有复杂度分析和具体公式"
+    }
+  },
+  {
+    "id": "ai_real_foundation_002",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "Transformer与Self-Attention",
+    "question": "Agent 背后通常还是 Transformer。你能从 self-attention 的角度解释一下，Transformer 为什么适合做长上下文建模？它相比 RNN 有什么优势？",
+    "answer_points": [
+      "Self-Attention 的计算方式（任意两个 token 直接交互）",
+      "长距离依赖建模能力（不受序列长度指数衰减影响）",
+      "并行计算优势（不像 RNN 必须顺序计算）",
+      "与 RNN 的对比（RNN 的梯度消失、顺序依赖、长程衰减）"
+    ],
+    "follow_up": [
+      "Self-Attention 的计算复杂度是多少？序列很长的时候怎么优化？",
+      "Transformer 的位置编码是怎么让模型知道 token 顺序的？"
+    ],
+    "standard_answer": "Self-Attention 让序列中任意两个 token 直接计算关联强度（Q·K），不受距离限制。长上下文优势：RNN 的信息传递是链式的，距离越远梯度越弱（梯度消失），而 Self-Attention 中第 1 个 token 和第 1000 个 token 直接交互，关联强度不衰减。并行优势：RNN 必须按顺序一步步算（t 依赖 t-1 的隐状态），Self-Attention 可以一次性计算整个序列的 Q、K、V 矩阵，充分利用 GPU 并行。复杂度：标准 Self-Attention 是 O(n²×d)，n 是序列长度。长序列优化：①稀疏注意力（只关注局部窗口或稀疏模式）；②线性注意力（用核技巧近似，降到 O(n×d)）；③FlashAttention（IO-aware 算法，减少内存读写）。位置编码：原始 Transformer 用 sinusoidal 位置编码注入位置信息，后来有可学习位置编码、RoPE（旋转位置编码）、ALiBi 等改进。",
+    "rubric": {
+      "accuracy": "Transformer 优势解释是否准确",
+      "structure": "是否按 attention→长程→并行→RNN 对比→优化展开",
+      "depth": "是否涉及复杂度、梯度消失、FlashAttention、位置编码",
+      "communication": "是否有清晰的对比和复杂度分析"
+    }
+  },
+  {
+    "id": "ai_real_foundation_003",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "RNN基础",
+    "question": "虽然现在主流是 Transformer，但 RNN 也不是完全没用了。你能说说 RNN 的基本原理吗？它有什么天生的缺陷，为什么后来被 Transformer 替代了？",
+    "answer_points": [
+      "RNN 的基本结构（循环单元、隐状态传递）",
+      "前向传播过程（当前输入 + 上一时刻隐状态 → 当前隐状态 → 输出）",
+      "主要缺陷（梯度消失/爆炸、长程依赖弱、无法并行）",
+      "被 Transformer 替代的原因"
+    ],
+    "follow_up": [
+      "LSTM 和 GRU 是怎么缓解梯度消失问题的？",
+      "现在还有什么场景会用 RNN 而不是 Transformer？"
+    ],
+    "standard_answer": "RNN 基本结构：每个时间步接收当前输入 x_t 和上一时刻隐状态 h_{t-1}，通过激活函数计算当前隐状态 h_t = tanh(W·[x_t, h_{t-1}] + b)，再输出 y_t。核心思想是用隐状态传递历史信息。缺陷：①梯度消失/爆炸——反向传播时梯度连乘，长序列前端梯度几乎为 0；②长程依赖弱——远距离信息在传递中被稀释；③无法并行——必须按时间顺序计算，不能利用 GPU 批量并行。替代原因：Transformer 的自注意力直接建模任意位置关系，解决了长程依赖和并行问题。LSTM/GRU 缓解：LSTM 用门控机制（输入门、遗忘门、输出门）控制信息流动，遗忘门可以选择保留长期记忆；GRU 简化门控（更新门、重置门），参数更少。RNN 仍有用场景：①实时流式处理（不需要等整个序列）；②资源受限设备（模型小、推理快）；③某些时序预测任务。",
+    "rubric": {
+      "accuracy": "RNN 原理和缺陷是否准确",
+      "structure": "是否按结构→传播→缺陷→替代→LSTM→场景展开",
+      "depth": "是否涉及梯度消失、门控机制、并行性",
+      "communication": "是否有公式和对比"
+    }
+  },
+  {
+    "id": "ai_real_research_001",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "project_experience",
+    "role_or_major": "人工智能保研",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "论文与研究规划",
+    "question": "请介绍一下你论文的工作内容，以及你后面计划研究什么方向。我看你提到想做 Agent，能具体说说为什么想做这个方向吗？",
+    "answer_points": [
+      "论文的核心问题和方法",
+      "个人贡献和实验结果",
+      "未来研究方向的选择理由",
+      "Agent 方向的具体研究兴趣点"
+    ],
+    "follow_up": [
+      "Agent 目前最让你兴奋的技术点是什么？",
+      "你觉得 Agent 和传统的软件自动化（如 RPA）有什么本质区别？"
+    ],
+    "standard_answer": "论文工作：我研究的是基于大模型的多步推理方法，核心贡献是提出了一种动态分解策略，让模型根据问题难度自动选择推理深度，在 GSM8K 数学推理数据集上比 baseline 提升了 6%。个人贡献：方法设计、实验实现、论文撰写。未来想做 Agent：因为 Agent 不仅是让模型回答问题，而是让模型能自主规划、调用工具、与环境交互，这是从‘静态推理’到‘动态执行’的跃迁。具体兴趣点：①如何让 Agent 在复杂任务中保持长期目标一致性；②如何让 Agent 从失败中自主学习和改进。最兴奋的技术点：ReAct 框架——把 reasoning 和 acting 结合起来，模型既能思考又能行动。与 RPA 区别：RPA 是预设规则的自动化，Agent 是模型自主理解目标并动态决策，能适应未预见的场景。",
+    "rubric": {
+      "accuracy": "论文和规划是否真实具体",
+      "structure": "是否按论文→贡献→规划→Agent→区别展开",
+      "depth": "是否涉及具体数据集、提升、ReAct、RPA 对比",
+      "communication": "是否有热情和研究深度"
+    }
+  },
+  {
+    "id": "ai_real_research_002",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "AI项目效果评估",
+    "question": "你简历里另一个 AI 项目，效果是怎么评估的？如果效果不好，你从哪些方面去定位问题？",
+    "answer_points": [
+      "评估指标（自动化指标 + 人工评估 + 用户反馈）",
+      "评估流程（离线评估 → 小流量 A/B → 全量上线）",
+      "问题定位方法（数据侧、模型侧、工程侧）",
+      "具体案例"
+    ],
+    "follow_up": [
+      "如果指标看起来都不错但用户就是不满意，可能是什么原因？",
+      "A/B 测试样本量怎么定？"
+    ],
+    "standard_answer": "评估：①离线——自动化指标（BLEU/ROUGE/F1）+ 人工抽检 200 条；②小流量——5% 用户灰度，对比核心指标（满意度、任务完成率）；③全量——监控上线后 7 天指标。问题定位：①数据侧——看 bad case 分布，是否是某类数据质量差或覆盖不足；②模型侧——看模型在哪些 query 类型上表现差（如长文本、多轮对话）；③工程侧——看延迟、错误率、超时是否影响体验。案例：某轮迭代后 F1 从 72% 提升到 78%，但用户满意度反而降了，定位发现是模型输出变长了，用户觉得啰嗦。解决：在 reward 里加入长度惩罚，优化后满意度回升。指标好体验差：指标可能没覆盖用户真实痛点（如指标看 accuracy，用户关心响应速度），需要加用户满意度、NPS 等指标。A/B 样本量：根据目标指标的提升幅度和方差，用统计公式计算最小样本量（如 Cohen's h 或在线样本量计算器），确保统计显著性（p < 0.05）。",
+    "rubric": {
+      "accuracy": "评估和问题定位是否系统",
+      "structure": "是否按评估→定位→案例→指标→样本量展开",
+      "depth": "是否涉及 A/B 测试、统计显著性、bad case 分析",
+      "communication": "是否有具体数据和案例"
+    }
+  },
+  {
+    "id": "ai_real_ds_001",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "常用数据结构与排序算法",
+    "question": "你本科学过数据结构吧？常用的数据结构有哪些，各适合什么场景？再顺便说说你知道的排序算法，以及它们的时间复杂度。",
+    "answer_points": [
+      "常用数据结构：数组、链表、栈、队列、哈希表、树、图",
+      "每种结构的典型应用场景",
+      "常见排序算法：冒泡、选择、插入、归并、快排、堆排",
+      "时间复杂度和空间复杂度对比"
+    ],
+    "follow_up": [
+      "快速排序最坏情况下时间复杂度是多少？怎么避免？",
+      "哈希表冲突了怎么办？"
+    ],
+    "standard_answer": "数据结构：①数组——随机访问 O(1)，适合索引查询；②链表——插入删除 O(1)，适合频繁修改；③栈——后进先出，适合括号匹配、回溯；④队列——先进先出，适合 BFS、缓冲；⑤哈希表——查找 O(1)，适合去重、缓存；⑥树——二叉搜索树查找 O(log n)，适合有序数据；⑦图——邻接表/矩阵，适合关系建模。排序：冒泡/选择/插入 O(n²)，适合小数据；归并/快排/堆排 O(n log n)，适合大数据。快排最坏 O(n²)（已排序数组+选第一个为 pivot），避免方法：随机 pivot 或三数取中。哈希冲突：①链地址法——冲突元素组成链表；②开放寻址法——线性探测找下一个空位。",
+    "rubric": {
+      "accuracy": "数据结构和排序复杂度是否准确",
+      "structure": "是否按结构→场景→排序→复杂度→冲突展开",
+      "depth": "是否涉及快排优化、哈希冲突解决",
+      "communication": "是否有清晰的对比表格或层次"
+    }
+  },
+  {
+    "id": "ai_real_ds_002",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "BFS与最短路径",
+    "question": "那再问你一个算法题。请介绍一下 BFS 的原理，以及怎么用它来找无权图中的最短路径？",
+    "answer_points": [
+      "BFS 的核心思想（逐层扩展、队列实现）",
+      "BFS 与 DFS 的区别",
+      "无权图最短路径的 BFS 解法",
+      "时间复杂度分析"
+    ],
+    "follow_up": [
+      "如果图是有权图，BFS 还能求最短路径吗？",
+      "BFS 在搜索引擎爬虫里是怎么用的？"
+    ],
+    "standard_answer": "BFS 核心：从起点出发，先访问所有距离为 1 的节点，再访问距离为 2 的节点，逐层扩展。实现：用队列，起点入队，每次出队一个节点，将其未访问的邻居入队。BFS vs DFS：BFS 用队列，适合找最短路径；DFS 用栈/递归，适合遍历所有路径、检测环。无权图最短路径：BFS 第一次访问到目标节点时，走过的边数就是最短路径（因为 BFS 按层扩展，先访问到的路径一定最短）。复杂度：O(V+E)。有权图：BFS 不行，需要用 Dijkstra（非负权）或 Bellman-Ford（负权）。搜索引擎爬虫：BFS 从种子 URL 开始，逐层抓取页面上的链接，保证先抓深度浅的页面。",
+    "rubric": {
+      "accuracy": "BFS 原理和最短路径是否准确",
+      "structure": "是否按思想→实现→区别→应用→有权图→爬虫展开",
+      "depth": "是否涉及复杂度、Dijkstra、爬虫应用",
+      "communication": "是否有伪代码或步骤说明"
+    }
+  },
+  {
+    "id": "ai_real_py_001",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "Python基础",
+    "question": "你平时写 Python 多吗？Python 的 list、dict、set 底层分别是怎么实现的？它们各自常用操作的时间复杂度是多少？",
+    "answer_points": [
+      "list——动态数组，追加均摊 O(1)，随机访问 O(1)，插入/删除 O(n)",
+      "dict——哈希表，查找/插入/删除平均 O(1)，最坏 O(n)",
+      "set——哈希表实现，查找/插入/删除平均 O(1)",
+      "各自适用场景"
+    ],
+    "follow_up": [
+      "dict 的 key 必须是可哈希的，为什么？",
+      "list 的 append 为什么是均摊 O(1) 而不是严格 O(1)？"
+    ],
+    "standard_answer": "list：底层是动态数组（over-allocate），追加时如果容量够直接 O(1)，不够时扩容（通常翻倍）并拷贝，均摊 O(1)；随机访问通过索引直接定位 O(1)；中间插入/删除需要移动后续元素 O(n)。dict：底层是哈希表，通过 hash(key) 定位槽位，冲突时用开放寻址或探测链；查找/插入/删除平均 O(1)，最坏所有 key 冲突时 O(n)。set：也是哈希表，只存 key 不存 value。key 必须可哈希：因为 dict 用 hash 值定位存储位置，如果 key 可变（如 list），hash 值会变，导致找不到数据。list append 均摊：偶尔触发扩容（O(n)），但扩容后接下来 n 次 append 都是 O(1)，均摊下来每次 O(1)。",
+    "rubric": {
+      "accuracy": "Python 数据结构实现是否准确",
+      "structure": "是否按 list→dict→set→可哈希→均摊展开",
+      "depth": "是否涉及动态数组、哈希冲突、扩容机制",
+      "communication": "是否有复杂度对比和原理解释"
+    }
+  },
+  {
+    "id": "ai_real_harness_003",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "大模型应用开发",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "优秀Agent Harness设计",
+    "question": "你说到 harness 工程，那目前你看到的比较优秀的 Agent harness 是怎么设计的？和一般的脚本调用大模型 API 相比，harness 多了哪些关键能力？",
+    "answer_points": [
+      "优秀 harness 的核心特征（模块化、可扩展、容错、可观测）",
+      "相比简单脚本的区别：状态管理、工具注册、错误恢复、多轮上下文",
+      "具体设计模式（如 ReAct Loop、Plan-and-Execute）",
+      "工程实践要点"
+    ],
+    "follow_up": [
+      "如果 Agent 需要同时调用多个工具，harness 里怎么调度？",
+      "harness 怎么保证不同用户之间的状态隔离？"
+    ],
+    "standard_answer": "优秀 harness 特征：①模块化——规划、记忆、工具、评估各自独立，通过接口交互；②可扩展——新工具通过注册中心动态接入，不需要改核心代码；③容错——工具调用失败自动重试、降级、记录日志；④可观测——全链路 trace、指标监控、bad case 回放。与简单脚本区别：简单脚本是一次性调用（输入→模型→输出），harness 是循环架构（规划→执行→观察→反思→再规划），支持多步任务和错误恢复。设计模式：ReAct Loop（推理和行动交替）适合探索性任务；Plan-and-Execute（先规划再执行）适合确定性任务。调度：并行调用无依赖的工具（如同时查天气和查股票），串行调用有依赖的（如先搜索再总结）。状态隔离：每个用户 session 有独立的状态上下文，用 session_id 隔离内存/缓存，防止数据串扰。",
+    "rubric": {
+      "accuracy": "harness 设计是否全面",
+      "structure": "是否按特征→区别→模式→调度→隔离展开",
+      "depth": "是否涉及 ReAct、并行调度、状态隔离",
+      "communication": "是否有架构层次和对比"
+    }
+  },
+  {
+    "id": "ai_real_rag_004",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "大模型应用开发",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "RAG评估与改进",
+    "question": "你的 RAG 系统上线以后，怎么知道它好不好？如果用户反馈回答质量不行，你会从哪些环节去排查和改进？",
+    "answer_points": [
+      "评估维度（检索质量、生成质量、端到端质量）",
+      "检索评估：召回率、精确率、MRR、NDCG",
+      "生成评估：相关性、幻觉率、流畅度",
+      "排查链路：query→检索→重排→上下文→生成",
+      "改进手段"
+    ],
+    "follow_up": [
+      "如果检索召回率很高但生成还是答非所问，问题可能出在哪？",
+      "用户说‘回答太长了’，这是 RAG 的问题还是 prompt 的问题？"
+    ],
+    "standard_answer": "评估维度：①检索——看召回率（正确答案是否在 TopK 里）、精确率（TopK 里多少相关）；②生成——看回答相关性、幻觉率（事实性错误比例）、流畅度；③端到端——用户满意度、任务完成率。排查链路：①query 侧——query 是否有歧义、是否需要改写；②检索侧——检索结果是否相关、是否遗漏关键文档；③重排侧——重排序是否把最相关文档排在前面；④上下文侧——注入 prompt 的上下文是否太长导致关键信息被截断；⑤生成侧——模型是否理解上下文、是否受幻觉影响。改进：检索召回高但生成差→可能是上下文过长或模型没理解重点，加摘要或强调关键信息；回答太长→prompt 问题，加长度约束（如‘请用 100 字以内回答’）或后处理截断。",
+    "rubric": {
+      "accuracy": "RAG 评估和排查是否系统",
+      "structure": "是否按维度→指标→排查→改进展开",
+      "depth": "是否涉及 MRR、NDCG、幻觉率、上下文截断",
+      "communication": "是否有排查流程和具体手段"
+    }
+  },
+  {
+    "id": "ai_real_foundation_004",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "大模型应用开发",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "Python内存与性能",
+    "question": "你说常用 Python，那 Python 里的 list 和 dict 在内存上有什么区别？如果数据量很大，list 的查找慢，你会怎么优化？",
+    "answer_points": [
+      "list 的内存布局（连续数组，存储指针）",
+      "dict 的内存布局（稀疏哈希表，存 key-value 对）",
+      "大数据量 list 查找优化（用 set/dict 做索引、排序后二分、分块）",
+      "具体场景选择"
+    ],
+    "follow_up": [
+      "list 的切片操作会复制数据吗？",
+      "dict 的键值对顺序在 Python 3.7+ 是怎么保证的？"
+    ],
+    "standard_answer": "内存：list 是连续数组，存的是指向对象的指针，追加时可能触发扩容（申请新内存并拷贝）；dict 是稀疏哈希表，存 hash(key)+key+value，负载因子超过 2/3 时扩容。大数据 list 查找优化：①如果只需要判断存在性——把 list 转成 set，O(n) 变 O(1)；②如果需要找索引——用 dict 做值到索引的映射；③如果数据有序——排序后用 bisect 二分查找 O(log n)；④如果数据太大放不进内存——用数据库或分块读取。切片：list 切片会创建新列表（浅拷贝），`lst[:]` 或 `lst[::]` 都复制；numpy array 切片是视图不复制。dict 顺序：Python 3.7+ 中 dict 保持插入顺序，因为实现上把键值对存在连续数组里，哈希表只存索引，遍历时直接按数组顺序走。",
+    "rubric": {
+      "accuracy": "Python 内存和优化是否准确",
+      "structure": "是否按内存→优化→切片→顺序展开",
+      "depth": "是否涉及扩容、负载因子、浅拷贝、插入顺序",
+      "communication": "是否有具体优化方案对比"
+    }
   }
 ]
