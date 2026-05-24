@@ -147,36 +147,35 @@ def _target_matches(q_role: str, target_keywords: List[str]) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Question quality filters
+# Stage 10.4: Hard ban list — these questions must NEVER appear in output
 # ---------------------------------------------------------------------------
-# Strong low-tech / HR / generic patterns that should be filtered from tech interviews.
-# These are matched against the question text ONLY (not follow_up or standard_answer).
-_LOW_TECH_QUESTION_PATTERNS = [
-    # Communication / explanation to non-tech
-    "非技术背景", "一分钟解释", "一分钟向", "向非技术",
-    # Weakness / personality
-    "最大的缺点", "优点和缺点", "怎么克服",
-    # Generic challenges (unless qualified with tech context in exemption logic)
-    "最近遇到的困难", "遇到的困难是什么", "你遇到的挑战", "最大的挑战",
-    # Career / motivation
-    "职业规划", "如何看待加班", "为什么选择我们", "为什么选择这个方向",
-    # Team / conflict
+# ALWAYS banned, no exemptions (the worst offenders)
+_HARD_BANNED_ALWAYS = [
+    "非技术背景",
+    "请用一分钟", "一分钟向", "一分钟解释",
+    "什么是 API",
+    "最大的缺点", "优点和缺点",
+    "最近遇到的困难",
+    "怎么克服",
+    "如何看待加班",
+    "用一句话概括", "一句话概括",
+    "核心竞争力",
+]
+
+# Banned unless strong technical context is present
+_HARD_BANNED_CONTEXTUAL = [
+    "遇到的挑战", "最大的挑战",
     "团队冲突", "描述一次你在团队中", "遇到冲突的经历",
-    # Self-marketing
-    "你的核心竞争力", "用一句话概括", "一句话概括",
-    # Learning habits
     "平时如何学习", "怎么学习新技术",
-    # Generic expression
     "沟通能力", "表达能力",
 ]
 
-_LOW_TECH_TOPIC_PATTERNS = [
-    "hr", "行为面", "沟通表达", "自我认知", "动机问题",
-    "团队协作", "职业规划", "个人成长", "行为面试",
+# Exempt in graduate_reexam (these are standard grad-school questions)
+_HARD_BANNED_GRAD_EXEMPT = [
+    "为什么选择我们", "为什么选择这个方向", "职业规划",
 ]
 
-# Context keywords that EXEMPT a question from being low-tech.
-# e.g. "你最近遇到的困难" is low-tech, but "线上故障/技术问题/排查" makes it technical.
+# Context keywords that EXEMPT a contextual ban.
 _TECH_CONTEXT_PATTERNS = [
     "技术问题", "线上问题", "项目故障", "线上故障", "排查", "性能", "工程", "系统",
     "模型", "数据", "检索", "评估", "api调用", "接口设计", "限流", "鉴权",
@@ -184,10 +183,30 @@ _TECH_CONTEXT_PATTERNS = [
     "架构", "算法", "训练", "推理", "调优", "优化", "bug", "缺陷", "监控",
 ]
 
-# API-related: generic "explain API" is low-tech, but "API design/auth/rate-limit" is not.
+# API-related technical patterns (API itself is NOT banned)
 _API_TECH_PATTERNS = [
     "接口设计", "api设计", "鉴权", "限流", "错误码", "超时", "降级", "熔断",
     "restful", "参数校验", "版本控制", "异常处理",
+]
+
+
+# ---------------------------------------------------------------------------
+# Question quality filters (Stage 10.2/10.3 soft filter)
+# ---------------------------------------------------------------------------
+_LOW_TECH_QUESTION_PATTERNS = [
+    "非技术背景", "一分钟解释", "一分钟向", "向非技术",
+    "最大的缺点", "优点和缺点", "怎么克服",
+    "最近遇到的困难", "遇到的困难是什么", "你遇到的挑战", "最大的挑战",
+    "职业规划", "如何看待加班", "为什么选择我们", "为什么选择这个方向",
+    "团队冲突", "描述一次你在团队中", "遇到冲突的经历",
+    "你的核心竞争力", "用一句话概括", "一句话概括",
+    "平时如何学习", "怎么学习新技术",
+    "沟通能力", "表达能力",
+]
+
+_LOW_TECH_TOPIC_PATTERNS = [
+    "hr", "行为面", "沟通表达", "自我认知", "动机问题",
+    "团队协作", "职业规划", "个人成长", "行为面试",
 ]
 
 _TECH_KEYWORDS_BOOST = [
@@ -228,6 +247,47 @@ def _is_technical_target(target: Optional[str]) -> bool:
         "服务端", "web", "算法", "机器学习", "深度学习", "cv", "nlp", "推荐",
         "模型训练", "数据", "工程", "开发", "技术",
     ])
+
+
+def is_hard_banned_question(
+    q: Dict[str, Any],
+    interview_mode: Optional[str] = None,
+) -> bool:
+    """Hard ban: these questions must NEVER be served to users.
+
+    Returns True if the question contains any hard-banned pattern.
+    graduate_reexam questions get limited exemptions for standard grad-school topics.
+    """
+    text_fields = [
+        q.get("question", ""),
+        q.get("topic", ""),
+        " ".join(str(p) for p in q.get("answer_points", [])),
+        " ".join(str(f) for f in q.get("follow_up", [])),
+        q.get("standard_answer", ""),
+    ]
+    combined = " ".join(text_fields).lower()
+
+    # ALWAYS banned (no exemptions)
+    for pat in _HARD_BANNED_ALWAYS:
+        if pat in combined:
+            return True
+
+    # Contextual: banned unless strong tech context
+    has_tech_context = any(tc in combined for tc in _TECH_CONTEXT_PATTERNS)
+    if not has_tech_context:
+        for pat in _HARD_BANNED_CONTEXTUAL:
+            if pat in combined:
+                return True
+
+    # Grad-school exemptions
+    if interview_mode == "graduate_reexam":
+        return False
+
+    for pat in _HARD_BANNED_GRAD_EXEMPT:
+        if pat in combined:
+            return True
+
+    return False
 
 
 def is_low_technical_question(
@@ -465,6 +525,11 @@ def pick_questions(
             filtered.append(q)
 
     random.shuffle(filtered)
+
+    # Phase 5: Final hard-ban filter for technical interviews
+    if is_tech_target and interview_mode == "industry_interview":
+        filtered = [q for q in filtered if not is_hard_banned_question(q, interview_mode)]
+
     return filtered[:num]
 
 
@@ -537,11 +602,14 @@ def _build_fallback_prompt(
         lines.extend([
             "【技术岗位硬性约束——违反会导致题目被废弃】",
             "这是技术面试，严禁生成泛 HR / 软技能 / 通用表达类题目。以下类型的题目绝对禁止：",
-            "- '你最大的缺点是什么' / '你的优点和缺点' / '怎么克服'",
-            "- '请用一分钟向非技术背景的人解释 API' / '用一句话概括' / '核心竞争力'",
-            "- '你为什么选择我们' / '你的职业规划' / '如何看待加班' / '团队冲突怎么处理'",
-            "- '你最近遇到的困难是什么，怎么解决'（除非限定为技术困难/线上故障/模型效果问题）",
-            "- '描述一次你遇到的挑战'（除非限定为技术挑战/架构选型/性能瓶颈）",
+            "- 向非技术背景解释技术概念 / 一分钟解释 / 用一句话概括",
+            "- 最大缺点 / 优点和缺点 / 怎么克服 / 核心竞争力",
+            "- 为什么选择我们公司 / 职业规划 / 如何看待加班 / 团队冲突",
+            "- 最近遇到的困难是什么（除非限定为技术困难/线上故障/模型效果问题）",
+            "- 描述一次你遇到的挑战（除非限定为技术挑战/架构选型/性能瓶颈）",
+            "",
+            "注意：API 本身是技术关键词，可以问 API 鉴权、限流、错误码、接口设计。",
+            "但禁止问'什么是 API'或'向非技术背景解释 API'。",
             "",
             "如果必须问'困难'或'挑战'，必须限定为技术场景：",
             "- 允许：'你最近一个 AI 应用项目里遇到的最难定位的技术问题是什么？请说明现象、排查路径和修复方案。'",
@@ -786,8 +854,8 @@ def _build_local_fallback_questions(
         templates = [
             {
                 "topic": "项目介绍",
-                "question": "请介绍一个你最有代表性的项目，你在其中承担了什么角色，遇到了什么挑战？",
-                "answer_points": ["项目背景", "个人职责", "技术挑战", "解决方案", "量化成果"],
+                "question": "请介绍一个你最有代表性的项目，你在其中承担了什么角色，遇到了什么技术难题？",
+                "answer_points": ["项目背景", "个人职责", "技术难题", "解决方案", "量化成果"],
                 "follow_up": ["如果重新做会改进什么？", "项目最大的技术债是什么？"],
             },
             {
@@ -803,16 +871,16 @@ def _build_local_fallback_questions(
                 "follow_up": ["如果当时没有解决，有没有备选方案？", "怎么防止类似问题再次发生？"],
             },
             {
-                "topic": "团队协作",
-                "question": "描述一次你在团队中解决冲突或推动决策的经历。",
-                "answer_points": ["具体场景", "各方立场", "你的行动", "结果反思"],
-                "follow_up": ["如果重新处理会怎么做？", "技术分歧时应该听谁的？"],
+                "topic": "技术决策",
+                "question": "描述一次你在项目中做关键技术决策或推动技术方案落地的经历。",
+                "answer_points": ["具体场景", "技术选项对比", "你的分析过程", "最终决策和结果"],
+                "follow_up": ["如果重新处理会怎么做？", "技术分歧时你是怎么推进的？"],
             },
             {
-                "topic": "职业规划",
-                "question": "你为什么想做这个方向？对自己的职业规划是什么？",
-                "answer_points": ["真实兴趣来源", "能力匹配点", "短期目标", "长期目标"],
-                "follow_up": ["如果工作内容不符预期怎么办？", "最近在学习什么新技术？"],
+                "topic": "技术成长",
+                "question": "你为什么想做这个技术方向？请结合具体项目说明你在这个方向上的技术积累。",
+                "answer_points": ["具体项目驱动", "技术栈掌握", "代表性技术决策", "下一步深入方向"],
+                "follow_up": ["如果技术栈要升级，你会怎么推进？", "最近在学习什么新技术？"],
             },
         ]
 
@@ -854,6 +922,21 @@ def generate_fallback_questions(
     style_examples = _get_style_examples(interview_mode, focus_mode, target_keywords, num_examples=3)
     prompt = _build_fallback_prompt(interview_mode, focus_mode, grade, major, target, resume_text, num_questions, style_examples)
 
+    def _filter_and_fill(questions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Remove hard-banned questions and fill with local templates if needed."""
+        clean = [q for q in questions if not is_hard_banned_question(q, interview_mode)]
+        if len(clean) >= num_questions:
+            return clean[:num_questions]
+        # Need more questions from local templates
+        local = _build_local_fallback_questions(interview_mode, focus_mode, target, num_questions)
+        local_clean = [q for q in local if not is_hard_banned_question(q, interview_mode)]
+        for q in local_clean:
+            if q not in clean:
+                clean.append(q)
+            if len(clean) >= num_questions:
+                break
+        return clean[:num_questions]
+
     # Try LLM first
     if _has_api_key():
         try:
@@ -865,7 +948,7 @@ def generate_fallback_questions(
             if len(parsed) >= num_questions // 2:
                 # Validate and enrich
                 result = []
-                for i, q in enumerate(parsed[:num_questions], 1):
+                for i, q in enumerate(parsed[:num_questions * 2], 1):
                     q["id"] = q.get("id", f"generated_{i:03d}")
                     q["interview_mode"] = interview_mode
                     q["focus_mode"] = focus_mode or "balanced"
@@ -879,12 +962,13 @@ def generate_fallback_questions(
                             "communication": "表达是否清晰流畅"
                         }
                     result.append(q)
-                return result
+                # Hard-ban filter + fill with templates if needed
+                return _filter_and_fill(result)
         except Exception:
             pass
 
     # Fallback to local templates
-    return _build_local_fallback_questions(interview_mode, focus_mode, target, num_questions)
+    return _filter_and_fill(_build_local_fallback_questions(interview_mode, focus_mode, target, num_questions))
 
 
 def _has_api_key() -> bool:
@@ -1346,6 +1430,10 @@ def start_interview(
         questions = _build_local_fallback_questions(interview_mode, focus_mode, role_or_major, num_questions)
         question_source = "llm_generated"
         warnings.append("当前岗位题库覆盖不足，系统已基于面经风格自动生成面试题。")
+
+    # Final hard-ban filter for technical interviews — drop any banned questions
+    if _is_technical_target(role_or_major) and interview_mode == "industry_interview":
+        questions = [q for q in questions if not is_hard_banned_question(q, interview_mode)]
 
     resume_evidence = extract_resume_evidence(resume_text) if resume_text else []
 
