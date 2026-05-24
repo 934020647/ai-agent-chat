@@ -149,16 +149,45 @@ def _target_matches(q_role: str, target_keywords: List[str]) -> bool:
 # ---------------------------------------------------------------------------
 # Question quality filters
 # ---------------------------------------------------------------------------
+# Strong low-tech / HR / generic patterns that should be filtered from tech interviews.
+# These are matched against the question text ONLY (not follow_up or standard_answer).
 _LOW_TECH_QUESTION_PATTERNS = [
-    "非技术背景", "一分钟解释", "一分钟向", "最大的缺点", "优点和缺点",
-    "为什么选择", "职业规划", "如何看待加班", "团队冲突", "你最大的挑战",
-    "你平时如何学习", "你的核心竞争力", "用一句话概括", "描述一次你",
-    "如果重新处理", "你认为技术意见分歧",
+    # Communication / explanation to non-tech
+    "非技术背景", "一分钟解释", "一分钟向", "向非技术",
+    # Weakness / personality
+    "最大的缺点", "优点和缺点", "怎么克服",
+    # Generic challenges (unless qualified with tech context in exemption logic)
+    "最近遇到的困难", "遇到的困难是什么", "你遇到的挑战", "最大的挑战",
+    # Career / motivation
+    "职业规划", "如何看待加班", "为什么选择我们", "为什么选择这个方向",
+    # Team / conflict
+    "团队冲突", "描述一次你在团队中", "遇到冲突的经历",
+    # Self-marketing
+    "你的核心竞争力", "用一句话概括", "一句话概括",
+    # Learning habits
+    "平时如何学习", "怎么学习新技术",
+    # Generic expression
+    "沟通能力", "表达能力",
 ]
 
 _LOW_TECH_TOPIC_PATTERNS = [
-    "hr", "行为面", "沟通表达", "自我认知", "动机问题", "表达能力",
-    "团队协作", "职业规划", "个人成长",
+    "hr", "行为面", "沟通表达", "自我认知", "动机问题",
+    "团队协作", "职业规划", "个人成长", "行为面试",
+]
+
+# Context keywords that EXEMPT a question from being low-tech.
+# e.g. "你最近遇到的困难" is low-tech, but "线上故障/技术问题/排查" makes it technical.
+_TECH_CONTEXT_PATTERNS = [
+    "技术问题", "线上问题", "项目故障", "线上故障", "排查", "性能", "工程", "系统",
+    "模型", "数据", "检索", "评估", "api调用", "接口设计", "限流", "鉴权",
+    "错误码", "缓存", "数据库", "部署", "安全", "成本", "延迟", "并发",
+    "架构", "算法", "训练", "推理", "调优", "优化", "bug", "缺陷", "监控",
+]
+
+# API-related: generic "explain API" is low-tech, but "API design/auth/rate-limit" is not.
+_API_TECH_PATTERNS = [
+    "接口设计", "api设计", "鉴权", "限流", "错误码", "超时", "降级", "熔断",
+    "restful", "参数校验", "版本控制", "异常处理",
 ]
 
 _TECH_KEYWORDS_BOOST = [
@@ -209,6 +238,10 @@ def is_low_technical_question(
 ) -> bool:
     """Identify HR/generic/low-technical questions that should be deprioritized
     in technical interviews.
+
+    Exemption: If the question contains strong technical context (e.g. 线上故障,
+    排查, 性能, 模型, 架构), it is NOT considered low-tech even if it loosely
+    matches a soft-skill pattern.
     """
     question_text = q.get("question", "")
     topic = q.get("topic", "")
@@ -216,8 +249,26 @@ def is_low_technical_question(
 
     q_lower = question_text.lower()
     topic_lower = topic.lower()
+    ap_text = " ".join(str(p) for p in answer_points).lower()
+    combined = q_lower + " " + topic_lower + " " + ap_text
 
-    # Pattern-based detection
+    # --- Exemption 1: strong tech context ---
+    has_tech_context = any(tc in combined for tc in _TECH_CONTEXT_PATTERNS)
+    if has_tech_context:
+        return False
+
+    # --- Exemption 2: API design / auth / rate-limit topics are technical ---
+    has_api_tech = any(p in combined for p in _API_TECH_PATTERNS)
+    if has_api_tech:
+        return False
+
+    # --- Exemption 3: graduate_reexam + 保研-specific motivation is acceptable ---
+    if interview_mode == "graduate_reexam":
+        grad_ok_patterns = ["为什么选择我们实验室", "为什么选择这个实验室", "目标院校"]
+        if any(p in q_lower for p in grad_ok_patterns):
+            return False
+
+    # --- Detection ---
     for pat in _LOW_TECH_QUESTION_PATTERNS:
         if pat in q_lower:
             return True
@@ -228,10 +279,8 @@ def is_low_technical_question(
 
     # Check answer_points for tech keyword scarcity
     if answer_points and len(answer_points) >= 2:
-        ap_text = " ".join(str(p) for p in answer_points).lower()
         tech_hit = sum(1 for kw in _TECH_KEYWORDS_BOOST if kw in ap_text)
         if tech_hit < 2 and len(answer_points) >= 3:
-            # If answer points are mostly non-technical, likely a soft-skill question
             return True
 
     return False
@@ -342,28 +391,40 @@ def pick_questions(
     # Phase 3: Try to pick top N with score > 0
     filtered = [q for s, q in scored if s > 0]
 
-    # Phase 3b: Quality filter for technical targets
+    # Phase 3b: HARD post-filter for technical interviews
+    # For technical targets in industry_interview or strict focus modes,
+    # we aggressively remove low-tech questions from the top N.
+    def _is_low(q_item: Dict[str, Any]) -> bool:
+        return is_low_technical_question(q_item, role_or_major, interview_mode, focus_mode)
+
     if is_tech_target and filtered:
-        # Keep at most 1 low-tech question in the final set
-        low_tech_count = sum(1 for q in filtered if is_low_technical_question(q, role_or_major, interview_mode, focus_mode))
-        if low_tech_count > 1:
-            # Rebuild: pick high-quality first, then allow at most 1 low-tech if needed
-            high_quality = [q for q in filtered if not is_low_technical_question(q, role_or_major, interview_mode, focus_mode)]
-            low_quality = [q for q in filtered if is_low_technical_question(q, role_or_major, interview_mode, focus_mode)]
-            filtered = high_quality[:num]
-            if len(filtered) < num and low_quality:
-                filtered.append(low_quality[0])
-        # For strict tech focus, ensure first 2 are not low-tech
+        tech_questions = [q for q in filtered if not _is_low(q)]
+        low_questions = [q for q in filtered if _is_low(q)]
+
+        if len(tech_questions) >= num:
+            # Enough tech questions: use ONLY tech questions
+            filtered = tech_questions
+        elif tech_questions:
+            # Not enough tech questions: fill with low-tech, but cap at 1
+            filtered = tech_questions[:]
+            if low_questions:
+                filtered.append(low_questions[0])
+        # else: no tech questions at all, keep original filtered (shouldn't happen with 97 questions)
+
+        # Ensure first 2 are never low-tech for strict tech interviews
         if is_strict_tech and len(filtered) >= 2:
-            low_idx = [i for i, q in enumerate(filtered) if is_low_technical_question(q, role_or_major, interview_mode, focus_mode)]
-            for idx in low_idx:
-                if idx < 2:
-                    # Swap with first non-low-tech question after position 2
-                    swap_candidates = [i for i in range(2, len(filtered)) if not is_low_technical_question(filtered[i], role_or_major, interview_mode, focus_mode)]
-                    if swap_candidates:
-                        filtered[idx], filtered[swap_candidates[0]] = filtered[swap_candidates[0]], filtered[idx]
+            for idx in range(2):
+                if _is_low(filtered[idx]):
+                    # Find first non-low-tech after position 2 to swap
+                    swap_idx = None
+                    for j in range(2, len(filtered)):
+                        if not _is_low(filtered[j]):
+                            swap_idx = j
+                            break
+                    if swap_idx is not None:
+                        filtered[idx], filtered[swap_idx] = filtered[swap_idx], filtered[idx]
                     else:
-                        # Move to end
+                        # No non-low-tech available after 2, move this one to end
                         q = filtered.pop(idx)
                         filtered.append(q)
 
@@ -474,14 +535,24 @@ def _build_fallback_prompt(
 
     if is_tech and interview_mode == "industry_interview":
         lines.extend([
-            "【技术岗位硬性约束】",
-            "这是技术面试，禁止生成泛 HR / 软技能类题目：",
-            "- 禁止出现'最大缺点''优点和缺点''为什么选择我们''职业规划''如何看待加班''团队冲突'等 HR 题。",
-            "- 禁止出现'一分钟向非技术背景解释''用一句话概括'等低技术表达题。",
-            "- 5 道题中至少 4 道必须是技术/项目/工程相关。",
-            "- 第 1 题可以是项目总览，但必须要求讲技术链路。",
-            "- 第 2-4 题必须是技术深挖（代码、架构、数据、模型、工具、性能、异常处理等）。",
-            "- 第 5 题可以是综合场景，但必须技术相关，例如上线、评估、故障排查、安全或成本控制。",
+            "【技术岗位硬性约束——违反会导致题目被废弃】",
+            "这是技术面试，严禁生成泛 HR / 软技能 / 通用表达类题目。以下类型的题目绝对禁止：",
+            "- '你最大的缺点是什么' / '你的优点和缺点' / '怎么克服'",
+            "- '请用一分钟向非技术背景的人解释 API' / '用一句话概括' / '核心竞争力'",
+            "- '你为什么选择我们' / '你的职业规划' / '如何看待加班' / '团队冲突怎么处理'",
+            "- '你最近遇到的困难是什么，怎么解决'（除非限定为技术困难/线上故障/模型效果问题）",
+            "- '描述一次你遇到的挑战'（除非限定为技术挑战/架构选型/性能瓶颈）",
+            "",
+            "如果必须问'困难'或'挑战'，必须限定为技术场景：",
+            "- 允许：'你最近一个 AI 应用项目里遇到的最难定位的技术问题是什么？请说明现象、排查路径和修复方案。'",
+            "- 允许：'你的后端项目遇到过最严重的线上故障是什么？怎么发现和恢复的？'",
+            "- 禁止：'你最近遇到的困难是什么，怎么解决的？'（没有技术限定）",
+            "",
+            "题目结构硬性要求：",
+            "- 第 1 题必须是项目技术链路深挖或简历项目追问（如'你简历里的XX项目，数据流是怎么走的？'）。",
+            "- 第 2-4 题必须是纯技术深挖（代码、架构、数据、模型、工具、性能、异常处理、安全、成本等）。",
+            "- 第 5 题可以是综合场景，但必须是技术场景（上线、评估、故障排查、安全、成本控制、延迟优化）。",
+            "- 5 道题中至少 4 道必须含有明确的技术/项目/工程关键词。",
             "",
         ])
 

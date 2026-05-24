@@ -115,19 +115,19 @@ function InterviewMode() {
     setReviewProgress({ percent: 5, stage: '正在读取简历内容...' })
     setError(null)
 
+    // Progress stages: ~60s to reach 90%
     const stages = [
-      { percent: 15, stage: '正在分析项目经历和技能栈...' },
-      { percent: 40, stage: '正在生成可能追问...' },
-      { percent: 65, stage: '正在整理修改建议...' },
-      { percent: 85, stage: '即将完成...' },
+      { percent: 5, stage: '正在读取简历内容...' },
+      { percent: 20, stage: '正在分析项目经历和技能栈...' },
+      { percent: 45, stage: '正在生成可能追问...' },
+      { percent: 70, stage: '正在整理修改建议...' },
+      { percent: 90, stage: '即将完成...' },
     ]
-    let stageIdx = 0
-    const progressTimer = setInterval(() => {
-      if (stageIdx < stages.length) {
-        setReviewProgress(stages[stageIdx])
-        stageIdx += 1
-      }
-    }, 1200)
+    const stageTimes = [0, 10000, 25000, 45000, 60000]
+    const timers = []
+    stages.forEach((s, i) => {
+      timers.push(setTimeout(() => setReviewProgress(s), stageTimes[i]))
+    })
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/resume/review`, {
@@ -150,7 +150,7 @@ function InterviewMode() {
     } catch (err) {
       setError('简历测评失败: ' + err.message)
     } finally {
-      clearInterval(progressTimer)
+      timers.forEach(clearTimeout)
       setReviewLoading(false)
     }
   }
@@ -241,21 +241,19 @@ function InterviewMode() {
     setLoading(true)
     setError(null)
 
+    // Progress stages: ~30s to reach 90%
     const stages = [
-      { percent: 10, stage: '正在分析你的回答...' },
-      { percent: 35, stage: '正在对照评分标准...' },
-      { percent: 60, stage: '正在生成点评和标准回答...' },
-      { percent: 80, stage: '正在准备下一道追问...' },
-      { percent: 92, stage: '即将完成...' },
+      { percent: 5, stage: '正在提交回答...' },
+      { percent: 20, stage: '正在分析你的回答...' },
+      { percent: 45, stage: '正在对照评分标准...' },
+      { percent: 70, stage: '正在生成点评和标准回答...' },
+      { percent: 90, stage: '即将完成...' },
     ]
-    let stageIdx = 0
-    setAnswerProgress({ percent: 5, stage: '正在提交回答...' })
-    const progressTimer = setInterval(() => {
-      if (stageIdx < stages.length) {
-        setAnswerProgress(stages[stageIdx])
-        stageIdx += 1
-      }
-    }, 1200)
+    const stageTimes = [0, 5000, 12000, 22000, 30000]
+    const timers = []
+    stages.forEach((s, i) => {
+      timers.push(setTimeout(() => setAnswerProgress(s), stageTimes[i]))
+    })
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/interview/answer`, {
@@ -295,7 +293,7 @@ function InterviewMode() {
     } catch (err) {
       setError('提交回答失败: ' + err.message)
     } finally {
-      clearInterval(progressTimer)
+      timers.forEach(clearTimeout)
       setLoading(false)
       setAnswerProgress({ percent: 0, stage: '' })
     }
