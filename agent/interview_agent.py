@@ -108,6 +108,68 @@ def _has_api_key() -> bool:
     return bool(os.getenv("OPENAI_API_KEY", "").strip())
 
 
+def extract_resume_evidence(resume_text: str, max_items: int = 5) -> List[str]:
+    """Extract short, quotable evidence snippets from resume text.
+    No embeddings, no external deps — pure rule/keyword based extraction.
+    """
+    if not resume_text or not resume_text.strip():
+        return []
+
+    # Tech keywords that indicate substantive content worth quoting
+    KEYWORDS = [
+        "项目", "经历", "实习", "论文", "竞赛", "系统", "平台",
+        "Spring", "Spring Boot", "Redis", "Kafka", "MyBatis", "SQL",
+        "FastAPI", "React", "Vue", "RAG", "Agent", "大模型",
+        "深度学习", "机器学习", "PyTorch", "TensorFlow", "YOLO", "OpenCV",
+        "数据库", "缓存", "消息队列", "Docker", "Nginx", "云服务器", "部署",
+        "分布式", "微服务", "高并发", "高可用", "性能优化",
+        "爬虫", "推荐", "搜索", "排序", "分类", "检测", "分割",
+        "Kubernetes", "K8s", "ES", "Elasticsearch", "ClickHouse", "MongoDB",
+        "gRPC", "REST", "API", "网关", "链路追踪", "监控",
+        "算法", "模型", "训练", "推理", "调优", "特征工程",
+        "数据清洗", "数据分析", "可视化", "BI", "A/B", "实验",
+        "产品", "用户", "需求", "运营", "增长", "转化", "留存",
+        "埋点", "漏斗", "路径", "画像", "标签", "推荐",
+    ]
+
+    # Split into lines and clean
+    raw_lines = resume_text.splitlines()
+    candidates = []
+    for line in raw_lines:
+        stripped = line.strip()
+        if len(stripped) < 10:
+            continue
+        # Keep lines that contain at least one keyword
+        lowered = stripped.lower()
+        if any(kw.lower() in lowered for kw in KEYWORDS):
+            # Deduplicate by exact match (case-insensitive)
+            if stripped.lower() not in [c.lower() for c in candidates]:
+                candidates.append(stripped)
+
+    # Sort by richness (more keywords = richer snippet)
+    def _score(snippet: str) -> int:
+        lowered = snippet.lower()
+        return sum(1 for kw in KEYWORDS if kw.lower() in lowered)
+
+    candidates.sort(key=_score, reverse=True)
+
+    # Truncate each snippet to ~80 chars max, but keep whole words
+    result = []
+    for snippet in candidates[:max_items]:
+        if len(snippet) > 80:
+            # Try to cut at a comma, semicolon, or space near 80 chars
+            cut = 80
+            for delim in ["，", ",", "；", ";", " "]:
+                pos = snippet.rfind(delim, 60, 85)
+                if pos > 0:
+                    cut = pos + 1
+                    break
+            snippet = snippet[:cut].strip()
+        result.append(snippet)
+
+    return result
+
+
 def _build_interviewer_system_prompt(
     interview_mode: str,
     role_or_major: str,
@@ -115,6 +177,7 @@ def _build_interviewer_system_prompt(
     resume_text: str,
     profile: Optional[Dict[str, Any]] = None,
     job_type: str = "developer",
+    resume_evidence: Optional[List[str]] = None,
 ) -> str:
     mode_label = {
         "graduate_reexam": "研究生复试/保研面试",
@@ -184,14 +247,23 @@ def _build_interviewer_system_prompt(
             "---\n"
             "请在面试中结合简历内容提出针对性问题或追问。"
             "特别关注简历中提到的项目、技术栈和量化成果。"
-            "\n\n【简历引用规则】"
-            "当题目涉及项目经历（focus_mode 为 project_experience 或 topic 包含'项目'）时，"
-            "你的提问必须优先引用简历中的具体内容，使用以下格式之一："
-            "'我看到你的简历中提到「...」，请你具体说明……'"
-            "或'根据你简历里的「...」项目，我想追问……'"
-            "或'你在简历中写到使用「...」技术，请结合项目说明……'"
-            "如果简历中无法定位到具体片段，可以使用'结合你的项目经历……'等概括性表达，"
-            "但不要捏造简历中不存在的项目名、公司名、论文名或指标。"
+        )
+
+    if resume_evidence:
+        prompt += (
+            "\n\n【简历依据】\n"
+            "以下是从候选人简历中提取到的可引用片段：\n"
+        )
+        for i, ev in enumerate(resume_evidence, 1):
+            prompt += f"{i}. {ev}\n"
+        prompt += (
+            "\n【提问要求】\n"
+            "你在提出项目经历相关问题时，必须优先引用上述其中一个片段，使用以下表达之一：\n"
+            "- '我看到你的简历中提到「...」，请你具体说明……'\n"
+            "- '根据你简历里的「...」经历，我想追问……'\n"
+            "- '你在简历中写到使用「...」技术，请结合项目说明……'\n"
+            "如果片段不足或不确定，不要捏造简历内容，只能说："
+            "'结合你的项目经历，请你说明……'"
         )
     return prompt
 
@@ -240,6 +312,7 @@ def _build_prompt_for_answer(
     user_answer: str,
     is_last_question: bool,
     job_type: str = "developer",
+    resume_evidence: Optional[List[str]] = None,
 ) -> str:
     """Build the user-facing prompt sent to the LLM for evaluation + next step."""
     questions = session["questions"]
@@ -312,22 +385,33 @@ def _build_prompt_for_answer(
                 f"- 直接给出下一道题的题目内容：{next_q['question']}\n"
             )
 
-        # Resume-specific questioning instruction
+        # Resume evidence injection for evaluation and follow-up
         resume_text = session.get("resume_text", "")
         focus_mode = session.get("focus", "")
         topic = current_q.get("topic", "")
-        if resume_text and resume_text.strip() and ("项目" in topic or focus_mode == "project_experience"):
+        is_project_related = "项目" in topic or focus_mode == "project_experience"
+
+        if resume_evidence and is_project_related:
+            lines.append("")
+            lines.append("【简历依据】")
+            lines.append("以下是从候选人简历中提取到的可引用片段：")
+            for i, ev in enumerate(resume_evidence, 1):
+                lines.append(f"{i}. {ev}")
+            lines.append(
+                "\n【提问要求】"
+                "如果涉及项目经历的提问或追问，优先引用上述片段，"
+                "不要捏造简历中不存在的项目名、公司名、论文名或指标。"
+            )
+
+        if resume_evidence and is_project_related:
             lines.append("")
             lines.append(
-                "【简历关联提问要求】\n"
-                "候选人有简历且本题与项目经历相关。你的面试官回复中，"
-                "如果涉及对候选人项目经历的提问或追问，"
-                "必须优先使用以下格式之一引用简历中的具体内容：\n"
-                "- '我看到你的简历中提到「...」，请你具体说明……'\n"
-                "- '根据你简历里的「...」项目，我想追问……'\n"
-                "- '你在简历中写到使用「...」技术，请结合项目说明……'\n"
-                "如果简历中无法定位具体片段，可以使用'结合你的项目经历……'等概括性表达，"
-                "但绝对不要捏造简历中不存在的项目名、公司名、论文名或指标。"
+                "【点评要求】\n"
+                "点评时结合简历中的技术关键词，判断用户回答是否充分展开了简历中提到的能力：\n"
+                "- 如果用户回答绕开了简历中的关键技术（如简历提到了 Redis + Kafka，但回答只说了缓存），"
+                "请明确指出并建议补充。\n"
+                "- 如果用户回答充分覆盖了简历中的技术点，请给予肯定。\n"
+                "- 不要编造简历中没有的内容。"
             )
 
         lines.append("")
@@ -448,6 +532,8 @@ def start_interview(
     if resume_session_id:
         resume_text = RESUME_STORE.get(resume_session_id, "")
 
+    resume_evidence = extract_resume_evidence(resume_text) if resume_text else []
+
     session = {
         "session_id": session_id,
         "mode": interview_mode,
@@ -463,6 +549,7 @@ def start_interview(
         "resume_session_id": resume_session_id,
         "profile": profile,
         "job_type": job_type,
+        "resume_evidence": resume_evidence,
     }
 
     INTERVIEW_SESSIONS[session_id] = session
@@ -509,7 +596,8 @@ def submit_answer(
 
     # Build prompt and call LLM
     job_type = session.get("job_type", "developer")
-    prompt = _build_prompt_for_answer(session, user_answer, is_last_question, job_type=job_type)
+    resume_evidence = session.get("resume_evidence")
+    prompt = _build_prompt_for_answer(session, user_answer, is_last_question, job_type=job_type, resume_evidence=resume_evidence)
     system_prompt = _build_interviewer_system_prompt(
         session["mode"],
         session["role"],
@@ -517,6 +605,7 @@ def submit_answer(
         session.get("resume_text", ""),
         session.get("profile"),
         job_type=job_type,
+        resume_evidence=resume_evidence,
     )
 
     llm_response = ""
