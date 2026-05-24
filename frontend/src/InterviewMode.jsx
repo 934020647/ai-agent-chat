@@ -141,31 +141,48 @@ function InterviewMode() {
     setStartSuccess('')
     setError(null)
     try {
+      const resolvedTarget = (target || profile?.target || '').trim()
+      if (!resolvedTarget) {
+        setStartError('请填写本轮目标岗位或目标院校专业方向。')
+        setIsStarting(false)
+        return
+      }
+
       const payload = {
         interview_mode: mode,
         focus_mode: focus,
-        role_or_major: target || undefined,
+        target: resolvedTarget,
+        role_or_major: resolvedTarget,
         grade: profile?.grade || undefined,
+        major: profile?.major || undefined,
         resume_session_id: resumeSessionId || undefined,
+        resume_id: resumeSessionId || undefined,
         num_questions: 5,
+        job_type: 'developer',
       }
       if (profileId) {
         payload.profile_id = profileId
       }
+
       const res = await fetch(`${API_BASE_URL}/api/interview/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
       const data = await res.json()
-      if (data.error) throw new Error(data.error)
+
+      if (data.error) {
+        throw new Error(data.error)
+      }
 
       const total = data.total_questions ?? data.progress?.total ?? 0
       const current = data.progress?.current ?? 1
       const question = data.current_question || null
 
       if (!question || total === 0) {
-        throw new Error('后端未返回有效面试题，请检查题库或面试配置。')
+        throw new Error(
+          '当前面试配置在题库中没有匹配题目，请尝试切换为“互联网大厂实习/校招”模式，或填写更明确的目标岗位。'
+        )
       }
 
       setSessionId(data.session_id)
@@ -177,10 +194,23 @@ function InterviewMode() {
       setInterviewerReply('')
       setEvaluation(null)
       setAnswerText('')
-      setStartSuccess('已基于个人资料和面经题库生成本轮面试。')
+
+      let successMsg = '已基于个人资料和面经题库生成本轮面试。'
+      if (data.warnings && data.warnings.length > 0) {
+        successMsg += ' 提示：' + data.warnings.join(' ')
+      }
+      setStartSuccess(successMsg)
     } catch (err) {
       console.error('[startInterview] error:', err)
-      setStartError('启动面试失败：' + (err.message || '未知错误'))
+      let msg = err.message || '未知错误'
+      if (msg.includes('Missing target')) {
+        msg = '请填写本轮目标岗位或目标院校专业方向。'
+      } else if (msg.includes('Profile expired')) {
+        msg = '个人资料已失效，已尝试使用当前表单信息开始面试。'
+      } else if (msg.includes('Resume not found')) {
+        msg = '简历已失效，本轮将不参考简历内容。'
+      }
+      setStartError('启动面试失败：' + msg)
     } finally {
       setIsStarting(false)
     }

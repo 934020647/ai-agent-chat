@@ -192,10 +192,14 @@ class InterviewStartRequest(BaseModel):
     interview_mode: str  # graduate_reexam, industry_interview, general_mock
     focus_mode: Optional[str] = None  # balanced, fundamentals, project_experience
     role_or_major: Optional[str] = None
+    target: Optional[str] = None
     grade: Optional[str] = None  # 大一, 大二, ..., 研二
+    major: Optional[str] = None
     resume_session_id: Optional[str] = None
+    resume_id: Optional[str] = None
     num_questions: int = 5
     profile_id: Optional[str] = None
+    job_type: Optional[str] = "developer"
 
 
 @app.post("/api/interview/start")
@@ -203,27 +207,71 @@ def interview_start(request: InterviewStartRequest):
     """Start a new interview session with selected configuration.
     If profile_id is provided, profile fields are used as defaults
     and can be overridden by explicit request parameters.
+    If profile_id is expired, falls back to request fields.
+    If resume is missing, starts without resume context.
     """
+    warnings = []
     profile = None
     if request.profile_id:
         profile = interview_agent.get_profile(request.profile_id)
+        if not profile:
+            warnings.append("Profile expired. Using request fields instead.")
 
-    # Resolve parameters: request explicit > profile > default
+    # Resolve target: request.target > request.role_or_major > profile.target > profile.role_or_major
+    target = (
+        request.target
+        if request.target is not None and request.target.strip()
+        else (
+            request.role_or_major
+            if request.role_or_major is not None and request.role_or_major.strip()
+            else (
+                profile.get("target")
+                if profile
+                else None
+            )
+        )
+    )
+
+    if not target:
+        return {"error": "Missing target. Please provide interview target or role."}
+
     grade = request.grade if request.grade is not None else (profile.get("grade") if profile else None)
-    role_or_major = request.role_or_major if request.role_or_major is not None else (profile.get("target") if profile else None)
-    resume_session_id = request.resume_session_id if request.resume_session_id is not None else (profile.get("resume_id") if profile else None)
+    major = request.major if request.major is not None else (profile.get("major") if profile else None)
+    resume_session_id = (
+        request.resume_session_id
+        if request.resume_session_id is not None
+        else (
+            request.resume_id
+            if request.resume_id is not None
+            else (profile.get("resume_id") if profile else None)
+        )
+    )
+
+    # Check resume exists; if not, drop it and warn
+    if resume_session_id and resume_session_id not in interview_agent.RESUME_STORE:
+        warnings.append("Resume not found, starting interview without resume context.")
+        resume_session_id = None
+
     interview_mode = request.interview_mode if request.interview_mode is not None else (profile.get("preferred_interview_mode") if profile else "general_mock")
     focus_mode = request.focus_mode if request.focus_mode is not None else (profile.get("preferred_focus_mode") if profile else None)
+    job_type = request.job_type if request.job_type is not None else (profile.get("preferred_job_type") if profile else "developer")
 
     result = interview_agent.start_interview(
         interview_mode=interview_mode,
         focus_mode=focus_mode,
-        role_or_major=role_or_major,
+        role_or_major=target,
         grade=grade,
         resume_session_id=resume_session_id,
         num_questions=request.num_questions,
         profile=profile,
+        job_type=job_type,
     )
+    if result.get("total_questions", 0) == 0:
+        return {
+            "error": f"当前面试配置（{interview_mode} + {focus_mode or 'balanced'} + {target}）在题库中没有匹配题目。请尝试切换面试模式或目标岗位。"
+        }
+    if warnings:
+        result["warnings"] = warnings
     return result
 
 

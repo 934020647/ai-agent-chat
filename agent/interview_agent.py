@@ -114,6 +114,7 @@ def _build_interviewer_system_prompt(
     grade: str,
     resume_text: str,
     profile: Optional[Dict[str, Any]] = None,
+    job_type: str = "developer",
 ) -> str:
     mode_label = {
         "graduate_reexam": "研究生复试/保研面试",
@@ -121,8 +122,15 @@ def _build_interviewer_system_prompt(
         "general_mock": "综合模拟面试",
     }.get(interview_mode, "模拟面试")
 
+    job_type_label = {
+        "developer": "开发工程师",
+        "algorithm": "算法工程师",
+        "product": "产品经理",
+        "general": "综合岗位",
+    }.get(job_type, "技术岗位")
+
     prompt = (
-        f"你是一位专业的 {mode_label} 面试官。"
+        f"你是一位专业的 {mode_label} 面试官，面试方向为【{job_type_label}】。"
         f"你正在面试一位申请【{role_or_major}】的【{grade}】学生。"
         "你的语气专业、友善但严格。"
         "你会根据候选人的回答质量给出具体反馈，并在必要时进行追问。"
@@ -131,6 +139,26 @@ def _build_interviewer_system_prompt(
         "不要使用任何 Markdown 标题格式（如 # ##）。"
         "使用纯文本或简单的列表格式即可。"
     )
+
+    if job_type == "developer":
+        prompt += (
+            "\n\n【岗位侧重】你重点关注候选人的工程实现能力、系统设计、性能优化、"
+            "接口设计、数据库、缓存、部署运维等工程实践能力。"
+        )
+    elif job_type == "algorithm":
+        prompt += (
+            "\n\n【岗位侧重】你重点关注候选人的算法思路、模型原理、时间/空间复杂度、"
+            "数据处理、评估指标、实验设计和论文/竞赛经历。"
+        )
+    elif job_type == "product":
+        prompt += (
+            "\n\n【岗位侧重】你重点关注候选人的用户洞察、需求分析、产品判断、"
+            "数据指标、优先级决策、沟通协作和项目推进能力。"
+        )
+    else:
+        prompt += (
+            "\n\n【岗位侧重】你采用通用专业技术面试风格，均衡考察基础、项目和综合素质。"
+        )
 
     if profile:
         prompt += "\n\n=== 候选人资料 ==="
@@ -156,6 +184,14 @@ def _build_interviewer_system_prompt(
             "---\n"
             "请在面试中结合简历内容提出针对性问题或追问。"
             "特别关注简历中提到的项目、技术栈和量化成果。"
+            "\n\n【简历引用规则】"
+            "当题目涉及项目经历（focus_mode 为 project_experience 或 topic 包含'项目'）时，"
+            "你的提问必须优先引用简历中的具体内容，使用以下格式之一："
+            "'我看到你的简历中提到「...」，请你具体说明……'"
+            "或'根据你简历里的「...」项目，我想追问……'"
+            "或'你在简历中写到使用「...」技术，请结合项目说明……'"
+            "如果简历中无法定位到具体片段，可以使用'结合你的项目经历……'等概括性表达，"
+            "但不要捏造简历中不存在的项目名、公司名、论文名或指标。"
         )
     return prompt
 
@@ -203,6 +239,7 @@ def _build_prompt_for_answer(
     session: Dict[str, Any],
     user_answer: str,
     is_last_question: bool,
+    job_type: str = "developer",
 ) -> str:
     """Build the user-facing prompt sent to the LLM for evaluation + next step."""
     questions = session["questions"]
@@ -215,6 +252,7 @@ def _build_prompt_for_answer(
     lines.append("=== 面试上下文 ===")
     lines.append(f"面试类型: {session['mode']}")
     lines.append(f"目标岗位/专业: {session['role']}")
+    lines.append(f"岗位类型: {job_type}")
     lines.append(f"年级: {session['grade']}")
     if profile:
         if profile.get("major"):
@@ -272,6 +310,24 @@ def _build_prompt_for_answer(
                 "所有题目已完成、最后一题已经结束、进入总结、总结环节、面试到此结束、正式面试结束、提问环节、本轮模拟面试已完成。\n"
                 "- 不要给候选人任何面试即将结束的信号。\n"
                 f"- 直接给出下一道题的题目内容：{next_q['question']}\n"
+            )
+
+        # Resume-specific questioning instruction
+        resume_text = session.get("resume_text", "")
+        focus_mode = session.get("focus", "")
+        topic = current_q.get("topic", "")
+        if resume_text and resume_text.strip() and ("项目" in topic or focus_mode == "project_experience"):
+            lines.append("")
+            lines.append(
+                "【简历关联提问要求】\n"
+                "候选人有简历且本题与项目经历相关。你的面试官回复中，"
+                "如果涉及对候选人项目经历的提问或追问，"
+                "必须优先使用以下格式之一引用简历中的具体内容：\n"
+                "- '我看到你的简历中提到「...」，请你具体说明……'\n"
+                "- '根据你简历里的「...」项目，我想追问……'\n"
+                "- '你在简历中写到使用「...」技术，请结合项目说明……'\n"
+                "如果简历中无法定位具体片段，可以使用'结合你的项目经历……'等概括性表达，"
+                "但绝对不要捏造简历中不存在的项目名、公司名、论文名或指标。"
             )
 
         lines.append("")
@@ -375,6 +431,7 @@ def start_interview(
     resume_session_id: Optional[str] = None,
     num_questions: int = 5,
     profile: Optional[Dict[str, Any]] = None,
+    job_type: str = "developer",
 ) -> Dict[str, Any]:
     """Start a new interview session, pick questions, and return session info."""
     session_id = str(uuid.uuid4())[:12]
@@ -405,6 +462,7 @@ def start_interview(
         "resume_text": resume_text,
         "resume_session_id": resume_session_id,
         "profile": profile,
+        "job_type": job_type,
     }
 
     INTERVIEW_SESSIONS[session_id] = session
@@ -450,13 +508,15 @@ def submit_answer(
     is_last_question = not has_next_question
 
     # Build prompt and call LLM
-    prompt = _build_prompt_for_answer(session, user_answer, is_last_question)
+    job_type = session.get("job_type", "developer")
+    prompt = _build_prompt_for_answer(session, user_answer, is_last_question, job_type=job_type)
     system_prompt = _build_interviewer_system_prompt(
         session["mode"],
         session["role"],
         session["grade"],
         session.get("resume_text", ""),
         session.get("profile"),
+        job_type=job_type,
     )
 
     llm_response = ""
