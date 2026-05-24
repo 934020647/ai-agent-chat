@@ -4,7 +4,11 @@
     "interview_mode": "graduate_reexam",
     "focus_mode": "balanced",
     "role_or_major": "计算机科学与技术保研",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "科研兴趣",
     "question": "请用两分钟介绍你的科研兴趣，以及你为什么选择这个方向？",
     "answer_points": [
@@ -30,7 +34,10 @@
     "interview_mode": "graduate_reexam",
     "focus_mode": "fundamentals",
     "role_or_major": "计算机科学与技术保研",
-    "grade_range": ["大三", "大四"],
+    "grade_range": [
+      "大三",
+      "大四"
+    ],
     "topic": "专业基础",
     "question": "请解释进程和线程的区别，什么场景下应该使用多线程，什么场景下应该使用多进程？",
     "answer_points": [
@@ -56,7 +63,11 @@
     "interview_mode": "graduate_reexam",
     "focus_mode": "project_experience",
     "role_or_major": "计算机科学与技术保研",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "项目经历",
     "question": "请详细介绍一个你认为最能体现你能力的项目，你在其中承担什么角色，遇到了什么技术挑战，如何解决的？",
     "answer_points": [
@@ -83,7 +94,11 @@
     "interview_mode": "graduate_reexam",
     "focus_mode": "balanced",
     "role_or_major": "人工智能保研",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "英文自我介绍",
     "question": "Please give a two-minute self-introduction in English.",
     "answer_points": [
@@ -110,7 +125,10 @@
     "interview_mode": "graduate_reexam",
     "focus_mode": "fundamentals",
     "role_or_major": "软件工程保研",
-    "grade_range": ["大三", "大四"],
+    "grade_range": [
+      "大三",
+      "大四"
+    ],
     "topic": "专业基础",
     "question": "什么是数据库的事务？请解释 ACID 特性，并说明在实际系统中如何保证一致性？",
     "answer_points": [
@@ -136,7 +154,11 @@
     "interview_mode": "graduate_reexam",
     "focus_mode": "project_experience",
     "role_or_major": "人工智能保研",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "项目经历",
     "question": "你项目中用到的深度学习模型是什么？请解释它的核心结构和 loss 函数设计。",
     "answer_points": [
@@ -162,7 +184,10 @@
     "interview_mode": "graduate_reexam",
     "focus_mode": "balanced",
     "role_or_major": "计算机科学与技术保研",
-    "grade_range": ["大四", "研一"],
+    "grade_range": [
+      "大四",
+      "研一"
+    ],
     "topic": "目标院校专业动机",
     "question": "你为什么选择我们实验室？你了解我们组最近哪些工作？",
     "answer_points": [
@@ -188,7 +213,11 @@
     "interview_mode": "industry_interview",
     "focus_mode": "fundamentals",
     "role_or_major": "后端开发实习",
-    "grade_range": ["大二", "大三", "研一"],
+    "grade_range": [
+      "大二",
+      "大三",
+      "研一"
+    ],
     "topic": "计算机基础",
     "question": "请解释 TCP 三次握手的过程，以及为什么需要三次而不是两次或四次？",
     "answer_points": [
@@ -214,7 +243,11 @@
     "interview_mode": "industry_interview",
     "focus_mode": "project_experience",
     "role_or_major": "后端开发实习",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "项目深挖",
     "question": "介绍一下你项目中的缓存设计，为什么这样设计？",
     "answer_points": [
@@ -240,7 +273,11 @@
     "interview_mode": "industry_interview",
     "focus_mode": "fundamentals",
     "role_or_major": "后端开发实习",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "计算机基础",
     "question": "Redis 的五种基本数据类型分别是什么？你在项目中主要用到了哪些？",
     "answer_points": [
@@ -266,7 +303,12 @@
     "interview_mode": "industry_interview",
     "focus_mode": "project_experience",
     "role_or_major": "AI工程/大模型应用实习",
-    "grade_range": ["大三", "大四", "研一", "研二"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
     "topic": "项目深挖",
     "question": "你做过的大模型应用项目是怎么做 prompt engineering 的？有没有用到 RAG？",
     "answer_points": [
@@ -292,7 +334,11 @@
     "interview_mode": "industry_interview",
     "focus_mode": "fundamentals",
     "role_or_major": "后端开发实习",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "计算机基础",
     "question": "什么是死锁？死锁产生的四个必要条件是什么？如何预防死锁？",
     "answer_points": [
@@ -318,7 +364,11 @@
     "interview_mode": "industry_interview",
     "focus_mode": "project_experience",
     "role_or_major": "后端开发实习",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "项目深挖",
     "question": "你的项目是怎么做数据库设计的？有没有遇到过性能瓶颈，怎么优化的？",
     "answer_points": [
@@ -344,7 +394,12 @@
     "interview_mode": "industry_interview",
     "focus_mode": "fundamentals",
     "role_or_major": "AI工程/大模型应用实习",
-    "grade_range": ["大三", "大四", "研一", "研二"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
     "topic": "计算机基础",
     "question": "请解释 Transformer 的核心结构，Self-Attention 机制解决了什么问题？",
     "answer_points": [
@@ -370,7 +425,11 @@
     "interview_mode": "industry_interview",
     "focus_mode": "project_experience",
     "role_or_major": "后端开发实习",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "项目深挖",
     "question": "请介绍你项目中的微服务拆分思路，服务之间是怎么通信的？",
     "answer_points": [
@@ -396,7 +455,14 @@
     "interview_mode": "general_mock",
     "focus_mode": "balanced",
     "role_or_major": "综合模拟面试",
-    "grade_range": ["大一", "大二", "大三", "大四", "研一", "研二"],
+    "grade_range": [
+      "大一",
+      "大二",
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
     "topic": "表达能力",
     "question": "请用一分钟向一个非技术背景的人解释什么是 API。",
     "answer_points": [
@@ -422,7 +488,12 @@
     "interview_mode": "general_mock",
     "focus_mode": "balanced",
     "role_or_major": "综合模拟面试",
-    "grade_range": ["大三", "大四", "研一", "研二"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
     "topic": "动机问题",
     "question": "你为什么想做后端开发/AI工程？你对自己的职业规划是什么？",
     "answer_points": [
@@ -448,7 +519,12 @@
     "interview_mode": "general_mock",
     "focus_mode": "fundamentals",
     "role_or_major": "综合模拟面试",
-    "grade_range": ["大二", "大三", "大四", "研一"],
+    "grade_range": [
+      "大二",
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "基础与项目混合",
     "question": "Git 中 merge 和 rebase 有什么区别？你在团队项目中怎么选择？",
     "answer_points": [
@@ -474,7 +550,12 @@
     "interview_mode": "general_mock",
     "focus_mode": "project_experience",
     "role_or_major": "综合模拟面试",
-    "grade_range": ["大三", "大四", "研一", "研二"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
     "topic": "基础与项目混合",
     "question": "你项目中最有成就感的一个优化是什么？优化前后的数据对比是怎样的？",
     "answer_points": [
@@ -500,7 +581,12 @@
     "interview_mode": "general_mock",
     "focus_mode": "balanced",
     "role_or_major": "综合模拟面试",
-    "grade_range": ["大三", "大四", "研一", "研二"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
     "topic": "表达能力",
     "question": "请描述一次你在团队中遇到冲突的经历，你是怎么解决的？",
     "answer_points": [
@@ -526,7 +612,11 @@
     "interview_mode": "graduate_reexam",
     "focus_mode": "fundamentals",
     "role_or_major": "人工智能保研",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "专业基础",
     "question": "请解释梯度消失和梯度爆炸问题，以及常见的解决方法。",
     "answer_points": [
@@ -552,7 +642,11 @@
     "interview_mode": "industry_interview",
     "focus_mode": "fundamentals",
     "role_or_major": "后端开发实习",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "计算机基础",
     "question": "HTTP 和 HTTPS 有什么区别？HTTPS 的握手过程是怎样的？",
     "answer_points": [
@@ -578,7 +672,12 @@
     "interview_mode": "industry_interview",
     "focus_mode": "project_experience",
     "role_or_major": "AI工程/大模型应用实习",
-    "grade_range": ["大三", "大四", "研一", "研二"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
     "topic": "项目深挖",
     "question": "你的大模型应用是怎么做效果评估的？有没有做 A/B 测试？",
     "answer_points": [
@@ -604,7 +703,12 @@
     "interview_mode": "general_mock",
     "focus_mode": "fundamentals",
     "role_or_major": "综合模拟面试",
-    "grade_range": ["大二", "大三", "大四", "研一"],
+    "grade_range": [
+      "大二",
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "基础与项目混合",
     "question": "什么是幂等性？你在接口设计中是怎么保证幂等的？",
     "answer_points": [
@@ -630,7 +734,12 @@
     "interview_mode": "general_mock",
     "focus_mode": "project_experience",
     "role_or_major": "综合模拟面试",
-    "grade_range": ["大三", "大四", "研一", "研二"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
     "topic": "基础与项目混合",
     "question": "请介绍一个你从零开始搭建的系统，它的完整技术栈是什么？",
     "answer_points": [
@@ -657,7 +766,11 @@
     "interview_mode": "graduate_reexam",
     "focus_mode": "balanced",
     "role_or_major": "软件工程保研",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "科研兴趣",
     "question": "如果研究生期间导师给你的方向和你预想的不太一样，你会怎么调整自己？",
     "answer_points": [
@@ -683,7 +796,11 @@
     "interview_mode": "industry_interview",
     "focus_mode": "fundamentals",
     "role_or_major": "后端开发实习",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "计算机基础",
     "question": "请解释一致性哈希的原理，以及它在分布式缓存中的应用。",
     "answer_points": [
@@ -709,7 +826,11 @@
     "interview_mode": "industry_interview",
     "focus_mode": "project_experience",
     "role_or_major": "后端开发实习",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "项目深挖",
     "question": "你项目中的日志系统是怎么设计的？日志量大了之后怎么处理？",
     "answer_points": [
@@ -735,7 +856,12 @@
     "interview_mode": "general_mock",
     "focus_mode": "balanced",
     "role_or_major": "综合模拟面试",
-    "grade_range": ["大三", "大四", "研一", "研二"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
     "topic": "动机问题",
     "question": "你最大的缺点是什么？你是怎么克服的？",
     "answer_points": [
@@ -761,7 +887,11 @@
     "interview_mode": "graduate_reexam",
     "focus_mode": "fundamentals",
     "role_or_major": "计算机科学与技术保研",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "专业基础",
     "question": "请解释操作系统中的虚拟内存，以及页面置换算法有哪些？",
     "answer_points": [
@@ -787,7 +917,12 @@
     "interview_mode": "industry_interview",
     "focus_mode": "fundamentals",
     "role_or_major": "AI工程/大模型应用实习",
-    "grade_range": ["大三", "大四", "研一", "研二"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
     "topic": "算法思路",
     "question": "给定一个数组，找出其中第 K 大的元素，要求时间复杂度优于 O(n log n)。",
     "answer_points": [
@@ -813,7 +948,12 @@
     "interview_mode": "general_mock",
     "focus_mode": "project_experience",
     "role_or_major": "综合模拟面试",
-    "grade_range": ["大三", "大四", "研一", "研二"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
     "topic": "基础与项目混合",
     "question": "你的项目有没有做监控和告警？出问题的时候你怎么排查？",
     "answer_points": [
@@ -839,7 +979,11 @@
     "interview_mode": "industry_interview",
     "focus_mode": "project_experience",
     "role_or_major": "后端开发实习",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "项目深挖",
     "question": "你项目中有没有用到消息队列？什么场景下用的？怎么保证消息不丢失？",
     "answer_points": [
@@ -866,7 +1010,11 @@
     "interview_mode": "graduate_reexam",
     "focus_mode": "project_experience",
     "role_or_major": "人工智能保研",
-    "grade_range": ["大三", "大四", "研一"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
     "topic": "项目经历",
     "question": "你项目的创新点是什么？和现有工作相比有什么优势？",
     "answer_points": [
@@ -892,7 +1040,12 @@
     "interview_mode": "general_mock",
     "focus_mode": "balanced",
     "role_or_major": "综合模拟面试",
-    "grade_range": ["大三", "大四", "研一", "研二"],
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
     "topic": "表达能力",
     "question": "请用一句话概括你的核心竞争力，然后用两分钟展开说明。",
     "answer_points": [
@@ -911,6 +1064,1235 @@
       "structure": "是否按一句话→展开→案例→匹配的结构",
       "depth": "是否有数据支撑、展示成长潜力",
       "communication": "是否自信、有说服力、有感染力"
+    }
+  },
+  {
+    "id": "ai_app_036",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "大模型应用项目",
+    "question": "你做过 RAG 或大模型应用项目吗？请说明数据是怎么进入知识库的，用户问题是怎么被检索和生成回答的。",
+    "answer_points": [
+      "说明业务场景和用户问题类型",
+      "说明文档切分、索引、检索或关键词匹配方式",
+      "说明检索结果如何注入 prompt",
+      "说明如何降低幻觉和错误回答"
+    ],
+    "follow_up": [
+      "如果检索出来的内容不相关，你怎么处理？",
+      "你如何评估 RAG 系统回答质量？"
+    ],
+    "standard_answer": "一个较好的回答应该先说明应用场景，再解释知识库构建、检索策略、prompt 组装、回答生成和质量控制。",
+    "rubric": {
+      "accuracy": "是否覆盖 RAG 应用核心链路",
+      "structure": "是否按数据进入、检索、生成、评估展开",
+      "depth": "是否能解释幻觉控制和检索失败场景",
+      "communication": "表达是否具体清晰"
+    }
+  },
+  {
+    "id": "ai_app_037",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "Agent 项目",
+    "question": "你做过 Agent 相关的项目吗？Agent 是怎么决定调用哪个工具的？如果工具调用失败会怎么处理？",
+    "answer_points": [
+      "说明 Agent 的任务拆解方式",
+      "说明工具注册和选择机制",
+      "说明工具调用失败时的重试和降级策略",
+      "说明多轮对话中状态是如何保持的"
+    ],
+    "follow_up": [
+      "Agent 如果陷入循环调用怎么办？",
+      "如果用户意图模糊，Agent 怎么澄清？"
+    ],
+    "standard_answer": "好的回答应该展示对 Agent 架构的理解：任务规划（Planning）→ 工具选择（Tool Selection）→ 执行（Execution）→ 观察（Observation）→ 再规划的循环。工具调用失败需要有超时机制、重试策略（指数退避）、降级到默认回复或人工介入。",
+    "rubric": {
+      "accuracy": "Agent 架构和工具调用机制是否准确",
+      "structure": "是否按规划→选择→执行→容错展开",
+      "depth": "是否涉及循环检测、超时、降级",
+      "communication": "表达是否清晰具体"
+    }
+  },
+  {
+    "id": "ai_app_038",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "Prompt Engineering",
+    "question": "你在项目里是怎么设计 prompt 的？有没有遇到过 prompt 被注入攻击或者模型输出不稳定的情况？",
+    "answer_points": [
+      "Prompt 设计策略（角色设定、Few-shot、CoT、结构化输出）",
+      "Prompt 版本管理和 A/B 测试",
+      "Prompt 注入防御（输入过滤、输出校验、分隔符）",
+      "输出不稳定的原因和解决办法（temperature、seed、top-p）"
+    ],
+    "follow_up": [
+      "如果模型输出格式总是不对，你怎么约束它？",
+      "用户输入包含恶意指令时，你的系统怎么防护？"
+    ],
+    "standard_answer": "我在项目中采用了分层 prompt 设计：系统层定义角色和行为边界，上下文层注入检索结果，用户层接收原始输入。防御方面：①用特殊分隔符（如 XML 标签）隔离用户输入和指令；②输出端做 JSON Schema 校验；③敏感操作加人工确认。输出稳定性：固定 temperature=0.1~0.3，对需要确定性的场景用 deterministic decoding。",
+    "rubric": {
+      "accuracy": "Prompt 工程策略是否实用",
+      "structure": "是否按设计→管理→防御→稳定展开",
+      "depth": "是否涉及注入攻击和输出约束",
+      "communication": "是否有具体案例"
+    }
+  },
+  {
+    "id": "ai_app_039",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "幻觉控制",
+    "question": "大模型回答出现幻觉时，你在项目中是怎么发现和控制的？有没有做过量化评估？",
+    "answer_points": [
+      "幻觉的类型（事实性幻觉、忠实性幻觉）",
+      "发现方法（人工抽检、对比事实库、自动指标）",
+      "控制手段（RAG  grounding、温度调低、输出约束、后校验）",
+      "量化评估指标和实验结果"
+    ],
+    "follow_up": [
+      "如果用户明确要求模型‘编造’一个创意方案，这算幻觉吗？你怎么处理？",
+      "幻觉率和回答流畅度之间怎么权衡？"
+    ],
+    "standard_answer": "事实性幻觉指模型生成与事实不符的内容，忠实性幻觉指输出与输入/上下文不一致。发现方法：①随机抽取 100 条回答，人工标注幻觉率；②对 RAG 场景做‘答案是否能在检索文档中找到支撑’的自动校验。控制：①优先用 RAG 提供 grounding；②对数值/时间/人名等实体做后校验（正则+知识库）；③temperature 调低减少随机性。评估结果：优化前幻觉率约 15%，优化后降到 5% 以下。",
+    "rubric": {
+      "accuracy": "幻觉类型和控制手段是否准确",
+      "structure": "是否按发现→分类→控制→评估展开",
+      "depth": "是否涉及具体指标和实验数据",
+      "communication": "是否展示系统性思维"
+    }
+  },
+  {
+    "id": "ai_app_040",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "向量检索",
+    "question": "你在 RAG 项目里是怎么做向量检索的？Embedding 模型选的什么？怎么保证检索结果的相关性？",
+    "answer_points": [
+      "Embedding 模型选型（开源 vs 商用、领域适配）",
+      "向量数据库选型（FAISS、Milvus、Chroma、pgvector）",
+      "检索策略（Top-K、相似度阈值、重排序）",
+      "相关性评估和bad case分析"
+    ],
+    "follow_up": [
+      "如果查询和文档的语义差距很大（比如缩写、口语化），检索效果不好怎么办？",
+      "向量检索和关键词检索怎么结合？"
+    ],
+    "standard_answer": "我项目里用 BGE-large-zh 做 Embedding（开源、中文效果好、支持微调），向量库用 FAISS（轻量、速度快、适合中小规模）。检索流程：query → embedding → FAISS 检索 Top10 → Cross-Encoder 重排序取 Top3 → 注入 prompt。相关性保障：①对 bad case 做分析，发现口语化查询召回差，于是加了一层 query 扩展（同义词替换）；②对领域术语建关键词映射表；③混合检索：向量检索 + BM25 关键词检索，结果融合。",
+    "rubric": {
+      "accuracy": "Embedding 和向量检索技术是否准确",
+      "structure": "是否按选型→流程→优化→评估展开",
+      "depth": "是否涉及重排序、混合检索、bad case 分析",
+      "communication": "是否有具体选型理由和数据"
+    }
+  },
+  {
+    "id": "ai_app_041",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "多轮对话记忆",
+    "question": "你的 AI 应用是怎么处理多轮对话的？对话历史怎么管理？如果对话很长，怎么防止超出模型上下文长度？",
+    "answer_points": [
+      "对话历史的存储方式（内存、Redis、数据库）",
+      "上下文窗口管理策略（滑动窗口、摘要、关键信息提取）",
+      "长对话压缩和摘要机制",
+      "用户切换话题时的处理"
+    ],
+    "follow_up": [
+      "摘要生成本身也消耗 token，怎么权衡？",
+      "如果用户问‘刚才我说的第三个方案是什么’，系统怎么记住？"
+    ],
+    "standard_answer": "我的项目用 Redis 存储对话历史（TTL 24 小时），每次请求带上最近 10 轮对话。超长处理：①当 token 数超过阈值（如 3000），对早期对话做摘要（用轻量模型或规则提取关键决策点）；②对关键实体（人名、时间、决策）单独存储在 key-value 记忆库中。话题切换检测：用模型判断当前问题是否与上一轮同主题，若不同则清空短期上下文但保留关键记忆。",
+    "rubric": {
+      "accuracy": "多轮对话和上下文管理策略是否实用",
+      "structure": "是否按存储→管理→压缩→话题切换展开",
+      "depth": "是否涉及摘要、记忆库、话题检测",
+      "communication": "是否有具体参数和取舍"
+    }
+  },
+  {
+    "id": "ai_app_042",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "前后端结合 AI 应用",
+    "question": "你做 AI 应用时，前后端是怎么分工的？模型推理放在前端还是后端？为什么这么设计？",
+    "answer_points": [
+      "前端职责（用户交互、流式展示、输入校验）",
+      "后端职责（请求转发、鉴权、限流、缓存、日志）",
+      "模型部署位置的选择理由（延迟、安全、成本、设备差异）",
+      "流式输出（SSE/WebSocket）的实现"
+    ],
+    "follow_up": [
+      "如果模型推理很慢（5秒以上），前端怎么优化用户体验？",
+      "后端怎么做限流，防止用户恶意刷接口？"
+    ],
+    "standard_answer": "我的项目采用后端推理架构：前端只负责 UI 和 SSE 流式展示，后端转发请求到大模型 API。原因：①模型权重和 API Key 不能暴露在前端；②后端可以做统一鉴权、限流、审计日志；③不同用户设备的算力差异大，无法保证体验。流式输出用 SSE，前端逐字渲染降低等待焦虑。慢请求优化：①首 token 延迟高时先展示‘思考中’动画；②对常见问法做缓存（Redis）；③后端做异步队列，超时时返回友好提示。限流：用令牌桶算法，每分钟 30 次，超限返回 429。",
+    "rubric": {
+      "accuracy": "前后端分工和推理部署是否准确",
+      "structure": "是否按分工→选择理由→流式→优化→限流展开",
+      "depth": "是否涉及安全、成本、缓存、限流",
+      "communication": "是否有具体参数和取舍"
+    }
+  },
+  {
+    "id": "ai_app_043",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI应用开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "部署和接口安全",
+    "question": "如果要把你的 AI 应用上线给真实用户，你会重点关注哪些安全、成本和性能问题？",
+    "answer_points": [
+      "安全风险（Prompt 注入、数据泄露、滥用、版权）",
+      "成本控制（模型选择、缓存、批量处理、token 优化）",
+      "性能优化（并发、流式、超时、降级）",
+      "监控和告警"
+    ],
+    "follow_up": [
+      "如果用户上传敏感文件让模型分析，你怎么保证数据安全？",
+      "模型 API 按 token 计费，你怎么监控和预警成本超支？"
+    ],
+    "standard_answer": "安全：①输入过滤（敏感词、注入检测）；②输出审核（关键词过滤、分类器）；③用户数据隔离，不用于模型训练；④关键操作留痕审计。成本：①根据场景选模型（简单任务用小模型，复杂任务用大模型）；②高频问答做缓存；③prompt 压缩（去除冗余示例）。性能：①接口超时 30 秒，超时时降级到缓存答案或友好提示；②核心路径加熔断。监控：记录每次调用的 token 数、延迟、成本，日成本超过阈值发告警。",
+    "rubric": {
+      "accuracy": "安全、成本、性能策略是否全面",
+      "structure": "是否按安全→成本→性能→监控展开",
+      "depth": "是否涉及具体机制和参数",
+      "communication": "是否展示上线思维"
+    }
+  },
+  {
+    "id": "ai_app_044",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "大模型应用开发",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "工具调用",
+    "question": "你实现过让大模型调用外部工具（如搜索、计算、数据库查询）的功能吗？请描述完整的调用链路。",
+    "answer_points": [
+      "工具定义和描述（Function Calling / Tool Schema）",
+      "模型选择工具的逻辑",
+      "工具执行和结果回传",
+      "错误处理和超时机制"
+    ],
+    "follow_up": [
+      "如果模型选错了工具怎么办？",
+      "工具执行结果很长，怎么压缩后传给模型？"
+    ],
+    "standard_answer": "我实现了基于 OpenAI Function Calling 的工具调用系统。流程：①定义工具 schema（名称、描述、参数）；②用户提问时，模型先判断是否需要工具，若需要则输出 tool_calls；③后端解析 tool_calls，执行对应函数（如搜索、计算）；④将结果以 tool 消息回传给模型；⑤模型基于工具结果生成最终回答。错误处理：工具执行超时 10 秒，失败时返回错误信息给模型，让模型决定是否重试或告知用户。",
+    "rubric": {
+      "accuracy": "工具调用链路是否准确",
+      "structure": "是否按定义→选择→执行→回传→容错展开",
+      "depth": "是否涉及错误处理和结果压缩",
+      "communication": "是否有具体实现细节"
+    }
+  },
+  {
+    "id": "ai_app_045",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "大模型应用开发",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "大模型 API 调用",
+    "question": "你调用过大模型 API 吗？是怎么处理并发、超时和重试的？如果 API 限流了怎么办？",
+    "answer_points": [
+      "API 调用封装（统一接口、错误码处理）",
+      "并发控制（连接池、异步请求、Semaphore）",
+      "超时和重试策略（指数退避、最大重试次数）",
+      "限流应对（令牌桶、队列、降级）"
+    ],
+    "follow_up": [
+      "如果模型 API 完全不可用，你的系统怎么降级？",
+      "不同模型（GPT、Claude、国产模型）的 API 差异你是怎么抽象的？"
+    ],
+    "standard_answer": "我用 aiohttp 做异步 API 调用，连接池限制 20 个连接，Semaphore 限制并发 10。超时：连接超时 5 秒，读取超时 60 秒。重试：失败时指数退避（1s, 2s, 4s），最多重试 3 次。限流：收到 429 时读取 Retry-After 头，按建议时间等待；同时维护本地令牌桶，提前限流避免触发服务商限制。降级：大模型不可用时，先尝试切换到备用模型（如从 GPT-4 降到 GPT-3.5），再不行返回缓存答案或提示用户稍后再试。",
+    "rubric": {
+      "accuracy": "API 调用和容错策略是否准确",
+      "structure": "是否按封装→并发→超时→重试→限流→降级展开",
+      "depth": "是否涉及具体参数和多模型切换",
+      "communication": "是否有工程实践细节"
+    }
+  },
+  {
+    "id": "algo_046",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "算法工程师实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "模型训练流程",
+    "question": "请介绍你训练一个模型的完整流程，从数据准备到模型部署。哪个环节你觉得最难，为什么？",
+    "answer_points": [
+      "数据准备（采集、清洗、标注、划分）",
+      "模型选型和 baseline 搭建",
+      "训练过程（超参调优、监控、断点续训）",
+      "评估和迭代",
+      "部署和推理优化"
+    ],
+    "follow_up": [
+      "训练过程中 loss 不下降，你会怎么排查？",
+      "模型上线后发现效果比离线差，可能是什么原因？"
+    ],
+    "standard_answer": "我的流程：①数据准备——爬取/清洗数据，处理缺失值和异常值，按 8:1:1 划分训练/验证/测试集；②Baseline——先用简单模型（如逻辑回归、ResNet-18）建立基准；③训练——用 wandb 监控 loss 和指标，学习率预热+余弦退火，早停防止过拟合；④评估——不仅看 accuracy，还看 F1、AUC、混淆矩阵；⑤部署——用 ONNX/TensorRT 加速推理。最难的是数据质量：脏数据会让模型学到错误模式，我花了 30% 的时间做数据清洗和标注质检。",
+    "rubric": {
+      "accuracy": "训练流程是否完整准确",
+      "structure": "是否按数据→模型→训练→评估→部署展开",
+      "depth": "是否涉及具体工具和策略",
+      "communication": "是否有真实困难和反思"
+    }
+  },
+  {
+    "id": "algo_047",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "算法工程师实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "过拟合",
+    "question": "什么是过拟合？你在项目中遇到过吗？当时是怎么发现和解决的？",
+    "answer_points": [
+      "过拟合的定义和表现（训练集好、验证集差）",
+      "发现方法（学习曲线、验证集监控）",
+      "解决手段（正则化、Dropout、数据增强、早停、简化模型）",
+      "项目中具体的处理过程"
+    ],
+    "follow_up": [
+      "Dropout 在推理时是怎么处理的？",
+      "如果数据量本身就很小，怎么缓解过拟合？"
+    ],
+    "standard_answer": "过拟合是模型在训练集上表现很好但在验证/测试集上表现差，说明模型记住了训练数据的噪声而非学到通用规律。我在图像分类项目中遇到过：训练 accuracy 98%，验证 accuracy 72%。解决：①增加数据增强（随机裁剪、翻转、颜色抖动）；②加 Dropout（0.5）；③加 L2 正则（weight_decay=1e-4）；④早停（验证 loss 连续 5 轮不下降就停止）。最终验证 accuracy 提升到 85%。数据量小的时候：用迁移学习（预训练模型+微调）、半监督学习、或数据合成（GAN）。",
+    "rubric": {
+      "accuracy": "过拟合概念和解决方法是否准确",
+      "structure": "是否按定义→发现→解决→数据量小展开",
+      "depth": "是否涉及具体参数和多种手段",
+      "communication": "是否有项目中的真实案例"
+    }
+  },
+  {
+    "id": "algo_048",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "算法工程师实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "损失函数",
+    "question": "你在项目里用过哪些损失函数？为什么选这个？如果任务目标变了，损失函数需要怎么调整？",
+    "answer_points": [
+      "列举用过的损失函数（CrossEntropy、MSE、BCE、Focal Loss、Dice Loss）",
+      "选择理由（任务类型、数据分布、类别不平衡）",
+      "多任务场景的损失加权",
+      "损失函数调整的实际案例"
+    ],
+    "follow_up": [
+      "Focal Loss 是怎么解决类别不平衡的？",
+      "如果模型对某个类别总是预测错误，除了换损失函数还能怎么做？"
+    ],
+    "standard_answer": "分类任务用 CrossEntropy；二分类用 BCE；类别不平衡用 Focal Loss（降低易分类样本的权重，让模型更关注难样本）；分割任务用 Dice Loss（优化 IoU）。选择理由要和任务匹配：我的目标检测项目里前景背景比例约 1:100，用 Focal Loss 后 mAP 提升了 4 个点。多任务场景：总 loss = λ1*L_cls + λ2*L_reg，λ 需要调参，我一般先让两个 loss 量级相近再微调。任务目标变化：如果从分类改成排序，就换成 Pairwise Ranking Loss 或 ListNet。",
+    "rubric": {
+      "accuracy": "损失函数原理和选择是否准确",
+      "structure": "是否按列举→选择→多任务→调整展开",
+      "depth": "是否涉及 Focal Loss、多任务加权",
+      "communication": "是否有具体提升数据"
+    }
+  },
+  {
+    "id": "algo_049",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "算法工程师实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "CNN / Transformer",
+    "question": "你项目里用的是 CNN 还是 Transformer？如果让你重新设计，会不会换架构？为什么？",
+    "answer_points": [
+      "当前架构的选择理由（任务特点、数据量、计算资源）",
+      "CNN 的局部感受野和归纳偏置",
+      "Transformer 的全局依赖和可扩展性",
+      "重新设计的取舍分析"
+    ],
+    "follow_up": [
+      "Transformer 在图像任务里的主要缺点是什么？",
+      "如果数据量只有几千张图，你会选 CNN 还是 Transformer？"
+    ],
+    "standard_answer": "我的图像分类项目用 ResNet-50（CNN），选择理由是：①数据集只有 1 万张，CNN 的归纳偏置（局部性、平移不变性）在小数据上更稳定；②训练速度快，单卡 2 小时收敛。如果重新设计且数据量扩大到 100 万：我会尝试 Swin Transformer 或 ConvNeXt，因为大数据集上 Transformer 的表达能力更强，且预训练权重（如 ImageNet-22k）能更好地迁移。小数据场景（几千张）选 CNN + 迁移学习，大数据场景选 Transformer。",
+    "rubric": {
+      "accuracy": "CNN 和 Transformer 特点是否准确",
+      "structure": "是否按当前选择→对比→重新设计→场景展开",
+      "depth": "是否涉及归纳偏置、数据量、计算资源",
+      "communication": "是否有清晰的取舍逻辑"
+    }
+  },
+  {
+    "id": "algo_050",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "算法工程师实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "实验复现",
+    "question": "你有没有复现过论文的实验？复现过程中遇到过什么问题？怎么确认复现结果是对的？",
+    "answer_points": [
+      "复现的论文和任务",
+      "复现流程（代码、数据、超参、环境）",
+      "遇到的问题（版本差异、超参缺失、数据预处理不一致）",
+      "结果验证方法（和论文指标对比、消融实验）"
+    ],
+    "follow_up": [
+      "如果论文代码不开源，你怎么复现？",
+      "复现结果和论文差很多，你优先怀疑哪里？"
+    ],
+    "standard_answer": "我复现过一篇目标检测论文（YOLOX）。流程：①下载官方代码，记录 commit hash；②按论文描述准备数据集（COCO）；③对照论文表里的超参设置学习率、batch size、优化器；④跑通 baseline，记录 mAP。遇到的问题：①论文里写的 batch size 是 64，但这是 8 卡的合计值，单卡需要调学习率（线性缩放）；②数据预处理里随机裁剪的参数和官方实现有细微差别。验证：复现 mAP 50.1%，论文 50.0%，差异在合理范围内。还做了消融实验：去掉论文提出的 Decoupled Head，mAP 下降 1.0%，和论文一致。",
+    "rubric": {
+      "accuracy": "复现流程和验证方法是否科学",
+      "structure": "是否按论文→流程→问题→验证展开",
+      "depth": "是否涉及超参缩放、消融实验",
+      "communication": "是否有具体指标和差异分析"
+    }
+  },
+  {
+    "id": "backend_051",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "后端开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "接口设计",
+    "question": "你设计过 RESTful API 吗？怎么保证接口的幂等性、版本兼容性和安全性？",
+    "answer_points": [
+      "RESTful 设计原则（资源、HTTP 方法、状态码）",
+      "幂等性实现（唯一请求 ID、Token 机制）",
+      "版本兼容（URL 版本、Header 版本、向后兼容）",
+      "安全性（HTTPS、鉴权、输入校验、防 SQL 注入）"
+    ],
+    "follow_up": [
+      "如果接口要加新字段，老客户端不识别怎么办？",
+      "你怎么做 API 文档管理，保证前后端一致？"
+    ],
+    "standard_answer": "我设计过电商系统的订单 API。RESTful：/api/v1/orders（GET 列表、POST 创建、GET /{id} 详情、PUT /{id} 更新）。幂等：POST 创建订单用唯一请求 ID（前端生成 UUID，后端 Redis 去重 5 分钟）。版本：URL 中带 v1/v2，新版本不删除旧字段，只加新字段（老客户端忽略不识别的字段）。安全：①HTTPS 全链路；②JWT 鉴权，Token 15 分钟过期；③所有输入做 Pydantic 校验；④SQL 用 ORM 参数化查询防注入。文档：用 OpenAPI + Swagger 自动生成，代码即文档。",
+    "rubric": {
+      "accuracy": "RESTful 和安全实践是否规范",
+      "structure": "是否按设计→幂等→版本→安全→文档展开",
+      "depth": "是否涉及具体机制和工具",
+      "communication": "是否有完整案例"
+    }
+  },
+  {
+    "id": "backend_052",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "后端开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "并发",
+    "question": "你的项目里有没有高并发场景？是怎么处理的？有没有用过锁、线程池或者异步？",
+    "answer_points": [
+      "高并发场景描述（QPS、峰值）",
+      "并发控制手段（线程池、协程、连接池）",
+      "锁的使用（悲观锁、乐观锁、分布式锁）",
+      "异步处理（消息队列、Celery、异步 IO）"
+    ],
+    "follow_up": [
+      "乐观锁怎么实现？ABA 问题怎么解决？",
+      "如果数据库连接池被打满，系统会怎么表现？"
+    ],
+    "standard_answer": "我的项目峰值 QPS 约 2000，主要并发场景是限时秒杀。处理：①Nginx 层做漏桶限流；②应用层用 Redis 分布式锁（SETNX + 过期时间）控制库存扣减；③数据库用乐观锁（version 字段）做最终一致性校验；④订单创建异步化（Kafka + 消费者），降低接口同步耗时。异步：用 asyncio + aiohttp 处理 IO 密集型请求，并发量从 50 提升到 500。线程池：CPU 密集型任务（如图片处理）用 ProcessPoolExecutor。",
+    "rubric": {
+      "accuracy": "并发控制手段是否准确",
+      "structure": "是否按场景→限流→锁→异步→线程池展开",
+      "depth": "是否涉及乐观锁、分布式锁、ABA",
+      "communication": "是否有具体 QPS 和效果数据"
+    }
+  },
+  {
+    "id": "backend_053",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "后端开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "鉴权和安全",
+    "question": "你的系统是怎么做用户鉴权的？Token 被盗用了怎么办？",
+    "answer_points": [
+      "鉴权方案（Session、JWT、OAuth）",
+      "Token 设计（有效期、刷新机制、签名）",
+      "Token 被盗的应对措施（黑名单、设备绑定、IP 检测）",
+      "权限控制（RBAC、接口级权限）"
+    ],
+    "follow_up": [
+      "JWT 的 payload 里能不能放敏感信息？",
+      "如果用户登出，怎么让 Token 立即失效？"
+    ],
+    "standard_answer": "我的系统用 JWT（access token 15 分钟 + refresh token 7 天）。鉴权流程：用户登录后后端签发 JWT，前端存 httpOnly cookie；每次请求带 Authorization 头；后端验签并检查有效期。Token 被盗应对：①检测异常（同一账号多地登录、IP 突变）时强制重新登录；②关键操作（支付、修改密码）需二次验证（短信/邮箱）。JWT 失效：access token 短有效期自然过期；refresh token 存 Redis 黑名单，登出时加入黑名单。敏感信息不放 JWT payload（仅放 user_id、role），因为 payload 只是 base64 编码可解码。",
+    "rubric": {
+      "accuracy": "鉴权方案和安全措施是否准确",
+      "structure": "是否按方案→设计→盗用应对→权限展开",
+      "depth": "是否涉及黑名单、二次验证、敏感信息",
+      "communication": "是否有具体参数和流程"
+    }
+  },
+  {
+    "id": "backend_054",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "后端开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "部署",
+    "question": "你的项目是怎么部署的？如果线上出问题了，你的排查流程是什么？",
+    "answer_points": [
+      "部署架构（容器化、CI/CD、蓝绿/滚动发布）",
+      "监控和告警（指标、日志、链路追踪）",
+      "排查流程（复现→定位→修复→验证）",
+      "回滚策略"
+    ],
+    "follow_up": [
+      "如果只有部分用户反馈问题，怎么定位是哪里出问题？",
+      "上线后性能下降，但没有报错，你怎么排查？"
+    ],
+    "standard_answer": "我的项目用 Docker + GitHub Actions CI/CD，部署到阿里云 ECS。发布：滚动更新，每次只替换 20% 实例，健康检查通过后再继续。监控：Prometheus + Grafana（QPS、P99 延迟、错误率、CPU/内存），错误率 > 1% 钉钉告警。排查流程：①看 Grafana 确认问题范围和开始时间；②查日志（ELK）找异常堆栈；③用 trace_id 串联分布式调用链；④本地复现 → 修复 → 代码审查 → 重新部署。部分用户问题：看日志里的 user_id、设备、地区分布，定位是否是特定灰度组或 CDN 节点问题。性能下降无报错： profiling 看 CPU 火焰图，检查是否有慢 SQL、锁竞争、GC 频繁。",
+    "rubric": {
+      "accuracy": "部署和排查流程是否规范",
+      "structure": "是否按部署→监控→排查→回滚→特例展开",
+      "depth": "是否涉及灰度、profiling、GC",
+      "communication": "是否有具体工具和参数"
+    }
+  },
+  {
+    "id": "backend_055",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "后端开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "数据库索引",
+    "question": "你在项目里是怎么设计数据库索引的？有没有遇到过索引失效的情况？怎么发现的？",
+    "answer_points": [
+      "索引设计原则（最左前缀、覆盖索引、选择性）",
+      "索引优化案例（慢查询优化前后的对比）",
+      "索引失效场景（函数操作、类型转换、like '%x'）",
+      "发现和验证方法（EXPLAIN、慢查询日志）"
+    ],
+    "follow_up": [
+      "联合索引 (a,b,c) 和单独索引 a、b、c 有什么区别？",
+      "索引是不是越多越好？有什么代价？"
+    ],
+    "standard_answer": "设计原则：①WHERE 条件高频字段建索引；②联合索引按选择性高的字段放前面（最左前缀）；③避免对低基数字段（如性别）单独建索引。案例：用户行为表按 time+user_id 建联合索引，慢查询从 500ms 降到 10ms。索引失效：①WHERE 里对字段用函数（DATE(create_time)）导致失效；②隐式类型转换（varchar 字段传 int）；③like '%keyword' 前缀模糊。发现：开慢查询日志（>100ms 记录），用 EXPLAIN 看是否用了索引。联合索引 (a,b,c) 支持 a、ab、abc 查询，但不支持 b、bc；且只需要维护一棵 B+ 树，存储更小。索引代价：写操作变慢（维护 B+ 树），占磁盘空间。",
+    "rubric": {
+      "accuracy": "索引原理和失效场景是否准确",
+      "structure": "是否按设计→案例→失效→发现→联合索引→代价展开",
+      "depth": "是否涉及 EXPLAIN、最左前缀、写代价",
+      "communication": "是否有优化前后对比数据"
+    }
+  },
+  {
+    "id": "pm_056",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI产品经理",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "用户需求分析",
+    "question": "你分析过用户需求吗？请举一个你做的需求分析案例，你是怎么确定这个需求值得做的？",
+    "answer_points": [
+      "需求来源和收集方法（用户访谈、数据、竞品、反馈）",
+      "需求验证（假设→验证→迭代）",
+      "优先级判断（价值、成本、风险、战略契合度）",
+      "量化指标和预期效果"
+    ],
+    "follow_up": [
+      "如果老板和业务方的需求优先级冲突，你怎么处理？",
+      "你怎么判断一个需求是真需求还是伪需求？"
+    ],
+    "standard_answer": "我做过一个 AI 写作助手的需求分析。来源：用户反馈里 30% 的问题集中在‘不知道如何开头’。验证：访谈 10 位用户，确认这是共性痛点；竞品分析发现 Notion AI 和 Grammarly 都有类似功能且用户满意度高。优先级：价值高（解决核心痛点）、成本中（用现有大模型 API）、风险低（不影响核心流程）。预期：功能上线后，用户完成首段写作的时间从 5 分钟降到 1 分钟，7 日留存提升 8%。冲突处理：用数据说话，把两个需求按 ROI 排序，给老板看收益预估和风险分析，建议先做 ROI 高的。伪需求判断：看用户是否愿意为这个功能付费或付出额外时间，如果只是‘想要’而非‘需要’，大概率是伪需求。",
+    "rubric": {
+      "accuracy": "需求分析方法是否系统",
+      "structure": "是否按来源→验证→优先级→指标→冲突展开",
+      "depth": "是否涉及 ROI、伪需求判断",
+      "communication": "是否有具体数据和案例"
+    }
+  },
+  {
+    "id": "pm_057",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI产品经理",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "竞品分析",
+    "question": "你做竞品分析时，一般看什么维度？能不能举一个你分析过的竞品，你从中得到了什么结论？",
+    "answer_points": [
+      "分析维度（功能、体验、商业模式、用户群体、技术）",
+      "信息收集渠道（产品体验、用户评价、行业报告）",
+      "差异化分析（我们和竞品的优劣势）",
+      "结论和行动建议"
+    ],
+    "follow_up": [
+      "如果竞品功能比我们多，但用户体验差，你怎么判断哪个更重要？",
+      "你怎么防止竞品分析变成‘抄功能’？"
+    ],
+    "standard_answer": "我分析某 AI 写作工具时看了五个维度：①核心功能（生成、改写、续写）；②用户体验（交互流程、响应速度）；③商业模式（免费+增值 vs 订阅制）；④用户评价（App Store、知乎、小红书）；⑤技术（模型能力、生成质量）。结论：竞品在生成速度上有优势（2 秒出结果），但续写功能的上下文理解差（用户吐槽‘接不上’）。我们的机会：把续写做成差异化卖点，加强长文本记忆。行动：先做 3 人用户测试验证假设，再排期开发 MVP。防止抄功能：竞品分析的目的是找‘用户未被满足的需求’和‘差异化空间’，而不是功能清单对比。",
+    "rubric": {
+      "accuracy": "竞品分析维度是否全面",
+      "structure": "是否按维度→收集→差异→结论→行动展开",
+      "depth": "是否涉及用户体验、商业模式、差异化",
+      "communication": "是否有具体结论和行动"
+    }
+  },
+  {
+    "id": "pm_058",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI产品经理",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "指标设计",
+    "question": "你设计过产品指标吗？请举一个例子，你是怎么定义‘成功’的？如果指标涨了但用户满意度降了，你怎么解释？",
+    "answer_points": [
+      "指标体系（北极星指标、核心指标、观察指标）",
+      "指标定义和计算方式",
+      "指标之间的权衡关系",
+      "异常分析和归因"
+    ],
+    "follow_up": [
+      "DAU 涨了但留存降了，是好事还是坏事？",
+      "你怎么判断一个指标是不是虚荣指标？"
+    ],
+    "standard_answer": "我设计的 AI 写作工具指标：北极星指标——周活跃创作用户数（WAU）；核心指标——人均创作次数、7 日留存、付费转化率；观察指标——功能使用率、用户反馈 NPS。成功定义：WAU 月环比 +15% 且 7 日留存 > 40%。指标涨满意度降：可能是强推功能导致用户被迫使用（如弹窗引导），表面数据好看但体验差。分析：看用户行为路径（是否跳过、是否重复进入）、结合问卷和舆情。DAU 涨留存降：短期利好但长期危险，说明拉新效果好但产品留不住人，需要优先解决留存。虚荣指标：只看总量不看质量（如总下载量），或者容易被操控（如刷量），好的指标应该反映用户真实价值。",
+    "rubric": {
+      "accuracy": "指标体系设计是否科学",
+      "structure": "是否按体系→定义→权衡→异常→虚荣指标展开",
+      "depth": "是否涉及北极星指标、归因分析",
+      "communication": "是否有具体数值和判断逻辑"
+    }
+  },
+  {
+    "id": "pm_059",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI产品经理",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "MVP 设计",
+    "question": "如果你要做一个 AI 面试助手产品的 MVP，你会怎么做？哪些功能必须有，哪些可以后面再加？",
+    "answer_points": [
+      "MVP 核心定位和目标用户",
+      "必须有功能（解决核心痛点）",
+      "可以延后功能（锦上添花）",
+      "验证方式（用户测试、数据指标）"
+    ],
+    "follow_up": [
+      "MVP 上线后用户反馈不好，你怎么判断是方向错了还是执行错了？",
+      "如果资源只能做 3 个功能，你怎么选？"
+    ],
+    "standard_answer": "AI 面试助手 MVP：定位——帮助应届生模拟技术面试。核心功能：①选择岗位和侧重点生成面试题（解决‘不知道会被问什么’）；②语音/文字作答后给出评分和建议（解决‘不知道怎么改进’）。延后功能：①简历自动解析（手动输入也可）；②多轮追问（第一轮先给固定题）；③社区分享。验证：上线后看核心指标——用户完成一次完整模拟面试的比例（目标 > 50%）、用户评分（目标 > 4 分）。方向错 vs 执行错：如果用户连第一步都不愿意尝试（选岗位），可能是方向错（用户不需要）；如果用户做到了某一步后流失，可能是执行错（体验差）。资源有限时选功能：按‘用户不完成这个就不存在产品’的标准，只保留核心路径功能。",
+    "rubric": {
+      "accuracy": "MVP 思维是否清晰",
+      "structure": "是否按定位→核心→延后→验证→判断展开",
+      "depth": "是否涉及方向错 vs 执行错",
+      "communication": "是否有具体指标和判断标准"
+    }
+  },
+  {
+    "id": "pm_060",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI产品经理",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "跨团队沟通",
+    "question": "作为产品经理，你怎么和技术团队沟通需求？如果开发说‘这个需求做不了’，你怎么处理？",
+    "answer_points": [
+      "需求沟通方式（PRD、原型、面对面沟通）",
+      "技术可行性评估（一起拆解、评估工期）",
+      "‘做不了’的应对（了解原因、寻找替代方案、调整优先级）",
+      "建立信任和共识"
+    ],
+    "follow_up": [
+      "如果开发估的时间比预期长一倍，你会砍需求还是加排期？",
+      "你怎么保证开发理解的需求和你想的一样？"
+    ],
+    "standard_answer": "沟通：PRD 写清楚用户故事、验收标准、优先级；用 Figma 画关键流程原型；需求评审会让开发提前看文档，会上聚焦疑问而非从头讲。‘做不了’：先问原因——是技术瓶颈（如实时性做不到）、资源不足（人手不够）、还是方案复杂（实现成本高）。如果是技术瓶颈：一起 brainstorm 替代方案（如从实时改成准实时）；如果是资源问题：看能否分期交付 MVP；如果是方案复杂：简化需求，先做核心路径。信任：平时多了解技术栈的基本原理，不做‘不懂技术的产品’；认可开发的工作，需求变更时主动承担沟通成本。估期长：先问能不能分期（先做核心，2 周上线），如果不能且确实关键，再申请加排期。保证理解一致：让开发复述需求，或者让开发写技术方案后我对照验收标准检查。",
+    "rubric": {
+      "accuracy": "沟通和协作方法是否务实",
+      "structure": "是否按沟通→评估→应对→信任→验证展开",
+      "depth": "是否涉及替代方案、分期、复述确认",
+      "communication": "是否展示同理心和解决问题能力"
+    }
+  },
+  {
+    "id": "grad_061",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "project_experience",
+    "role_or_major": "人工智能保研",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "论文/竞赛经历",
+    "question": "你发表过论文或参加过竞赛吗？请详细介绍你的贡献和成果。如果没有，请介绍你最深入读过的一篇论文。",
+    "answer_points": [
+      "论文/竞赛背景和动机",
+      "个人贡献（ idea、实验、写作）",
+      "核心方法和创新点",
+      "结果和收获"
+    ],
+    "follow_up": [
+      "如果让你复现这篇论文，你觉得最难的部分是什么？",
+      "审稿人质疑你的方法不新颖，你怎么回应？"
+    ],
+    "standard_answer": "我参加过 Kaggle 图像分类竞赛，获得铜牌（Top 10%）。我的贡献：①数据清洗——发现训练集有 3% 的标注错误，用置信学习自动纠正；②模型集成——ResNet-50 + EfficientNet-B3 + ViT，用加权平均融合，AUC 比单模型高 2%；③超参调优——用 Optuna 自动搜索学习率和数据增强参数。收获：学会了如何系统化地做实验记录（每次实验记参数、结果、结论），以及如何快速验证想法（小数据集上 30 分钟跑通再放大）。复现最难：论文里的数据预处理细节（如随机裁剪的范围）往往不写清楚，需要看代码或反复尝试。回应质疑：先承认对方观点的合理性，然后用消融实验数据证明——比如去掉‘不新颖’的部分，性能下降 X%，说明这个部分虽然看似简单但对效果有实质贡献。",
+    "rubric": {
+      "accuracy": "论文/竞赛经历是否真实具体",
+      "structure": "是否按背景→贡献→方法→结果→收获展开",
+      "depth": "是否涉及实验细节和学术回应",
+      "communication": "是否真诚、有逻辑、有数据"
+    }
+  },
+  {
+    "id": "grad_062",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "balanced",
+    "role_or_major": "人工智能保研",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "目标院校匹配",
+    "question": "你了解我们学院/实验室最近的研究方向吗？你觉得你的背景和我们的方向有什么契合点？",
+    "answer_points": [
+      "对目标院校/实验室方向的了解（具体论文、项目）",
+      "个人背景和技能的匹配点",
+      "未来想做的研究课题",
+      "能为实验室带来的价值"
+    ],
+    "follow_up": [
+      "如果导师让你做工程实现而不是研究，你愿意吗？",
+      "你有没有联系过我们实验室的师兄师姐？"
+    ],
+    "standard_answer": "我了解到贵实验室近两年的方向集中在多模态大模型和视觉-语言预训练，发表了 VL-BERT 后续工作和视觉问答相关论文。我的背景契合点：①本科做过图像分类和目标检测项目，熟悉 CV 基础；②在 AI 应用开发实习中做过 RAG 系统，对 LLM 的 prompt 工程和检索有经验；③希望将 CV 和 NLP 结合，做多模态方向。未来想做：视觉-语言模型在医学影像报告生成中的应用。我能带来的价值：有工程实现能力（Python、PyTorch），可以快速复现论文 baseline 并做改进。工程实现愿意做：我认为好的研究需要扎实的工程基础，而且工程实现中往往能发现研究问题。",
+    "rubric": {
+      "accuracy": "对实验室了解是否具体真实",
+      "structure": "是否按了解→匹配→未来→价值→态度展开",
+      "depth": "是否提到具体论文和技术方向",
+      "communication": "是否真诚、有准备、有规划"
+    }
+  },
+  {
+    "id": "grad_063",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "fundamentals",
+    "role_or_major": "计算机科学与技术保研",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "专业基础",
+    "question": "请解释深度学习中 Batch Normalization 的原理，以及它在训练和推理时的行为差异。",
+    "answer_points": [
+      "BN 的原理（标准化、可学习参数 γ、β）",
+      "训练时的行为（用当前 batch 统计量）",
+      "推理时的行为（用移动平均统计量）",
+      "BN 的作用（加速收敛、缓解梯度消失、轻微正则化）"
+    ],
+    "follow_up": [
+      "BN 和 LayerNorm 有什么区别？为什么 Transformer 用 LayerNorm？",
+      "Batch Size 很小（比如 2）时，BN 效果会变差吗？为什么？"
+    ],
+    "standard_answer": "BN 对每个特征维度在 batch 维度上做标准化：x̂ = (x - μ_B) / √(σ_B² + ε)，然后缩放平移 y = γx̂ + β。训练时用当前 batch 的均值和方差；推理时用训练时累积的移动平均（running_mean、running_var），保证输出稳定。作用：①缓解内部协变量偏移，加速收敛；②允许更大学习率；③轻微正则化效果（batch 统计量有噪声）。BN vs LayerNorm：BN 在 batch 维度标准化，LayerNorm 在特征维度标准化。Transformer 用 LayerNorm 是因为序列长度变化大，且 batch size 小的时候 BN 不稳定。小 batch BN：统计量噪声大，均值和方差估计不准，效果变差；解决方案：GroupNorm、LayerNorm，或用大 batch。",
+    "rubric": {
+      "accuracy": "BN 原理和训练/推理差异是否准确",
+      "structure": "是否按原理→训练→推理→作用→对比→小 batch 展开",
+      "depth": "是否涉及 γ/β、移动平均、LN 对比",
+      "communication": "是否用公式辅助说明"
+    }
+  },
+  {
+    "id": "grad_064",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "project_experience",
+    "role_or_major": "软件工程保研",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "项目经历",
+    "question": "你项目里遇到过的最大技术挑战是什么？如果让你用研究生阶段学到的知识重新解决，你会怎么做？",
+    "answer_points": [
+      "具体挑战描述（场景、难点、影响）",
+      "当时的解决方案和局限",
+      "研究生知识能带来的改进（新方法、新工具、新视角）",
+      "落地可行性和预期效果"
+    ],
+    "follow_up": [
+      "这个挑战有没有学术上的解决方法？",
+      "你怎么评估新方法一定比旧方法好？"
+    ],
+    "standard_answer": "最大挑战是处理高并发下的数据一致性问题。场景：电商秒杀，库存扣减和订单创建需要原子性。当时方案：数据库事务 + 乐观锁，简单但性能差（QPS 只有 200），且数据库压力大。局限：没有考虑缓存层和异步化，瓶颈明显。研究生阶段学到分布式系统和消息队列后，我会：①用 Redis 做库存预扣（Lua 脚本保证原子性），QPS 提升到 5000+；②订单创建异步化（Kafka），降低接口同步耗时；③用分布式事务框架（如 Seata）保证最终一致性。可行性：Redis + Kafka 是业界成熟方案，Seata 也有大量生产案例。评估：压测对比新旧方案 QPS、延迟、错误率，用数据说话。",
+    "rubric": {
+      "accuracy": "挑战和解决方案是否真实具体",
+      "structure": "是否按挑战→当时方案→局限→新方案→评估展开",
+      "depth": "是否涉及分布式系统、最终一致性",
+      "communication": "是否有具体指标和可行性分析"
+    }
+  },
+  {
+    "id": "grad_065",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "balanced",
+    "role_or_major": "人工智能保研",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "科研兴趣",
+    "question": "如果研究生期间让你独立负责一个课题，你会怎么选题、规划、推进？",
+    "answer_points": [
+      "选题方法（文献调研、导师讨论、个人兴趣）",
+      "研究规划（时间线、里程碑、风险预估）",
+      "推进策略（快速验证、实验记录、定期复盘）",
+      "预期成果和备选方案"
+    ],
+    "follow_up": [
+      "如果实验结果和假设相反怎么办？",
+      "如果导师不认可你的选题方向怎么办？"
+    ],
+    "standard_answer": "选题：先用 2 周做文献综述，读该方向近 3 年顶会论文（CVPR/ICML/NeurIPS），找出 3 个未解决或可以改进的问题；然后和导师讨论可行性，确定选题。规划：第 1-3 个月 baseline 复现和初步实验；第 4-6 个月核心方法设计和实现；第 7-9 个月大量实验和论文写作；每个阶段设里程碑（如 baseline 复现完成、核心方法有效）。推进：每周记录实验日志（参数、结果、结论），每两周和导师汇报，及时调整方向。风险：核心方法可能无效，备选方案是准备 2-3 个改进方向。结果相反：先检查代码和数据是否有 bug，确认无误后分析‘相反结果’的学术价值（可能推翻现有假设，也是贡献）。导师不认可：礼貌地展示文献支撑和初步实验数据，如果导师有更强理由，尊重导师意见并寻找交叉点。",
+    "rubric": {
+      "accuracy": "科研规划是否务实可行",
+      "structure": "是否按选题→规划→推进→风险→应对展开",
+      "depth": "是否涉及文献调研、里程碑、备选方案",
+      "communication": "是否展示独立科研能力和沟通意识"
+    }
+  },
+  {
+    "id": "ai_app_066",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "AI工程/大模型应用实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "大模型应用项目",
+    "question": "你做过的大模型应用里，prompt 是怎么迭代的？有没有做过 A/B 测试来验证 prompt 效果？",
+    "answer_points": [
+      "Prompt 迭代流程（问题发现→假设→修改→验证）",
+      "版本管理方法",
+      "A/B 测试设计（对照组、实验组、指标、样本量）",
+      "迭代成果和量化数据"
+    ],
+    "follow_up": [
+      "如果模型版本升级了（如 GPT-3.5 到 GPT-4），prompt 需要重新调优吗？",
+      "Prompt 调优和微调模型（fine-tuning）之间怎么选择？"
+    ],
+    "standard_answer": "我的 prompt 迭代流程：①收集 bad case（用户反馈+人工抽检）；②分析 bad case 根因（是指令不清、上下文不足、还是模型能力边界）；③修改 prompt（加示例、改表述、加约束）；④小流量 A/B 测试。版本管理：用 Git 管理 prompt 模板，每个版本记修改原因和效果数据。A/B 测试：对照组用旧 prompt，实验组用新 prompt，各 500 条请求，评估指标：回答准确率、用户满意度、平均 token 数。成果：某轮迭代后，回答准确率从 72% 提升到 84%，用户满意度从 3.8 提升到 4.3。模型升级：GPT-4 对指令理解更强，部分‘hacky’的 prompt 技巧可以简化，但需要重新测试确认。Prompt vs 微调：数据量小（<1000 条）或任务变化快时优先调 prompt；数据量大且任务稳定时考虑微调，微调成本更高但效果上限更高。",
+    "rubric": {
+      "accuracy": "Prompt 迭代和 A/B 测试是否科学",
+      "structure": "是否按流程→管理→测试→成果→模型升级→微调选择展开",
+      "depth": "是否涉及版本管理、样本量、成本权衡",
+      "communication": "是否有具体数据和决策逻辑"
+    }
+  },
+  {
+    "id": "ai_app_067",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "AI工程/大模型应用实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "大模型应用项目",
+    "question": "如果你的 RAG 系统检索出来的文档和用户问题相关度不高，你会从哪些方面优化？",
+    "answer_points": [
+      "Query 侧优化（query 扩展、改写、意图识别）",
+      "文档侧优化（切分策略、摘要、元数据）",
+      "检索侧优化（混合检索、重排序、相似度阈值）",
+      "评估和迭代方法"
+    ],
+    "follow_up": [
+      "如果用户用口语化表达提问，而知识库是正式文档，语义差距大怎么办？",
+      "怎么判断是检索的问题还是生成的问题？"
+    ],
+    "standard_answer": "Query 优化：①用 LLM 做 query 扩展（如把‘怎么退款’扩展为‘退款流程、退款条件、退款时间’）；②识别用户意图，路由到不同知识库。文档优化：①按语义切分而非固定长度切分；②给每段文档加摘要和关键词元数据；③对表格、代码等特殊格式做结构化提取。检索优化：①向量检索 + BM25 混合，结果融合；②用 Cross-Encoder 重排序；③设置相似度阈值，低于阈值时走兜底策略（告知用户未找到相关信息）。评估：定期抽查 100 条查询，人工标注检索相关性（Precision@K），定位 bad case。口语化问题：建同义词映射表，或训练 query 改写模型。检索 vs 生成：如果检索到的文档本身相关但生成答案不对，是生成问题；如果检索到的文档不相关，是检索问题。",
+    "rubric": {
+      "accuracy": "RAG 优化手段是否全面",
+      "structure": "是否按 Query→文档→检索→评估→问题定位展开",
+      "depth": "是否涉及混合检索、重排序、语义切分",
+      "communication": "是否有系统化的优化思路"
+    }
+  },
+  {
+    "id": "pm_068",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "产品经理",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "增长和留存",
+    "question": "你做过用户增长或留存提升的项目吗？请说一个你主导的 case，数据变化是怎样的？",
+    "answer_points": [
+      "项目背景和目标（增长/留存指标基线）",
+      "策略设计（渠道、活动、产品改进）",
+      "执行过程（资源协调、排期、上线）",
+      "数据结果和复盘"
+    ],
+    "follow_up": [
+      "增长是靠补贴拉来的，还是产品本身带来的？怎么区分？",
+      "留存提升后，有没有发现其他指标（如付费）下降了？"
+    ],
+    "standard_answer": "我主导过一个新用户 onboarding 优化项目，目标提升 7 日留存。背景：原留存 25%，分析发现 60% 的新用户在首次使用后 3 天内流失，主要原因是‘不知道产品能做什么’。策略：①简化首次使用流程（从 5 步降到 2 步）；②增加个性化引导（根据用户选择的目标岗位推荐对应功能）；③第 1、3、7 天推送提醒（内容有价值而非硬广）。执行：和产品、设计、开发一起 2 周排期，小流量灰度 1 周，全量上线。结果：7 日留存从 25% 提升到 34%（+9pp），且用户首次完成核心功能的比例从 40% 提升到 65%。区分补贴 vs 产品：看留存曲线，补贴带来的用户留存衰减快（补贴停止后迅速回落），产品改进带来的留存更稳定。监控：留存提升的同时观察 LTV 和付费率，确保没有为了留存牺牲商业价值。",
+    "rubric": {
+      "accuracy": "增长和留存策略是否系统",
+      "structure": "是否按背景→策略→执行→结果→区分→监控展开",
+      "depth": "是否涉及留存曲线、LTV、灰度测试",
+      "communication": "是否有具体数据和复盘"
+    }
+  },
+  {
+    "id": "backend_069",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "后端开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "项目深挖",
+    "question": "你的项目是怎么做服务拆分的？拆分后遇到过什么分布式问题？",
+    "answer_points": [
+      "拆分依据（业务边界、团队规模、数据独立性）",
+      "拆分后的通信方式",
+      "遇到的分布式问题（事务、一致性、链路追踪）",
+      "解决方案和权衡"
+    ],
+    "follow_up": [
+      "如果拆分后服务间调用链路变长，延迟怎么控制？",
+      "拆分粒度怎么把握？太细或太粗分别有什么问题？"
+    ],
+    "standard_answer": "我的项目从单体拆分为用户服务、订单服务、库存服务。拆分依据：①业务边界清晰（用户、交易、库存各自独立）；②团队 3 人，每人负责一个服务；③数据独立性（每个服务有独立数据库）。通信：同步用 gRPC（内部调用，低延迟），异步用 Kafka（订单状态变更通知）。分布式问题：①分布式事务——用 Saga 模式（订单创建→库存扣减→支付，每个步骤可补偿）；②一致性——最终一致性，允许短时间不一致（如库存显示延迟 1 秒）；③链路追踪——每个请求生成 trace_id，贯穿所有服务。延迟控制：①并行调用（如同时查用户信息和优惠券）；②缓存热点数据；③超时设置（服务间调用 3 秒超时，超时时降级）。粒度：太细导致调用链复杂、运维成本高；太粗失去拆分意义。我的原则是‘一个服务能由 1-2 人独立维护’。",
+    "rubric": {
+      "accuracy": "服务拆分和分布式问题是否准确",
+      "structure": "是否按依据→通信→问题→解决→延迟→粒度展开",
+      "depth": "是否涉及 Saga、最终一致性、trace_id",
+      "communication": "是否有具体原则和参数"
+    }
+  },
+  {
+    "id": "algo_070",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "算法工程师实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "评价指标",
+    "question": "你在项目里是怎么评估模型效果的？分类、回归、生成任务分别用什么指标？",
+    "answer_points": [
+      "分类指标（Accuracy、Precision、Recall、F1、AUC、混淆矩阵）",
+      "回归指标（MSE、MAE、RMSE、R²）",
+      "生成指标（BLEU、ROUGE、 perplexity、人工评估）",
+      "指标选择的业务考量"
+    ],
+    "follow_up": [
+      "如果类别极度不平衡（如 1:1000），Accuracy 还有意义吗？",
+      "生成任务的 BLEU 高但实际效果不好，你怎么解释？"
+    ],
+    "standard_answer": "分类：先看混淆矩阵，再用 F1（平衡 Precision 和 Recall），类别不平衡时用 AUC-PR 或 F1-macro。回归：MAE 鲁棒性好（对异常值不敏感），RMSE 惩罚大误差，根据业务选。生成：BLEU/ROUGE 做自动化评估，但核心是人工评估（流畅度、相关性、事实性）。业务考量：医疗诊断场景优先 Recall（宁可误报不漏报），推荐场景优先 Precision（减少干扰）。类别不平衡：Accuracy 没意义（全预测为负也能 99.9% 准确），用 F1、AUC-PR、或加权损失。BLEU 高但效果不好：BLEU 只衡量 n-gram 重叠，不衡量语义正确性和事实性。比如模型生成的句子语法通顺、用词和参考答案重叠高，但关键事实错误，BLEU 也会高。所以生成任务必须加人工评估和事实性校验。",
+    "rubric": {
+      "accuracy": "指标定义和选择是否准确",
+      "structure": "是否按分类→回归→生成→业务→不平衡→BLEU 局限展开",
+      "depth": "是否涉及 AUC-PR、加权损失、事实性校验",
+      "communication": "是否有具体场景和判断"
+    }
+  },
+  {
+    "id": "pm_071",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "产品经理",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "优先级判断",
+    "question": "如果同时有 5 个需求要排期，资源只够做 2 个，你怎么选？请举一个你实际做过的优先级判断 case。",
+    "answer_points": [
+      "优先级判断框架（价值、成本、风险、紧急度）",
+      "量化评估方法（打分、ROI 计算）",
+      " stakeholder 沟通和共识达成",
+      "实际案例和结果"
+    ],
+    "follow_up": [
+      "如果老板坚持要做你认为优先级低的需求，你怎么处理？",
+      "需求优先级排好了，但中途插入一个紧急需求，怎么办？"
+    ],
+    "standard_answer": "我的框架：价值（用户收益+商业收益）× 成功概率 / 成本（人天+风险）。5 个需求先按这个公式打分，再和前 2 名对比。实际案例：当时有①支付流程优化（减少流失，价值高）、②暗黑模式（用户呼声高但付费转化关联弱）、③管理员后台（内部需求）。打分：支付优化 ROI 最高（预计减少 10% 流失，月增收 5 万，成本 2 周），排第一；管理员后台虽然用户不感知但运营效率提升明显，排第二；暗黑模式 ROI 低，排第三。沟通：把打分表给老板和团队看，用数据达成共识。老板坚持低优先级：先了解老板的真实诉求（可能是战略考虑或重要客户要求），如果是合理的战略需求，接受并调整其他需求；如果只是个人偏好，用数据和用户反馈委婉说明。紧急需求插入：评估是否真正紧急（影响收入/安全/合规），如果是，暂停当前低优先级需求；如果不是，放入下一迭代。",
+    "rubric": {
+      "accuracy": "优先级框架是否实用",
+      "structure": "是否按框架→案例→沟通→老板→紧急需求展开",
+      "depth": "是否涉及 ROI、战略考量、紧急度判断",
+      "communication": "是否有具体打分和沟通策略"
+    }
+  },
+  {
+    "id": "grad_072",
+    "interview_mode": "graduate_reexam",
+    "focus_mode": "fundamentals",
+    "role_or_major": "人工智能保研",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "专业基础",
+    "question": "请解释 Transformer 中的位置编码（Positional Encoding）的作用，以及绝对位置编码和相对位置编码的区别。",
+    "answer_points": [
+      "为什么需要位置编码（Self-Attention 本身无序）",
+      "绝对位置编码（sinusoidal、可学习）",
+      "相对位置编码（RoPE、ALiBi）",
+      "各自优缺点和适用场景"
+    ],
+    "follow_up": [
+      "如果序列长度超过训练时的最大长度，位置编码还能用吗？",
+      "RoPE 是怎么实现的？和绝对位置编码比有什么优势？"
+    ],
+    "standard_answer": "Self-Attention 对输入 token 是无序的（置换不变性），需要位置编码注入位置信息。绝对位置编码：原始 Transformer 用 sinusoidal 函数（PE(pos,2i)=sin(pos/10000^(2i/d))），优点是外推性好（训练时未见过的位置也有定义），后来也有可学习的版本（BERT）。相对位置编码：RoPE（旋转位置编码）通过旋转矩阵将相对位置信息融入 attention 计算；ALiBi 直接在 attention score 上加基于距离的偏置。绝对编码简单但外推能力有限；RoPE 外推性好，是 LLaMA、ChatGLM 等主流模型的选择；ALiBi 训练稳定、外推性强。超长序列：sinusoidal 和 RoPE 有一定外推能力，但超过训练长度后性能下降；解决方案：插值（Position Interpolation）、NTK-aware 缩放、或动态长度训练。RoPE 实现：将 q、k 向量每两维看作复数，乘以旋转矩阵 e^(i·m·θ_j)，m 为位置，这样 attention score 只和相对位置有关。",
+    "rubric": {
+      "accuracy": "位置编码原理和对比是否准确",
+      "structure": "是否按作用→绝对→相对→超长→RoPE 实现展开",
+      "depth": "是否涉及 sinusoidal 公式、RoPE、ALiBi、外推",
+      "communication": "是否用公式和类比辅助"
+    }
+  },
+  {
+    "id": "ai_app_073",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "大模型应用开发",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "大模型应用项目",
+    "question": "你的大模型应用是怎么做用户输入的安全过滤的？有没有遇到过用户故意让模型输出不当内容的情况？",
+    "answer_points": [
+      "输入过滤策略（关键词、分类模型、规则引擎）",
+      "输出审核机制（二次校验、敏感词过滤、分类器）",
+      "对抗性输入的应对（越狱提示、角色扮演攻击）",
+      "合规和审计"
+    ],
+    "follow_up": [
+      "如果用户用编码、谐音、拆分等方式绕过过滤，怎么办？",
+      "安全过滤太严格导致正常用户体验变差，怎么平衡？"
+    ],
+    "standard_answer": "我的系统三层防护：①输入层——关键词过滤（敏感词库）+ 轻量分类模型（判断输入是否属于危险类别）；②模型层——system prompt 里明确约束模型不回答违法、暴力、歧视内容；③输出层——对模型输出做敏感词二次过滤，高风险内容拒绝展示并记录审计日志。对抗输入：对常见越狱模板（如 DAN、角色扮演）建规则库；对编码/谐音用归一化处理（如全角转半角、谐音映射）。平衡：①白名单机制（教育、医疗等正当场景允许讨论敏感话题）；②分级处理（高风险直接拦截，中风险加提示语，低风险正常通过）；③定期看误拦截率，调整阈值。审计：所有拦截和拒绝操作记日志，便于复盘和合规检查。",
+    "rubric": {
+      "accuracy": "安全策略是否全面",
+      "structure": "是否按输入→模型→输出→对抗→平衡→审计展开",
+      "depth": "是否涉及越狱、分级、误拦截",
+      "communication": "是否有具体策略和权衡"
+    }
+  },
+  {
+    "id": "backend_074",
+    "interview_mode": "industry_interview",
+    "focus_mode": "fundamentals",
+    "role_or_major": "后端开发实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一"
+    ],
+    "topic": "消息队列",
+    "question": "你在项目里用过消息队列吗？请说一个具体场景，为什么选这个队列，怎么保证消息不丢失、不重复、有序？",
+    "answer_points": [
+      "使用场景（异步、削峰、解耦）",
+      "选型理由（Kafka、RabbitMQ、RocketMQ 对比）",
+      "不丢失（生产者确认、持久化、消费者 ACK）",
+      "不重复（幂等设计）",
+      "有序（分区键、单分区）"
+    ],
+    "follow_up": [
+      "如果消息积压了几百万条，你怎么处理？",
+      "消息队列和任务队列（如 Celery）有什么区别？"
+    ],
+    "standard_answer": "我的订单通知场景用 Kafka：理由是高吞吐（万级 QPS）、持久化好、社区成熟。不丢失：生产者 acks=all，min.insync.replicas=2；Broker 配置 replica.factor=3；消费者手动 commit offset（处理完业务再 commit）。不重复：消费者端做幂等（订单 ID + 状态机，已处理过的直接跳过）。有序：同一订单的消息用 order_id 做 partition key，保证单分区有序。消息积压：①先扩容消费者（加实例）；②如果消费逻辑慢，优化代码或批量处理；③紧急时跳过非关键消息（如日志），先保证核心业务流程。消息队列 vs 任务队列：消息队列侧重事件传递（ pub/sub），任务队列侧重任务执行（如 Celery 带任务状态、重试、结果存储）。",
+    "rubric": {
+      "accuracy": "消息队列原理和可靠性是否准确",
+      "structure": "是否按场景→选型→丢失→重复→有序→积压→对比展开",
+      "depth": "是否涉及 Kafka 配置、幂等、分区键",
+      "communication": "是否有具体配置和应急方案"
+    }
+  },
+  {
+    "id": "algo_075",
+    "interview_mode": "industry_interview",
+    "focus_mode": "project_experience",
+    "role_or_major": "算法工程师实习",
+    "grade_range": [
+      "大三",
+      "大四",
+      "研一",
+      "研二"
+    ],
+    "topic": "模型训练流程",
+    "question": "你在训练模型时，是怎么划分数据集和做交叉验证的？如果数据有泄露，会对结果产生什么影响？",
+    "answer_points": [
+      "数据集划分方法（随机划分、时间序列划分、分层抽样）",
+      "交叉验证（K-Fold、Stratified K-Fold、时间序列 CV）",
+      "数据泄露的类型和检测（目标泄露、时间泄露、样本重叠）",
+      "泄露对结果的扭曲"
+    ],
+    "follow_up": [
+      "如果训练集和测试集有同一个人的不同样本，这算泄露吗？",
+      "时间序列数据为什么不能简单随机划分？"
+    ],
+    "standard_answer": "划分：分类任务用分层抽样（保证各类别比例一致）；时间序列任务按时间划分（训练集在测试集之前）。交叉验证：K=5 的 Stratified K-Fold，每折都保证类别比例。数据泄露：①目标泄露——特征里包含了目标信息（如用‘购买日期’预测‘是否购买’，日期在购买后）；②时间泄露——用未来数据预测过去；③样本重叠——同一样本出现在训练集和测试集。泄露影响：离线指标虚高，上线后效果暴跌（我曾遇到泄露导致离线 AUC 95%，上线后降到 65%）。检测：检查特征与目标的相关性是否异常高；看训练集和测试集的分布是否过于一致。同一个人的样本：如果是人脸识别或推荐场景，同一个人的样本需要放在同一折（Group K-Fold），否则模型可能记住个人特征而非通用模式。时间序列：随机划分会让模型‘看到未来’，学到虚假模式，必须按时间顺序划分。",
+    "rubric": {
+      "accuracy": "划分方法和数据泄露是否准确",
+      "structure": "是否按划分→交叉验证→泄露类型→检测→特例展开",
+      "depth": "是否涉及分层抽样、Group K-Fold、时间泄露",
+      "communication": "是否有真实案例和数据"
     }
   }
 ]

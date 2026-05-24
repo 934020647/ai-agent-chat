@@ -266,10 +266,10 @@ def interview_start(request: InterviewStartRequest):
         profile=profile,
         job_type=job_type,
     )
-    if result.get("total_questions", 0) == 0:
-        return {
-            "error": f"当前面试配置（{interview_mode} + {focus_mode or 'balanced'} + {target}）在题库中没有匹配题目。请尝试切换面试模式或目标岗位。"
-        }
+    # Merge backend warnings with agent warnings (fallback, etc.)
+    agent_warnings = result.pop("warnings", [])
+    if agent_warnings:
+        warnings.extend(agent_warnings)
     if warnings:
         result["warnings"] = warnings
     return result
