@@ -1,11 +1,24 @@
 import ReactMarkdown from 'react-markdown'
 
-function ResumeReviewPanel({ review, loading, onRequestReview, canReview, resumeId, profileId }) {
+function ResumeReviewPanel({ review, loading, progress, onRequestReview, canReview, resumeId, profileId }) {
   if (loading) {
     return (
       <div className="review-panel">
         <h3>简历测评</h3>
-        <div className="loading">正在生成简历测评，请稍候...</div>
+        {progress && progress.percent > 0 && (
+          <div className="progress-feedback">
+            <div className="progress-stage">{progress.stage}</div>
+            <div className="progress-bar-container">
+              <div
+                className="progress-fill-animated"
+                style={{ width: `${progress.percent}%` }}
+              />
+            </div>
+          </div>
+        )}
+        {!progress || progress.percent === 0 && (
+          <div className="loading">正在生成简历测评，请稍候...</div>
+        )}
       </div>
     )
   }

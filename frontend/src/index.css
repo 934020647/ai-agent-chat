@@ -839,6 +839,38 @@ header p {
   cursor: not-allowed;
 }
 
+/* Progress Feedback */
+.progress-feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  background: #f4f8fc;
+  border: 1px solid #d0e3f5;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.progress-stage {
+  font-size: 13px;
+  color: #1a5490;
+  font-weight: 500;
+}
+
+.progress-bar-container {
+  height: 7px;
+  background: #dce8f5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill-animated {
+  height: 100%;
+  background: linear-gradient(90deg, #4a90d9, #6ab0f9);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
 /* Interview Summary */
 .interview-summary {
   display: flex;

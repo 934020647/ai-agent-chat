@@ -20,6 +20,7 @@ function InterviewMode() {
   // Review state
   const [review, setReview] = useState(null)
   const [reviewLoading, setReviewLoading] = useState(false)
+  const [reviewProgress, setReviewProgress] = useState({ percent: 0, stage: '' })
 
   // Interview config state
   const [mode, setMode] = useState('general_mock')
@@ -38,6 +39,7 @@ function InterviewMode() {
   const [summary, setSummary] = useState(null)
   const [closingMessage, setClosingMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const [answerProgress, setAnswerProgress] = useState({ percent: 0, stage: '' })
   const [isStarting, setIsStarting] = useState(false)
   const [startError, setStartError] = useState('')
   const [startSuccess, setStartSuccess] = useState('')
@@ -110,7 +112,23 @@ function InterviewMode() {
       return
     }
     setReviewLoading(true)
+    setReviewProgress({ percent: 5, stage: '正在读取简历内容...' })
     setError(null)
+
+    const stages = [
+      { percent: 15, stage: '正在分析项目经历和技能栈...' },
+      { percent: 40, stage: '正在生成可能追问...' },
+      { percent: 65, stage: '正在整理修改建议...' },
+      { percent: 85, stage: '即将完成...' },
+    ]
+    let stageIdx = 0
+    const progressTimer = setInterval(() => {
+      if (stageIdx < stages.length) {
+        setReviewProgress(stages[stageIdx])
+        stageIdx += 1
+      }
+    }, 1200)
+
     try {
       const res = await fetch(`${API_BASE_URL}/api/resume/review`, {
         method: 'POST',
@@ -127,10 +145,12 @@ function InterviewMode() {
         }
         throw new Error(data.error)
       }
+      setReviewProgress({ percent: 100, stage: '测评完成' })
       setReview(data)
     } catch (err) {
       setError('简历测评失败: ' + err.message)
     } finally {
+      clearInterval(progressTimer)
       setReviewLoading(false)
     }
   }
@@ -220,6 +240,23 @@ function InterviewMode() {
     if (!answerText.trim() || !sessionId) return
     setLoading(true)
     setError(null)
+
+    const stages = [
+      { percent: 10, stage: '正在分析你的回答...' },
+      { percent: 35, stage: '正在对照评分标准...' },
+      { percent: 60, stage: '正在生成点评和标准回答...' },
+      { percent: 80, stage: '正在准备下一道追问...' },
+      { percent: 92, stage: '即将完成...' },
+    ]
+    let stageIdx = 0
+    setAnswerProgress({ percent: 5, stage: '正在提交回答...' })
+    const progressTimer = setInterval(() => {
+      if (stageIdx < stages.length) {
+        setAnswerProgress(stages[stageIdx])
+        stageIdx += 1
+      }
+    }, 1200)
+
     try {
       const res = await fetch(`${API_BASE_URL}/api/interview/answer`, {
         method: 'POST',
@@ -258,7 +295,9 @@ function InterviewMode() {
     } catch (err) {
       setError('提交回答失败: ' + err.message)
     } finally {
+      clearInterval(progressTimer)
       setLoading(false)
+      setAnswerProgress({ percent: 0, stage: '' })
     }
   }
 
@@ -331,6 +370,7 @@ function InterviewMode() {
         <ResumeReviewPanel
           review={review}
           loading={reviewLoading}
+          progress={reviewProgress}
           onRequestReview={handleRequestReview}
           canReview={!!resolveResumeId()}
           resumeId={resolveResumeId()}
@@ -439,6 +479,18 @@ function InterviewMode() {
               </div>
             )}
           </div>
+
+          {loading && answerProgress.percent > 0 && (
+            <div className="progress-feedback">
+              <div className="progress-stage">{answerProgress.stage}</div>
+              <div className="progress-bar-container">
+                <div
+                  className="progress-fill-animated"
+                  style={{ width: `${answerProgress.percent}%` }}
+                />
+              </div>
+            </div>
+          )}
 
           <div className="answer-area">
             <textarea

@@ -146,6 +146,97 @@ def _target_matches(q_role: str, target_keywords: List[str]) -> bool:
     return False
 
 
+# ---------------------------------------------------------------------------
+# Question quality filters
+# ---------------------------------------------------------------------------
+_LOW_TECH_QUESTION_PATTERNS = [
+    "非技术背景", "一分钟解释", "一分钟向", "最大的缺点", "优点和缺点",
+    "为什么选择", "职业规划", "如何看待加班", "团队冲突", "你最大的挑战",
+    "你平时如何学习", "你的核心竞争力", "用一句话概括", "描述一次你",
+    "如果重新处理", "你认为技术意见分歧",
+]
+
+_LOW_TECH_TOPIC_PATTERNS = [
+    "hr", "行为面", "沟通表达", "自我认知", "动机问题", "表达能力",
+    "团队协作", "职业规划", "个人成长",
+]
+
+_TECH_KEYWORDS_BOOST = [
+    "rag", "agent", "lora", "微调", "benchmark", "reward", "bm25", "向量检索",
+    "kv cache", "transformer", "self-attention", "prompt", "harness", " hallucination",
+    "幻觉", "工具调用", "api", "接口", "缓存", "redis", "kafka", "mysql", "sql", "索引",
+    "日志", "部署", "nginx", "fastapi", "react", "数据结构", "算法", "bfs", "复杂度",
+    "模型", "训练", "评估", "数据 pipeline", "python", "pytorch", " LoRA",
+]
+
+_TECH_TOPIC_PATTERNS = [
+    "项目", "工程", "系统", "数据", "模型", "检索", "部署", "缓存", "数据库",
+    "接口", "算法", "训练", "评估", "pipeline", "harness", "agent", "rag",
+]
+
+_PROJECT_PHRASING_PATTERNS = [
+    "你项目中", "你简历中", "结合项目", "线上", "评估", "排查", "为什么这样设计",
+    "如果换一种", "怎么评估效果", "线上出问题", "如果数据量", "如果用户量",
+    "你是怎么做的", "具体怎么", "请说明", "请解释",
+]
+
+_TARGET_TECH_KEYWORDS: Dict[str, List[str]] = {
+    "ai应用开发": ["rag", "agent", "prompt", "lora", "benchmark", "harness", "api", "幻觉", "工具调用", "向量检索", "数据 pipeline"],
+    "大模型应用开发": ["rag", "agent", "prompt", "lora", "benchmark", "harness", "api", "幻觉", "工具调用", "向量检索"],
+    "后端": ["接口", "缓存", "redis", "kafka", "mysql", "sql", "索引", "日志", "部署", "nginx", "消息队列", "鉴权", "安全"],
+    "算法": ["模型", "训练", "损失函数", "评估指标", "复杂度", "pytorch", "过拟合", "数据集"],
+    "产品": ["用户", "指标", "mvp", "需求", "优先级", "竞品", "增长", "留存"],
+}
+
+
+def _is_technical_target(target: Optional[str]) -> bool:
+    """Check if the target is a technical/engineering role."""
+    if not target:
+        return False
+    t = target.lower()
+    return any(k in t for k in [
+        "ai", "大模型", "llm", "rag", "agent", "aigc", "后端", "java", "go", "python",
+        "服务端", "web", "算法", "机器学习", "深度学习", "cv", "nlp", "推荐",
+        "模型训练", "数据", "工程", "开发", "技术",
+    ])
+
+
+def is_low_technical_question(
+    q: Dict[str, Any],
+    target: Optional[str] = None,
+    interview_mode: Optional[str] = None,
+    focus_mode: Optional[str] = None,
+) -> bool:
+    """Identify HR/generic/low-technical questions that should be deprioritized
+    in technical interviews.
+    """
+    question_text = q.get("question", "")
+    topic = q.get("topic", "")
+    answer_points = q.get("answer_points", [])
+
+    q_lower = question_text.lower()
+    topic_lower = topic.lower()
+
+    # Pattern-based detection
+    for pat in _LOW_TECH_QUESTION_PATTERNS:
+        if pat in q_lower:
+            return True
+
+    for pat in _LOW_TECH_TOPIC_PATTERNS:
+        if pat in topic_lower:
+            return True
+
+    # Check answer_points for tech keyword scarcity
+    if answer_points and len(answer_points) >= 2:
+        ap_text = " ".join(str(p) for p in answer_points).lower()
+        tech_hit = sum(1 for kw in _TECH_KEYWORDS_BOOST if kw in ap_text)
+        if tech_hit < 2 and len(answer_points) >= 3:
+            # If answer points are mostly non-technical, likely a soft-skill question
+            return True
+
+    return False
+
+
 def _score_question(
     q: Dict[str, Any],
     interview_mode: str,
@@ -153,6 +244,7 @@ def _score_question(
     target_keywords: List[str],
     grade: Optional[str],
     resume_text: Optional[str] = None,
+    target: Optional[str] = None,
 ) -> int:
     """Score a question for relevance. Higher = better match."""
     score = 0
@@ -180,6 +272,45 @@ def _score_question(
             if w in resume_lower:
                 score += 2
                 break
+
+    # ---- Stage 10.2: Tech boost / penalty ----
+    q_text = q.get("question", "").lower()
+    topic_lower = topic.lower()
+    ap_text = " ".join(str(p) for p in q.get("answer_points", [])).lower()
+
+    # Tech keyword boost (+3)
+    for kw in _TECH_KEYWORDS_BOOST:
+        if kw in q_text or kw in topic_lower or kw in ap_text:
+            score += 3
+            break  # Only boost once per question
+
+    # Project/engineering topic boost (+2)
+    for pat in _TECH_TOPIC_PATTERNS:
+        if pat in topic_lower:
+            score += 2
+            break
+
+    # Project-specific phrasing boost (+2)
+    for pat in _PROJECT_PHRASING_PATTERNS:
+        if pat in q_text:
+            score += 2
+            break
+
+    # Target-specific tech boost (+2)
+    if target:
+        t_lower = target.lower()
+        for key, keywords in _TARGET_TECH_KEYWORDS.items():
+            if key in t_lower:
+                for kw in keywords:
+                    if kw in q_text or kw in topic_lower or kw in ap_text:
+                        score += 2
+                        break
+                break
+
+    # Low-technical penalty (-8)
+    if is_low_technical_question(q, target, interview_mode, focus_mode):
+        score -= 8
+
     return score
 
 
@@ -194,11 +325,13 @@ def pick_questions(
     """Filter question bank using scoring-based selection with relaxed fallback."""
     bank = _load_bank()
     target_keywords = _expand_target_keywords(role_or_major)
+    is_tech_target = _is_technical_target(role_or_major)
+    is_strict_tech = is_tech_target and (focus_mode in ("project_experience", "fundamentals"))
 
     # Phase 1: Score all questions
     scored = []
     for q in bank:
-        s = _score_question(q, interview_mode, focus_mode, target_keywords, grade, resume_text)
+        s = _score_question(q, interview_mode, focus_mode, target_keywords, grade, resume_text, target=role_or_major)
         scored.append((s, q))
 
     # Phase 2: Sort by score descending, then shuffle to break ties and improve variety
@@ -208,6 +341,32 @@ def pick_questions(
 
     # Phase 3: Try to pick top N with score > 0
     filtered = [q for s, q in scored if s > 0]
+
+    # Phase 3b: Quality filter for technical targets
+    if is_tech_target and filtered:
+        # Keep at most 1 low-tech question in the final set
+        low_tech_count = sum(1 for q in filtered if is_low_technical_question(q, role_or_major, interview_mode, focus_mode))
+        if low_tech_count > 1:
+            # Rebuild: pick high-quality first, then allow at most 1 low-tech if needed
+            high_quality = [q for q in filtered if not is_low_technical_question(q, role_or_major, interview_mode, focus_mode)]
+            low_quality = [q for q in filtered if is_low_technical_question(q, role_or_major, interview_mode, focus_mode)]
+            filtered = high_quality[:num]
+            if len(filtered) < num and low_quality:
+                filtered.append(low_quality[0])
+        # For strict tech focus, ensure first 2 are not low-tech
+        if is_strict_tech and len(filtered) >= 2:
+            low_idx = [i for i, q in enumerate(filtered) if is_low_technical_question(q, role_or_major, interview_mode, focus_mode)]
+            for idx in low_idx:
+                if idx < 2:
+                    # Swap with first non-low-tech question after position 2
+                    swap_candidates = [i for i in range(2, len(filtered)) if not is_low_technical_question(filtered[i], role_or_major, interview_mode, focus_mode)]
+                    if swap_candidates:
+                        filtered[idx], filtered[swap_candidates[0]] = filtered[swap_candidates[0]], filtered[idx]
+                    else:
+                        # Move to end
+                        q = filtered.pop(idx)
+                        filtered.append(q)
+
     if len(filtered) >= num:
         return filtered[:num]
 
@@ -294,6 +453,8 @@ def _build_fallback_prompt(
         "project_experience": "项目经历深挖",
     }.get(focus_mode or "", "综合考察")
 
+    is_tech = _is_technical_target(target)
+
     lines = [
         f"你是一位资深{mode_label}出题专家。现在需要为一位申请【{target or '综合岗位'}】的【{grade or '未指定年级'}】学生生成 {num_questions} 道模拟面试题。",
         f"考察侧重点：{focus_label}。",
@@ -309,13 +470,29 @@ def _build_fallback_prompt(
         "6. 每道题必须有 follow_up 追问。",
         "7. 题目语气要像面试官现场口头提问，口语化、自然。",
         "",
+    ]
+
+    if is_tech and interview_mode == "industry_interview":
+        lines.extend([
+            "【技术岗位硬性约束】",
+            "这是技术面试，禁止生成泛 HR / 软技能类题目：",
+            "- 禁止出现'最大缺点''优点和缺点''为什么选择我们''职业规划''如何看待加班''团队冲突'等 HR 题。",
+            "- 禁止出现'一分钟向非技术背景解释''用一句话概括'等低技术表达题。",
+            "- 5 道题中至少 4 道必须是技术/项目/工程相关。",
+            "- 第 1 题可以是项目总览，但必须要求讲技术链路。",
+            "- 第 2-4 题必须是技术深挖（代码、架构、数据、模型、工具、性能、异常处理等）。",
+            "- 第 5 题可以是综合场景，但必须技术相关，例如上线、评估、故障排查、安全或成本控制。",
+            "",
+        ])
+
+    lines.extend([
         "5道题应覆盖：",
         "- 1道自我介绍/背景或项目总览",
         "- 2道岗位核心技术",
         "- 1道项目深挖/简历追问",
         "- 1道综合场景/反思改进",
         "",
-    ]
+    ])
 
     if style_examples:
         lines.append("【参考风格样例】以下是题库中已有的真实面经风格题目，请你模仿其结构和语气，但生成全新的题目：")
